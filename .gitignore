@@ -1,0 +1,7 @@
+.env
+*.env
+logs/
+data/
+freqai_models/
+__pycache__/
+venv/
