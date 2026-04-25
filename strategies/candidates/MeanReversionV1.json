@@ -1,0 +1,33 @@
+{
+  "strategy_name": "MeanReversionV1",
+  "params": {
+    "trailing": {
+      "trailing_stop": false,
+      "trailing_stop_positive": null,
+      "trailing_stop_positive_offset": 0.0,
+      "trailing_only_offset_is_reached": false
+    },
+    "max_open_trades": {
+      "max_open_trades": 3
+    },
+    "buy": {
+      "bb_period": 30,
+      "bb_std": 1.7,
+      "buy_rsi": 30
+    },
+    "sell": {
+      "sell_rsi": 67
+    },
+    "roi": {
+      "0": 0.426,
+      "226": 0.13,
+      "650": 0.082,
+      "1867": 0
+    },
+    "stoploss": {
+      "stoploss": -0.27
+    }
+  },
+  "ft_stratparam_v": 1,
+  "export_time": "2026-04-25 15:52:06.218205+00:00"
+}
