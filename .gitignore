@@ -1,7 +1,14 @@
 .env
 *.env
+.env.*
+risk/balance_state.json
 logs/
 data/
 freqai_models/
 __pycache__/
+*.pyc
+*.pyo
+sentiment/scores/current_score.json
+sentiment/scores/history.csv
+user_data/
 venv/
