@@ -1,3 +1,7 @@
+import sys
+import os
+sys.path.insert(0, '/Users/aatifquamre/masterbot')
+from sentiment.reader import get_current_sentiment, get_sentiment_signal
 import pandas_ta as ta
 from freqtrade.strategy import IStrategy, IntParameter, DecimalParameter
 from pandas import DataFrame
@@ -61,3 +65,31 @@ class MeanReversionV1(IStrategy):
             ),
             'exit_long'] = 1
         return dataframe
+
+    def custom_entry_signal(self, current_time, proposed_buy, proposed_sell,
+                            low_profit_factor, current_profit, min_roi,
+                            current_entry_rate, open_trade_count,
+                            number_of_successful_entries):
+        sentiment = get_current_sentiment()
+        signal = get_sentiment_signal()
+        
+        if proposed_buy:
+            # Log sentiment on every entry evaluation
+            self.dp.send_msg(
+                f"[Sentiment] Score: {sentiment['score']:.3f} | "
+                f"Signal: {signal} | "
+                f"Sources: {len(sentiment['sources_used'])} | "
+                f"Age: {sentiment['age_minutes']:.0f}min"
+            )
+            
+            # Hard block for BEARISH
+            if signal == 'BEARISH':
+                logger.info(f"[Sentiment BLOCK] Score {sentiment['score']:.3f} is BEARISH. Blocking long entry.")
+                return False, proposed_sell
+                
+            if signal == 'UNAVAILABLE':
+                logger.info("[Sentiment WARNING] Score unavailable. Proceeding with caution.")
+                
+            return proposed_buy, proposed_sell
+            
+        return proposed_buy, proposed_sell
