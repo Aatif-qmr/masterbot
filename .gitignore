@@ -23,4 +23,5 @@ qnt/src/dist/
 qnt/browser_output/
 qnt/src/.cache/
 ~/.qnt/quota_state.json
-
+qnt/src/Archive.zip
+qnt/src/memory-tests/large-chat-session.json
