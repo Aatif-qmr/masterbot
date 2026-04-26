@@ -21,3 +21,6 @@ qnt/src/packages/*/node_modules/
 qnt/src/bundle/
 qnt/src/dist/
 qnt/browser_output/
+qnt/src/.cache/
+~/.qnt/quota_state.json
+
