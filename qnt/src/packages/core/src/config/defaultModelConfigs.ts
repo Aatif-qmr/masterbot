@@ -260,62 +260,46 @@ export const DEFAULT_MODEL_CONFIGS: ModelConfigServiceConfig = {
     },
   },
   modelIdResolutions: {
-    'gemma-4-31b-it': {
-      default: 'gemma-4-31b-it',
+    'gemma-4-31b-it': { default: 'gemma-4-31b-it' },
+    'gemma-4-26b-a4b-it': { default: 'gemma-4-26b-a4b-it' },
+    'gemini-3.1-pro-preview': {
+      default: 'gemini-3.1-pro-preview',
+      contexts: [
+        { condition: { hasAccessToPreview: false }, target: 'gemini-2.5-pro' },
+        { condition: { useCustomTools: true }, target: 'gemini-3.1-pro-preview-customtools' },
+      ],
     },
-    'gemma-4-26b-a4b-it': {
-      default: 'gemma-4-26b-a4b-it',
+    'gemini-3.1-pro-preview-customtools': {
+      default: 'gemini-3.1-pro-preview-customtools',
+      contexts: [ { condition: { hasAccessToPreview: false }, target: 'gemini-2.5-pro' } ],
     },
-
+    'gemini-3-flash-preview': {
+      default: 'gemini-3-flash-preview',
+      contexts: [ { condition: { hasAccessToPreview: false }, target: 'gemini-2.5-flash' } ],
+    },
     'gemini-3-pro-preview': {
       default: 'gemini-3-pro-preview',
       contexts: [
         { condition: { hasAccessToPreview: false }, target: 'gemini-2.5-pro' },
-        {
-          condition: { useGemini3_1: true, useCustomTools: true },
-          target: 'gemini-3.1-pro-preview-customtools',
-        },
-        {
-          condition: { useGemini3_1: true },
-          target: 'gemini-3.1-pro-preview',
-        },
+        { condition: { useGemini3_1: true, useCustomTools: true }, target: 'gemini-3.1-pro-preview-customtools' },
+        { condition: { useGemini3_1: true }, target: 'gemini-3.1-pro-preview' },
       ],
     },
     'auto-gemini-3': {
       default: 'gemini-3-pro-preview',
       contexts: [
         { condition: { hasAccessToPreview: false }, target: 'gemini-2.5-pro' },
-        {
-          condition: { useGemini3_1: true, useCustomTools: true },
-          target: 'gemini-3.1-pro-preview-customtools',
-        },
-        {
-          condition: { useGemini3_1: true },
-          target: 'gemini-3.1-pro-preview',
-        },
+        { condition: { useGemini3_1: true, useCustomTools: true }, target: 'gemini-3.1-pro-preview-customtools' },
+        { condition: { useGemini3_1: true }, target: 'gemini-3.1-pro-preview' },
       ],
     },
-    'auto-gemini-2.5': {
-      default: 'gemini-2.5-pro',
-    },
-    'gemini-3.1-flash-lite-preview': {
-      default: 'gemini-3.1-flash-lite-preview',
-      contexts: [
-        {
-          condition: { useGemini3_1FlashLite: false },
-          target: 'gemini-2.5-flash-lite',
-        },
-      ],
-    },
-    'flash-lite': {
-      default: 'gemini-2.5-flash-lite',
-      contexts: [
-        {
-          condition: { useGemini3_1FlashLite: true },
-          target: 'gemini-3.1-flash-lite-preview',
-        },
-      ],
-    },
+    auto: { default: 'gemini-3-flash-preview' },
+    flash: { default: 'gemini-3-flash-preview' },
+    pro: { default: 'gemini-3.1-pro-preview-customtools' },
+    lite: { default: 'gemini-3.1-flash-lite-preview' },
+    fast: { default: 'gemini-3.1-flash-lite-preview' },
+    'auto-gemini-2.5': { default: 'gemini-2.5-pro' },
+    'flash-lite': { default: 'gemini-2.5-flash-lite' },
   },
   classifierIdResolutions: {
     auto: {
