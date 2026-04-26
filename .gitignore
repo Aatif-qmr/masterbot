@@ -12,3 +12,12 @@ sentiment/scores/current_score.json
 sentiment/scores/history.csv
 user_data/
 venv/
+
+# qnt CLI fork
+qnt/src/node_modules/
+qnt/src/packages/*/dist/
+qnt/src/packages/*/tsconfig.tsbuildinfo
+qnt/src/packages/*/node_modules/
+qnt/src/bundle/
+qnt/src/dist/
+qnt/browser_output/
