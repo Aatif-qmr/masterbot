@@ -154,9 +154,10 @@ export class A2AClientManager {
           new RestTransportFactory({ fetchImpl: authFetch }),
           new JsonRpcTransportFactory({ fetchImpl: authFetch }),
           new GrpcTransportFactory({
-            grpcChannelCredentials: grpcUrl.startsWith('https://')
+            grpcChannelCredentials: (grpcUrl.startsWith('https://')
               ? grpc.credentials.createSsl()
-              : grpc.credentials.createInsecure(),
+              : grpc.credentials.createInsecure()) as any,
+
           }),
         ],
         cardResolver: resolver,

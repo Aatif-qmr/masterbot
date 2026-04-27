@@ -39,7 +39,7 @@ if (process.env.CI) {
 } else {
   // Build core first because everyone depends on it
   console.log('Building @google/gemini-cli-core...');
-  execSync('npm run build -w @google/gemini-cli-core', {
+  execSync('npm run build -w @google/qnt-cli-core', {
     stdio: 'inherit',
     cwd: root,
   });
