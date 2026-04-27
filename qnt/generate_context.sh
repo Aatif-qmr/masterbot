@@ -254,7 +254,41 @@ Hard rules I follow without exception:
 
 EOF
 
-# ── SECTION 10: Known Issues Log ─────────────
+# ── SECTION 10: qnt Capabilities ──────────────
+cat >> "$OUTPUT" << 'EOF'
+## qnt Capabilities
+
+### Skills Available
+1. bot-diagnostics — diagnose and fix system issues
+2. strategy-research — find and implement strategies
+3. market-analysis — real-time market intelligence
+4. code-fix — diagnose and fix code errors
+5. browser-extract — extract data from any website
+
+### Browser Engine
+Heavy browser automation via M2 Puppeteer.
+Trigger from M1: bash qnt/browser_bridge.sh <command>
+Commands: feargreed | coinglass | arxiv | page <url>
+Output saved: qnt/browser_output/
+
+### Model Routing
+LITE  → health checks, status, formatting
+FLASH → news, sentiment, inspection, fixes, Q&A
+PRO   → strategy generation, research, deep analysis
+Fallback: automatic — 429/404 handled silently
+
+### How To Use qnt
+Interactive: qnt (starts session with QNT.md loaded)
+Single task: qnt -p "your prompt here"
+Via script:  subprocess.run(['qnt', '-p', '...'])
+
+### Key Commands
+/quota      — show model quota status
+/model_info — show current model routing
+
+EOF
+
+# ── SECTION 11: Known Issues Log ──────────────
 # This section is appended to by qnt when it fixes things
 if [ ! -f /Users/aatifquamre/masterbot/qnt/.issues_log ]; then
   touch /Users/aatifquamre/masterbot/qnt/.issues_log

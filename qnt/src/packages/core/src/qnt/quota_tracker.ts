@@ -14,14 +14,12 @@ const QUOTA_FILE = path.join(
 // Conservative daily limits per model
 // Based on real-world Google AI Pro observations
 const MODEL_DAILY_LIMITS: Record<string, number> = {
-  'gemini-3.1-flash-lite-preview': 9000,
-  'gemini-3-flash-preview':        1000,
-  'gemini-2.5-flash':              800,
-  'gemini-3.1-pro-preview-customtools': 100,
-  'gemini-2.5-pro':                100,
-  'gemini-2.5-flash-lite':         9000,
+  'gemini-2.0-flash-lite-preview-02-05': 9000,
+  'gemini-2.0-flash':                   1000,
+  'gemini-1.5-flash':                   1000,
+  'gemini-1.5-pro':                     100,
   // Catch-all for unknown models
-  'default':                        200,
+  'default':                            200,
 };
 
 // Thresholds for switching behavior
@@ -246,5 +244,5 @@ export function getBestAvailableModel(
 
   // All models in chain exhausted
   // Return LITE as absolute last resort
-  return 'gemini-3.1-flash-lite-preview';
+  return 'gemini-2.0-flash-lite-preview-02-05';
 }

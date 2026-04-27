@@ -4,7 +4,7 @@
 - Name: qnt
 - Role: Intelligence brain for MasterBot trading system
 - Version: 1.0.0
-- Generated: 2026-04-27T08:49:49Z
+- Generated: 2026-04-27T19:58:32Z
 - Model routing: Task-aware (LITE/FLASH/PRO tiers)
 
 ## Mission
@@ -92,6 +92,8 @@ overriding or disabling any of these.
 */30 * * * * /bin/bash /Users/azmatsaif/masterbot/automation/run_sentiment.sh >> /Users/azmatsaif/masterbot/logs/sentiment_cron.log 2>&1
 0 1 * * 1 /bin/bash /Users/azmatsaif/masterbot/automation/retrain_freqai.sh >> /Users/azmatsaif/masterbot/logs/freqai_cron.log 2>&1
 0 23 * * 0 /bin/bash /Users/azmatsaif/masterbot/automation/weekly_hyperopt.sh >> /Users/azmatsaif/masterbot/logs/hyperopt_cron.log 2>&1
+0 * * * * scp -r /Users/azmatsaif/masterbot/qnt/browser_output/ aatifquamre@100.90.68.42:/Users/aatifquamre/masterbot/qnt/browser_output/ 2>/dev/null
+0 22 * * 6 bash /Users/azmatsaif/masterbot/automation/weekly_strategy_scan.sh
 ```
 
 ## Key File Map
@@ -179,8 +181,39 @@ Hard rules I follow without exception:
 6. Verify it worked
 7. Log it in Section 10 below
 
+## qnt Capabilities
+
+### Skills Available
+1. bot-diagnostics — diagnose and fix system issues
+2. strategy-research — find and implement strategies
+3. market-analysis — real-time market intelligence
+4. code-fix — diagnose and fix code errors
+5. browser-extract — extract data from any website
+
+### Browser Engine
+Heavy browser automation via M2 Puppeteer.
+Trigger from M1: bash qnt/browser_bridge.sh <command>
+Commands: feargreed | coinglass | arxiv | page <url>
+Output saved: qnt/browser_output/
+
+### Model Routing
+LITE  → health checks, status, formatting
+FLASH → news, sentiment, inspection, fixes, Q&A
+PRO   → strategy generation, research, deep analysis
+Fallback: automatic — 429/404 handled silently
+
+### How To Use qnt
+Interactive: qnt (starts session with QNT.md loaded)
+Single task: qnt -p "your prompt here"
+Via script:  subprocess.run(['qnt', '-p', '...'])
+
+### Key Commands
+/quota      — show model quota status
+/model_info — show current model routing
+
 ## Known Issues Log
 Format: [DATE] FIXED/NOTED: description
 
+[2026-04-28] NOTED: Full system backup created: masterbot_backup_20260428.tar.gz
 
 *(qnt appends here when it fixes issues)*

@@ -42,7 +42,14 @@ if [[ "$FT_RES" == *"pong"* ]]; then check_pass "Freqtrade API accessible"; else
 # 8. M2 Reachable (Tailscale)
 if ping -c 1 -W 2 100.74.110.36 > /dev/null 2>&1; then check_pass "M2 reachable via Tailscale"; else check_fail "M2 unreachable"; fi
 
-# 9. Git log visual check
+# 9. QNT Brain available
+if qnt -p "reply: READY" --output-format text >/dev/null 2>&1; then 
+    check_pass "QNT Intelligence node ready"
+else 
+    check_fail "QNT Intelligence node NOT READY"
+fi
+
+# 10. Git log visual check
 echo -e "\n--- Latest Git Commits ---"
 git log --all --oneline | head -10
 

@@ -120,7 +120,55 @@ def get_risk_events():
     except: pass
     return events
 
-def format_telegram_report(current, previous, sentiment, risk, week_start, week_end):
+def get_qnt_intelligence(current, sentiment):
+    import subprocess
+    # Use a simpler prompt for faster response
+    prompt = f"Act as MasterBot brain. Analyze: {current['total_profit_usdt']} USDT profit, {current['win_rate_pct']}% win rate. Sentiment: {sentiment.get('avg_sentiment_score', 'N/A')}. Give exactly 2 sentences of tactical advice."
+    try:
+        result = subprocess.run(
+            ['qnt', '-p', prompt, '--output-format', 'text'],
+            capture_output=True, text=True, timeout=60, cwd='/Users/aatifquamre/masterbot'
+        )
+        if result.returncode == 0 and result.stdout.strip():
+            # Extract first two sentences to be safe
+            text = result.stdout.strip()
+            sentences = text.split('.')
+            return '.'.join(sentences[:2]) + '.'
+    except:
+        pass
+    return "Intelligence node busy. Continuing with standard protocols."
+
+def get_qnt_weekly_brief() -> str:
+    """
+    Ask qnt for a market intelligence summary
+    to append to the weekly Telegram report.
+    Timeout after 60 seconds — report sends
+    even if qnt is slow or unavailable.
+    """
+    import subprocess
+
+    try:
+        result = subprocess.run(
+            ['qnt', '-p',
+             'Generate a concise weekly market '
+             'intelligence summary for MasterBot. '
+             'Cover: overall market sentiment this week, '
+             'any major crypto events or news, '
+             'funding rate trend, and one sentence on '
+             'what to watch next week. '
+             'Maximum 150 words. Plain text only.'],
+            capture_output=True,
+            text=True,
+            timeout=60,
+            cwd='/Users/aatifquamre/masterbot'
+        )
+        if result.stdout.strip():
+            return result.stdout.strip()
+        return "qnt market brief unavailable this week."
+    except Exception as e:
+        return f"qnt brief error: {str(e)[:80]}"
+
+def format_telegram_report(current, previous, sentiment, risk, intel, week_start, week_end, qnt_brief):
     next_monday = (datetime.now() + timedelta(days=(7 - datetime.now().weekday()))).strftime('%Y-%m-%d')
     
     if current['total_trades'] == 0:
@@ -149,6 +197,9 @@ def format_telegram_report(current, previous, sentiment, risk, week_start, week_
 Week: {week_start} → {week_end}
 ──────────────────────
 
+🧠 QNT Analysis
+{intel}
+
 💰 Performance
 {perf_str}
 
@@ -170,6 +221,9 @@ P&L: {current['total_profit_usdt']:.2f} vs {previous['total_profit_usdt']:.2f} U
 Drawdown warnings: {risk['drawdown_warnings']}
 Entry blocks: {risk['risk_blocks']}
 Sentiment blocks: {risk['sentiment_blocks']}
+
+🧠 QNT Intelligence Brief
+{qnt_brief}
 
 ──────────────────────
 Mode: PAPER TRADING
@@ -203,7 +257,12 @@ if __name__ == '__main__':
     curr_metrics = calculate_metrics(trades)
     prev_metrics = calculate_metrics(prev_trades)
     
-    report = format_telegram_report(curr_metrics, prev_metrics, get_sentiment_correlation(), get_risk_events(), week_start, week_end)
+    sentiment = get_sentiment_correlation()
+    risk = get_risk_events()
+    intel = get_qnt_intelligence(curr_metrics, sentiment or {})
+    qnt_brief = get_qnt_weekly_brief()
+    
+    report = format_telegram_report(curr_metrics, prev_metrics, sentiment, risk, intel, week_start, week_end, qnt_brief)
     
     res = requests.post(f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage", data={'chat_id': TELEGRAM_CHAT_ID, 'text': report})
     print("✅ Telegram report sent" if res.status_code == 200 else f"❌ Failed: {res.text}")

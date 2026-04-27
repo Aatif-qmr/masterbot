@@ -52,9 +52,26 @@ BALANCE=$(curl -s -u "$FREQTRADE_UI_USERNAME:$FREQTRADE_UI_PASSWORD" http://100.
 SENTIMENT=$(python3 -c "import json; d=json.load(open('$MASTERBOT_DIR/sentiment/scores/current_score.json')); print(f\"{d['score']:.3f}\")" 2>/dev/null)
 
 SUMMARY="🟢 MasterBot Started
-Mode: ${MODE}
+━━━━━━━━━━━━━━━━━━━━
+Mode: $(echo $MODE | tr '[:lower:]' '[:upper:]')
+Time: $(date)
 Balance: ${BALANCE} USDT
-Sentiment: ${SENTIMENT}"
+Sentiment: ${SENTIMENT}
+Strategies: MeanReversionV1 + TrendFollowV1
+Risk limits: 3% daily / 7% weekly
+Health: All systems nominal
+🧠 Intelligence: qnt active
+━━━━━━━━━━━━━━━━━━━━
+Web UI: http://127.0.0.1:8080
+qnt: type 'qnt' to interact with the brain
+Next report: Monday 7:00 AM"
 
 curl -s -X POST "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendMessage" -d chat_id="$TELEGRAM_CHAT_ID" -d text="$SUMMARY" > /dev/null
-echo -e "\n✅ MasterBot is running\n" | tee -a "$LOG"
+
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" | tee -a "$LOG"
+echo "  ✅ MASTERBOT STARTED SUCCESSFULLY" | tee -a "$LOG"
+echo "  Mode: $MODE | Balance: $BALANCE USDT" | tee -a "$LOG"
+echo "  🧠 Intelligence: qnt active" | tee -a "$LOG"
+echo "  Telegram commands: /status /profit /balance" | tee -a "$LOG"
+echo "  qnt commands: qnt -p \"your question\"" | tee -a "$LOG"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" | tee -a "$LOG"

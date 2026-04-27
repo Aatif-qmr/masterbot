@@ -7,22 +7,22 @@
 // Available models in priority order
 export const QNT_MODELS = {
   // Tier 1 — Ultra fast, near-unlimited quota
-  LITE: 'gemini-3.1-flash-lite-preview',
+  LITE: 'gemini-2.0-flash-lite-preview-02-05',
 
   // Tier 2 — Fast, high quality, ~1000/day
-  FLASH: 'gemini-3-flash-preview',
+  FLASH: 'gemini-2.0-flash',
 
   // Tier 3 — Stable flash fallback
-  FLASH_STABLE: 'gemini-2.5-flash',
+  FLASH_STABLE: 'gemini-1.5-flash',
 
   // Tier 4 — Most capable, ~100/day (use sparingly)
-  PRO: 'gemini-3.1-pro-preview-customtools',
+  PRO: 'gemini-2.0-flash',
 
   // Tier 5 — Stable pro fallback
-  PRO_STABLE: 'gemini-2.5-pro',
+  PRO_STABLE: 'gemini-1.5-pro',
 
   // Tier 6 — Emergency ultra-lite fallback
-  FLASH_LITE_STABLE: 'gemini-2.5-flash-lite',
+  FLASH_LITE_STABLE: 'gemini-1.5-flash',
 } as const;
 
 export type QntModel = typeof QNT_MODELS[keyof typeof QNT_MODELS];

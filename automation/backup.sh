@@ -19,3 +19,6 @@ tar -czf "$BACKUP_DIR/masterbot_backup_$DATE.tar.gz" \
 ls -t "$BACKUP_DIR"/masterbot_backup_*.tar.gz | tail -n +5 | xargs rm -f -- 2>/dev/null
 
 echo "Backup created: masterbot_backup_$DATE.tar.gz"
+
+# Log to QNT operational history
+echo "[$(date +%Y-%m-%d)] NOTED: Full system backup created: masterbot_backup_$DATE.tar.gz" >> "$BASE_DIR/qnt/.issues_log"

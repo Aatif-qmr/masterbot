@@ -89,9 +89,60 @@ def check_database():
 def check_log_sizes():
     return {"name": "Log Growth", "status": "PASS", "message": "Normal", "critical": True}
 
+def check_qnt_status() -> dict:
+    """
+    Verify qnt is installed, authenticated, and responsive on M1.
+    """
+    import subprocess
+    import time
+    start = time.time()
+    try:
+        # Use full path to qnt if possible, or assume it's in PATH
+        result = subprocess.run(
+            ['qnt', '-p', 'reply with exactly: QNT_OK', '--output-format', 'text'],
+            capture_output=True, text=True, timeout=45, cwd='/Users/aatifquamre/masterbot'
+        )
+        elapsed = time.time() - start
+        if 'QNT_OK' in result.stdout:
+            status = 'PASS' if elapsed < 20 else 'WARN'
+            return {
+                'name': 'QNT Status',
+                'status': status,
+                'message': f'qnt responsive in {elapsed:.1f}s',
+                'critical': False
+            }
+        else:
+            return {
+                'name': 'QNT Status',
+                'status': 'WARN',
+                'message': f'qnt responded but output unexpected: {result.stdout[:100]}',
+                'critical': False
+            }
+    except subprocess.TimeoutExpired:
+        return {
+            'name': 'QNT Status',
+            'status': 'WARN',
+            'message': 'qnt timeout after 45s (quota exhausted or slow model)',
+            'critical': False
+        }
+    except FileNotFoundError:
+        return {
+            'name': 'QNT Status',
+            'status': 'FAIL',
+            'message': 'qnt binary not found — reinstall needed',
+            'critical': False
+        }
+    except Exception as e:
+        return {
+            'name': 'QNT Status',
+            'status': 'WARN',
+            'message': f'qnt check error: {str(e)[:100]}',
+            'critical': False
+        }
+
 def run_all():
     timestamp = datetime.now(timezone.utc).isoformat()
-    checks = [check_freqtrade_process, check_freqtrade_api, check_sentiment_freshness, check_m2_reachable, check_binance_api, check_disk_space, check_database, check_log_sizes]
+    checks = [check_freqtrade_process, check_freqtrade_api, check_sentiment_freshness, check_m2_reachable, check_binance_api, check_disk_space, check_database, check_log_sizes, check_qnt_status]
     
     results = []
     for fn in checks:
