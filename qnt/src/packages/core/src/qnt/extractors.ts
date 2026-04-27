@@ -3,15 +3,19 @@
  * Specific logic for crypto and research data sources.
  */
 
-import { extractText, extractStructured, saveContent } from './browser_engine.js';
+import { extractText, extractStructured, saveContent, closeBrowser } from './browser_engine.js';
 
 /**
  * Extract Fear & Greed Index value and classification.
  */
 export async function extractFearGreed(): Promise<string> {
   const url = 'https://alternative.me/crypto/fear-and-greed-index/';
-  const result = await extractText(url, '.fng-value');
-  return saveContent(result, url, 'feargreed');
+  try {
+    const result = await extractText(url, '.fng-value');
+    return saveContent(result, url, 'feargreed');
+  } finally {
+    await closeBrowser();
+  }
 }
 
 /**
@@ -19,16 +23,20 @@ export async function extractFearGreed(): Promise<string> {
  */
 export async function extractCoinGlass(): Promise<string> {
   const url = 'https://www.coinglass.com/LiquidationData';
-  const data = await extractStructured(url);
-  const content = [
-    'COINGLASS LIQUIDATIONS',
-    '=====================',
-    data.text,
-    '',
-    'TABLES FOUND:',
-    ...data.tables.map(t => t.join('\n')),
-  ].join('\n');
-  return saveContent(content, url, 'coinglass');
+  try {
+    const data = await extractStructured(url);
+    const content = [
+      'COINGLASS LIQUIDATIONS',
+      '=====================',
+      data.text,
+      '',
+      'TABLES FOUND:',
+      ...data.tables.map(t => t.join('\n')),
+    ].join('\n');
+    return saveContent(content, url, 'coinglass');
+  } finally {
+    await closeBrowser();
+  }
 }
 
 /**
@@ -36,14 +44,22 @@ export async function extractCoinGlass(): Promise<string> {
  */
 export async function extractArxivRecent(category = 'q-fin.TR'): Promise<string> {
   const url = `https://arxiv.org/list/${category}/recent`;
-  const result = await extractText(url, '.list-title');
-  return saveContent(result, url, 'arxiv');
+  try {
+    const result = await extractText(url, '.list-title');
+    return saveContent(result, url, 'arxiv');
+  } finally {
+    await closeBrowser();
+  }
 }
 
 /**
  * Generic page extraction.
  */
 export async function extractAnyPage(url: string): Promise<string> {
-  const result = await extractText(url);
-  return saveContent(result, url, 'page');
+  try {
+    const result = await extractText(url);
+    return saveContent(result, url, 'page');
+  } finally {
+    await closeBrowser();
+  }
 }

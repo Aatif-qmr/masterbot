@@ -102,6 +102,10 @@ export async function closeBrowser(): Promise<void> {
   if (browser) {
     await browser.close().catch(() => null);
     browser = null;
+    // Force exit if this was called from a standalone script
+    if (process.send === undefined) {
+       setTimeout(() => process.exit(0), 1000);
+    }
   }
 }
 
