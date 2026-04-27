@@ -10,14 +10,14 @@ import type {
   LoadedSettings,
 } from '../../config/settings.js';
 import { MessageType } from '../types.js';
-import type { EditorType } from '@google/gemini-cli-core';
+import type { EditorType } from '@google/qnt-cli-core';
 import {
   allowEditorTypeInSandbox,
   hasValidEditorCommand,
   getEditorDisplayName,
   coreEvents,
   CoreEvent,
-} from '@google/gemini-cli-core';
+} from '@google/qnt-cli-core';
 import type { UseHistoryManagerReturn } from './useHistoryManager.js';
 
 import { SettingPaths } from '../../config/settingPaths.js';

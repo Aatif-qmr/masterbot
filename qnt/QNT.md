@@ -215,5 +215,7 @@ Via script:  subprocess.run(['qnt', '-p', '...'])
 Format: [DATE] FIXED/NOTED: description
 
 [2026-04-28] NOTED: Full system backup created: masterbot_backup_20260428.tar.gz
+[2026-04-28] NOTED: M2 Intelligence Node unreachable (100.74.110.36), causing critical failure in sentiment pipeline. M2 node requires manual investigation/restart.
+[2026-04-28] NOTED: M2 connectivity confirmed as flapping; sentiment pipeline down for >24 hours. Manual restart of M2 required.
 
 *(qnt appends here when it fixes issues)*

@@ -13,7 +13,7 @@ import {
   isSubagentProgress,
   checkExhaustive,
   type SubagentActivityItem,
-} from '@google/gemini-cli-core';
+} from '@google/qnt-cli-core';
 import {
   SubagentProgressDisplay,
   formatToolArgs,

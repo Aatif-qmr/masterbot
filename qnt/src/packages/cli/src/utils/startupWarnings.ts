@@ -7,7 +7,7 @@
 import fs from 'node:fs/promises';
 import os from 'node:os';
 import { join as pathJoin } from 'node:path';
-import { getErrorMessage } from '@google/gemini-cli-core';
+import { getErrorMessage } from '@google/qnt-cli-core';
 
 const warningsFilePath = pathJoin(os.tmpdir(), 'qnt-warnings.txt');
 

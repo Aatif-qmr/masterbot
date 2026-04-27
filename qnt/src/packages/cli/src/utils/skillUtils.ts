@@ -10,7 +10,7 @@ import {
   Storage,
   loadSkillsFromDir,
   type SkillDefinition,
-} from '@google/gemini-cli-core';
+} from '@google/qnt-cli-core';
 import { cloneFromGit } from '../config/extensions/github.js';
 import extract from 'extract-zip';
 import * as fs from 'node:fs/promises';

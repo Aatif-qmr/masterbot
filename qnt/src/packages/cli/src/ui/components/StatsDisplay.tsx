@@ -24,7 +24,7 @@ import {
 import { computeSessionStats } from '../utils/computeStats.js';
 import { useSettings } from '../contexts/SettingsContext.js';
 import type { QuotaStats } from '../types.js';
-import { LlmRole } from '@google/gemini-cli-core';
+import { LlmRole } from '@google/qnt-cli-core';
 
 // A more flexible and powerful StatRow component
 interface StatRowProps {

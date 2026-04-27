@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import type { Config } from '@google/gemini-cli-core';
+import type { Config } from '@google/qnt-cli-core';
 import { isAlternateBufferEnabled } from '../hooks/useAlternateBuffer.js';
 
 export const calculateMainAreaWidth = (

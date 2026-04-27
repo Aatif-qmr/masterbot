@@ -12,11 +12,11 @@ import { DescriptiveRadioButtonSelect } from './shared/DescriptiveRadioButtonSel
 import { useSettingsStore } from '../contexts/SettingsContext.js';
 import { SettingScope } from '../../config/settings.js';
 import { useKeypress, type Key } from '../hooks/useKeypress.js';
-import { isBinaryAvailable } from '@google/gemini-cli-core';
+import { isBinaryAvailable } from '@google/qnt-cli-core';
 import {
   WhisperModelManager,
   type WhisperModelProgress,
-} from '@google/gemini-cli-core';
+} from '@google/qnt-cli-core';
 import { CliSpinner } from './CliSpinner.js';
 
 interface VoiceModelDialogProps {

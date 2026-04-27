@@ -14,7 +14,7 @@ import {
   type ExecuteOptions,
   Kind,
   type MessageBus,
-} from '@google/gemini-cli-core';
+} from '@google/qnt-cli-core';
 import type { SessionContext } from './types.js';
 
 export { z };

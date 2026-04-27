@@ -36,7 +36,7 @@ import {
   type SettingsValue,
   TOGGLE_TYPES,
 } from '../../config/settingsSchema.js';
-import { debugLogger } from '@google/gemini-cli-core';
+import { debugLogger } from '@google/qnt-cli-core';
 
 import { useSearchBuffer } from '../hooks/useSearchBuffer.js';
 import {

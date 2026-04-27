@@ -29,7 +29,7 @@ import {
   applyInboxPatch,
   dismissInboxPatch,
   isProjectSkillPatchTarget,
-} from '@google/gemini-cli-core';
+} from '@google/qnt-cli-core';
 
 type Phase = 'list' | 'skill-preview' | 'skill-action' | 'patch-preview';
 

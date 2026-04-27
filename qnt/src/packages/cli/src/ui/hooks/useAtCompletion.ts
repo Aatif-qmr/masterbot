@@ -13,7 +13,7 @@ import {
   FileDiscoveryService,
   type Config,
   type FileSearch,
-} from '@google/gemini-cli-core';
+} from '@google/qnt-cli-core';
 import {
   MAX_SUGGESTIONS_TO_SHOW,
   type Suggestion,

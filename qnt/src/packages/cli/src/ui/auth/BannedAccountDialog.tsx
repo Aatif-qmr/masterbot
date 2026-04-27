@@ -13,7 +13,7 @@ import { useKeypress } from '../hooks/useKeypress.js';
 import {
   openBrowserSecurely,
   shouldLaunchBrowser,
-} from '@google/gemini-cli-core';
+} from '@google/qnt-cli-core';
 import { runExitCleanup } from '../../utils/cleanup.js';
 import type { AccountSuspensionInfo } from '../contexts/UIStateContext.js';
 

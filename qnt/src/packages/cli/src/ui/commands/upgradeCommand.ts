@@ -9,7 +9,7 @@ import {
   openBrowserSecurely,
   shouldLaunchBrowser,
   UPGRADE_URL_PAGE,
-} from '@google/gemini-cli-core';
+} from '@google/qnt-cli-core';
 import { isUltraTier } from '../../utils/tierUtils.js';
 import { CommandKind, type SlashCommand } from './types.js';
 

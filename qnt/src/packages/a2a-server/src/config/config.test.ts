@@ -21,12 +21,12 @@ import {
   FatalAuthenticationError,
   PolicyDecision,
   PRIORITY_YOLO_ALLOW_ALL,
-} from '@google/gemini-cli-core';
+} from '@google/qnt-cli-core';
 
 // Mock dependencies
-vi.mock('@google/gemini-cli-core', async (importOriginal) => {
+vi.mock('@google/qnt-cli-core', async (importOriginal) => {
   const actual =
-    await importOriginal<typeof import('@google/gemini-cli-core')>();
+    await importOriginal<typeof import('@google/qnt-cli-core')>();
   return {
     ...actual,
     PRIORITY_YOLO_ALLOW_ALL: 998,

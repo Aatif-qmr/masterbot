@@ -11,7 +11,7 @@ import {
   UserTierId,
   getCodeAssistServer,
   debugLogger,
-} from '@google/gemini-cli-core';
+} from '@google/qnt-cli-core';
 
 export interface PrivacyState {
   isLoading: boolean;

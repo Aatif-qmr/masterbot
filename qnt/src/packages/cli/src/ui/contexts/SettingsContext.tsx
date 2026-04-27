@@ -12,7 +12,7 @@ import type {
   SettingsFile,
 } from '../../config/settings.js';
 import { SettingScope } from '../../config/settings.js';
-import { checkExhaustive } from '@google/gemini-cli-core';
+import { checkExhaustive } from '@google/qnt-cli-core';
 
 export const SettingsContext = React.createContext<LoadedSettings | undefined>(
   undefined,

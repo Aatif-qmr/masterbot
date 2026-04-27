@@ -30,7 +30,7 @@ import {
   type TelemetryTarget,
   type ConfigParameters,
   type ExtensionLoader,
-} from '@google/gemini-cli-core';
+} from '@google/qnt-cli-core';
 
 import { logger } from '../utils/logger.js';
 import type { Settings } from './settings.js';

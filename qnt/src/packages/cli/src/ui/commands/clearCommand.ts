@@ -10,7 +10,7 @@ import {
   SessionStartSource,
   flushTelemetry,
   resetBrowserSession,
-} from '@google/gemini-cli-core';
+} from '@google/qnt-cli-core';
 import { CommandKind, type SlashCommand } from './types.js';
 import { MessageType } from '../types.js';
 import { randomUUID } from 'node:crypto';

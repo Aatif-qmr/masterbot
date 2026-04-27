@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { getModelQuotaInfo } from '@google/gemini-cli-core';
+import { getModelQuotaInfo } from '@google/qnt-cli-core';
 import type { SlashCommand, CommandContext } from './types.js';
 import { CommandKind } from './types.js';
 import { MessageType } from '../types.js';

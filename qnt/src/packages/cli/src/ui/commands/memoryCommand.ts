@@ -10,7 +10,7 @@ import {
   listMemoryFiles,
   refreshMemory,
   showMemory,
-} from '@google/gemini-cli-core';
+} from '@google/qnt-cli-core';
 import { MessageType } from '../types.js';
 import {
   CommandKind,

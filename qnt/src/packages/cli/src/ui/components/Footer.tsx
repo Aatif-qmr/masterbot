@@ -15,7 +15,7 @@ import {
   checkExhaustive,
   AuthType,
   UserAccountManager,
-} from '@google/gemini-cli-core';
+} from '@google/qnt-cli-core';
 import { ConsoleSummaryDisplay } from './ConsoleSummaryDisplay.js';
 import process from 'node:process';
 import { MemoryUsageDisplay } from './MemoryUsageDisplay.js';

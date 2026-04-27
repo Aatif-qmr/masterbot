@@ -13,8 +13,8 @@ import {
   debugLogger,
   isAccountSuspendedError,
   ProjectIdRequiredError,
-} from '@google/gemini-cli-core';
-import { getErrorMessage } from '@google/gemini-cli-core';
+} from '@google/qnt-cli-core';
+import { getErrorMessage } from '@google/qnt-cli-core';
 import { AuthState } from '../types.js';
 import { validateAuthMethod } from '../../config/auth.js';
 

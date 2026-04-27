@@ -8,7 +8,7 @@ import os from 'node:os';
 import fs from 'node:fs';
 import { readFile } from 'node:fs/promises';
 import { quote } from 'shell-quote';
-import { debugLogger, GEMINI_DIR } from '@google/gemini-cli-core';
+import { debugLogger, GEMINI_DIR } from '@google/qnt-cli-core';
 
 export const LOCAL_DEV_SANDBOX_IMAGE_NAME = 'qnt-sandbox';
 export const SANDBOX_NETWORK_NAME = 'qnt-sandbox';

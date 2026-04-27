@@ -8,7 +8,7 @@ import {
   listExtensions,
   type Config,
   getErrorMessage,
-} from '@google/gemini-cli-core';
+} from '@google/qnt-cli-core';
 import { SettingScope } from '../../config/settings.js';
 import {
   ExtensionManager,
