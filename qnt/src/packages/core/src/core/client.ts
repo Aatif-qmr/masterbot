@@ -5,18 +5,6 @@
  */
 
 import {
-  routeToModel,
-  getFallbackModel,
-  isQuotaError,
-  isModelUnavailableError
-} from '../qnt/model_router.js';
-import {
-  recordUsage,
-  markExhausted,
-  getBestAvailableModel,
-  blacklistModel
-} from '../qnt/quota_tracker.js';
-import {
   createUserContent,
   type GenerateContentConfig,
   type PartListUnion,
@@ -902,15 +890,6 @@ export class GeminiClient {
       this.currentSequenceModel = null;
     }
 
-    // ── QNT MODEL ROUTER ──────────────────────
-    const promptText = partListUnionToString(request);
-    let selectedModel: string | null = getBestAvailableModel(routeToModel(promptText), getFallbackModel);
-    
-    if (!this.currentSequenceModel) {
-       this.currentSequenceModel = selectedModel;
-    }
-    // ── END QNT MODEL ROUTER ──────────────────
-
     if (hooksEnabled && messageBus) {
       const hookResult = await this.fireBeforeAgentHookSafe(request, prompt_id);
       if (hookResult) {
@@ -946,51 +925,14 @@ export class GeminiClient {
     let continuationHandled = false;
 
     try {
-      // ── QNT RESILIENT STREAM EXECUTION ──────────
-      const MAX_RETRIES = 6;
-      let attempt = 0;
-
-      while (attempt < MAX_RETRIES && this.currentSequenceModel !== null) {
-        attempt++;
-        try {
-          turn = yield* this.processTurn(
-            request,
-            signal,
-            prompt_id,
-            boundedTurns,
-            isInvalidStreamRetry,
-            displayContent,
-          );
-          // Success
-          break;
-        } catch (error: unknown) {
-          const isQuota = isQuotaError(error);
-          const isUnavailable = isModelUnavailableError(error);
-          
-          if (isQuota || isUnavailable) {
-            const failingModel = this.currentSequenceModel;
-            markExhausted(failingModel);
-            if (isUnavailable) {
-              blacklistModel(failingModel);
-            }
-
-            // eslint-disable-next-line no-console
-            console.log(
-              `[qnt] ${failingModel} failed (${isQuota ? '429' : '404'}). ` +
-              `Trying fallback... (attempt ${attempt}/${MAX_RETRIES})`
-            );
-
-            const fallback = getFallbackModel(failingModel);
-            if (fallback) {
-              this.currentSequenceModel = fallback;
-              await new Promise(resolve => setTimeout(resolve, 1000));
-              continue;
-            }
-          }
-          throw error; // Not retryable or no fallback
-        }
-      }
-      // ── END QNT RESILIENT STREAM EXECUTION ──────
+      turn = yield* this.processTurn(
+        request,
+        signal,
+        prompt_id,
+        boundedTurns,
+        isInvalidStreamRetry,
+        displayContent,
+      );
 
       // Fire AfterAgent hook if we have a turn and no pending tools
       if (hooksEnabled && messageBus) {
@@ -1092,88 +1034,24 @@ export class GeminiClient {
     const userMemory = this.config.getSystemInstructionMemory();
     const systemInstruction = getCoreSystemPrompt(this.config, userMemory);
 
-    // ── QNT RESILIENT MODEL EXECUTION ──────────
-    const MAX_RETRIES = 6;
-    let attempt = 0;
-    let lastError: unknown = null;
+    const { model: resolvedModel, generateContentConfig } =
+      this.config.modelConfigService.getResolvedConfig(modelConfigKey);
 
-    // Determine starting model from prompt
-    const promptText = contents.map(c => c.parts || []).flat().map(p => p.text || '').join(' ');
-    let currentModel = getBestAvailableModel(routeToModel(promptText), getFallbackModel);
+    const requestConfig: GenerateContentConfig = {
+      ...generateContentConfig,
+      abortSignal,
+      systemInstruction,
+    };
 
-    while (attempt < MAX_RETRIES && currentModel !== null) {
-      attempt++;
-
-      try {
-        const { model: resolvedModel, generateContentConfig } =
-          this.config.modelConfigService.getResolvedConfig({
-            ...modelConfigKey,
-            model: currentModel,
-          });
-
-        const requestConfig: GenerateContentConfig = {
-          ...generateContentConfig,
-          abortSignal,
-          systemInstruction,
-        };
-
-        const result = await this.getContentGeneratorOrFail().generateContent(
-          {
-            model: resolvedModel,
-            config: requestConfig,
-            contents,
-          },
-          this.lastPromptId,
-          role,
-        );
-
-        // Success — record usage and return
-        recordUsage(currentModel);
-        return result;
-
-      } catch (error: unknown) {
-        lastError = error;
-        if (abortSignal.aborted) throw error;
-
-        const isQuota = isQuotaError(error);
-        const isUnavailable = isModelUnavailableError(error);
-
-        if (isQuota || isUnavailable) {
-          // Mark this model as exhausted
-          markExhausted(currentModel);
-          if (isUnavailable) {
-            blacklistModel(currentModel);
-          }
-
-          const reason = isQuota ? '429 quota' : '404 unavailable';
-          // eslint-disable-next-line no-console
-          console.log(
-            `[qnt] ${currentModel} failed (${reason}). ` +
-            `Trying next model... (attempt ${attempt}/${MAX_RETRIES})`
-          );
-
-          // Get next fallback
-          const fallback = getFallbackModel(currentModel);
-          if (fallback) {
-            currentModel = fallback;
-            // Small delay before retry to avoid hammering
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            continue;
-          } else {
-            break;
-          }
-        } else {
-          // Non-quota error (network, auth, etc)
-          throw error;
-        }
-      }
-    }
-
-    throw new Error(
-      `[qnt] All models exhausted after ${attempt} attempts. ` +
-      `Last error: ${String(lastError)}`
+    return this.getContentGeneratorOrFail().generateContent(
+      {
+        model: resolvedModel,
+        config: requestConfig,
+        contents,
+      },
+      this.lastPromptId,
+      role,
     );
-    // ── END QNT RESILIENT MODEL EXECUTION ──────
   }
 
   async tryCompressChat(

@@ -94,38 +94,6 @@ export const DEFAULT_MODEL_CONFIGS: ModelConfigServiceConfig = {
       },
     },
 
-    // QNT ALIASES
-    auto: {
-      extends: 'chat-base-3',
-      modelConfig: {
-        model: 'gemini-3-flash-preview',
-      },
-    },
-    flash: {
-      extends: 'chat-base-3',
-      modelConfig: {
-        model: 'gemini-3-flash-preview',
-      },
-    },
-    lite: {
-      extends: 'chat-base-3',
-      modelConfig: {
-        model: 'gemini-3.1-flash-lite-preview',
-      },
-    },
-    pro: {
-      extends: 'chat-base-3',
-      modelConfig: {
-        model: 'gemini-3.1-pro-preview-customtools',
-      },
-    },
-    fast: {
-      extends: 'chat-base-3',
-      modelConfig: {
-        model: 'gemini-3.1-flash-lite-preview',
-      },
-    },
-
     // Bases for the internal model configs.
     'gemini-2.5-flash-base': {
       extends: 'base',
@@ -293,30 +261,10 @@ export const DEFAULT_MODEL_CONFIGS: ModelConfigServiceConfig = {
         { condition: { useGemini3_1: true }, target: 'gemini-3.1-pro-preview' },
       ],
     },
-    auto: { default: 'gemini-3-flash-preview' },
-    flash: { default: 'gemini-3-flash-preview' },
-    pro: { default: 'gemini-3.1-pro-preview-customtools' },
-    lite: { default: 'gemini-3.1-flash-lite-preview' },
-    fast: { default: 'gemini-3.1-flash-lite-preview' },
     'auto-gemini-2.5': { default: 'gemini-2.5-pro' },
     'flash-lite': { default: 'gemini-2.5-flash-lite' },
   },
   classifierIdResolutions: {
-    auto: {
-      default: 'gemini-3-flash-preview',
-    },
-    flash: {
-      default: 'gemini-3-flash-preview',
-    },
-    lite: {
-      default: 'gemini-3.1-flash-lite-preview',
-    },
-    pro: {
-      default: 'gemini-3.1-pro-preview-customtools',
-    },
-    fast: {
-      default: 'gemini-3.1-flash-lite-preview',
-    },
     proactive: {
       default: 'gemini-3-flash-preview',
       contexts: [

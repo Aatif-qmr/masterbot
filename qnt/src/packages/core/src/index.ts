@@ -306,5 +306,4 @@ export * from './voice/whisperTranscriptionProvider.js';
 export * from './voice/transcriptionFactory.js';
 export * from './voice/whisperModelManager.js';
 export { isBinaryAvailable } from './utils/binaryCheck.js';
-export { getQuotaReport, getModelQuotaInfo } from './qnt/quota_tracker.js';
-export { isQuotaError, getFallbackModel, routeToModel } from './qnt/model_router.js';
+

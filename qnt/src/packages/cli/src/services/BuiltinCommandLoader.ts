@@ -41,8 +41,6 @@ import { ideCommand } from '../ui/commands/ideCommand.js';
 import { initCommand } from '../ui/commands/initCommand.js';
 import { mcpCommand } from '../ui/commands/mcpCommand.js';
 import { memoryCommand } from '../ui/commands/memoryCommand.js';
-import { qntModelCommand } from '../ui/commands/qntModelCommand.js';
-import { quotaCommand } from '../ui/commands/quotaCommand.js';
 import { oncallCommand } from '../ui/commands/oncallCommand.js';
 import { permissionsCommand } from '../ui/commands/permissionsCommand.js';
 import { planCommand } from '../ui/commands/planCommand.js';
@@ -185,8 +183,6 @@ export class BuiltinCommandLoader implements ICommandLoader {
           ]
         : [mcpCommand]),
       memoryCommand,
-      qntModelCommand,
-      quotaCommand,
       ...(this.config?.getFolderTrust() ? [permissionsCommand] : []),
       ...(this.config?.isPlanEnabled() ? [planCommand] : []),
       policiesCommand,

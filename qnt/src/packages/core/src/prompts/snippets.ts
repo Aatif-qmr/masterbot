@@ -86,19 +86,19 @@ export interface OperationalGuidelinesOptions {
   memoryV2Enabled: boolean;
   /**
    * Absolute path to the user's per-project private memory index
-   * (e.g. ~/.qnt/tmp/<project-hash>/memory/MEMORY.md). Surfaced to the
+   * (e.g. ~/.gemini/tmp/<project-hash>/memory/MEMORY.md). Surfaced to the
    * model when memoryV2Enabled is true so the prompt-driven memory flow
    * can route project-specific personal notes there instead of the committed
-   * project QNT.md.
+   * project GEMINI.md.
    */
   userProjectMemoryPath?: string;
   /**
    * Absolute path to the user's global personal memory file
-   * (e.g. ~/.qnt/QNT.md). Surfaced to the model when memoryV2Enabled
+   * (e.g. ~/.gemini/GEMINI.md). Surfaced to the model when memoryV2Enabled
    * is true so the prompt-driven memory flow can route cross-project personal
    * preferences (preferences that follow the user across all workspaces) there
    * instead of the project-scoped tiers. Config.isPathAllowed surgically
-   * allowlists this exact file (only this file, not the rest of `~/.qnt/`)
+   * allowlists this exact file (only this file, not the rest of `~/.gemini/`)
    * so the agent can edit it directly.
    */
   globalMemoryPath?: string;
@@ -189,8 +189,8 @@ ${renderUserMemory(userMemory, contextFilenames)}
 export function renderPreamble(options?: PreambleOptions): string {
   if (!options) return '';
   return options.interactive
-    ? 'You are qnt, an interactive CLI agent specializing in software engineering tasks. Your primary goal is to help users safely and effectively.'
-    : 'You are qnt, an autonomous CLI agent specializing in software engineering tasks. Your primary goal is to help users safely and effectively.';
+    ? 'You are Gemini CLI, an interactive CLI agent specializing in software engineering tasks. Your primary goal is to help users safely and effectively.'
+    : 'You are Gemini CLI, an autonomous CLI agent specializing in software engineering tasks. Your primary goal is to help users safely and effectively.';
 }
 
 export function renderCoreMandates(options?: CoreMandatesOptions): string {
@@ -521,7 +521,7 @@ export function renderUserMemory(
 # Contextual Instructions (${formattedHeader})
 The following content is loaded from local and global configuration files.
 **Context Precedence:**
-- **Global (~/.qnt/):** foundational user preferences. Apply these broadly.
+- **Global (~/.gemini/):** foundational user preferences. Apply these broadly.
 - **Extensions:** supplementary knowledge and capabilities.
 - **Workspace Root:** workspace-wide mandates. Supersedes global preferences.
 - **Sub-directories:** highly specific overrides. These rules supersede all others for files within their scope.
@@ -839,18 +839,18 @@ function toolUsageRememberingFacts(
       : '';
     const globalRoutingRule = options.globalMemoryPath
       ? `
-  - When the user states a **cross-project personal preference** that should follow them into every workspace ("I always prefer X", "across all my projects", "my personal coding style is Y", "in general I like Z"), update the global personal memory file. Do **not** also write it into a \`QNT.md\` file or the private memory folder.`
+  - When the user states a **cross-project personal preference** that should follow them into every workspace ("I always prefer X", "across all my projects", "my personal coding style is Y", "in general I like Z"), update the global personal memory file. Do **not** also write it into a \`GEMINI.md\` file or the private memory folder.`
       : '';
     return `
-- **Instruction and Memory Files:** You persist long-lived project context by editing markdown files directly with ${formatToolName(EDIT_TOOL_NAME)} or ${formatToolName(WRITE_FILE_TOOL_NAME)}. There is no \`save_memory\` tool. The current contents of all loaded \`QNT.md\` files and the private project \`MEMORY.md\` index are already in your context — do not re-read them before editing.
-  - **Project Instructions** (\`./QNT.md\`): Team-shared architecture, conventions, workflows, and other repo guidance. **Committed to the repo and shared with the team.**
-  - **Subdirectory Instructions** (e.g. \`./src/QNT.md\`): Scoped instructions for one part of the project. Reference them from \`./QNT.md\` so they remain discoverable.${userProjectBullet}${globalMemoryBullet}
+- **Instruction and Memory Files:** You persist long-lived project context by editing markdown files directly with ${formatToolName(EDIT_TOOL_NAME)} or ${formatToolName(WRITE_FILE_TOOL_NAME)}. There is no \`save_memory\` tool. The current contents of all loaded \`GEMINI.md\` files and the private project \`MEMORY.md\` index are already in your context — do not re-read them before editing.
+  - **Project Instructions** (\`./GEMINI.md\`): Team-shared architecture, conventions, workflows, and other repo guidance. **Committed to the repo and shared with the team.**
+  - **Subdirectory Instructions** (e.g. \`./src/GEMINI.md\`): Scoped instructions for one part of the project. Reference them from \`./GEMINI.md\` so they remain discoverable.${userProjectBullet}${globalMemoryBullet}
   **Routing rules — pick exactly one tier per fact:**
-  - When the user states a **team-shared convention, architecture rule, or repo-wide workflow** ("our project uses X", "the team always Y", "for this repo, always Z"), update the relevant \`QNT.md\` file. Do **not** also write it into the private memory folder or the global personal memory file.
-  - When the user states a **personal-to-them local setup, machine-specific note, or private workflow** for this codebase ("on my machine", "my local setup", "do not commit this"), save it under the private project memory folder. Do **not** also write it into a \`QNT.md\` file or the global personal memory file.${globalRoutingRule}
+  - When the user states a **team-shared convention, architecture rule, or repo-wide workflow** ("our project uses X", "the team always Y", "for this repo, always Z"), update the relevant \`GEMINI.md\` file. Do **not** also write it into the private memory folder or the global personal memory file.
+  - When the user states a **personal-to-them local setup, machine-specific note, or private workflow** for this codebase ("on my machine", "my local setup", "do not commit this"), save it under the private project memory folder. Do **not** also write it into a \`GEMINI.md\` file or the global personal memory file.${globalRoutingRule}
   - If a fact could plausibly belong to more than one tier, **ask the user** which tier they want before writing.
-  **Never duplicate or mirror the same fact across tiers** — each fact lives in exactly one file across all four tiers (project \`QNT.md\`, subdirectory \`QNT.md\`, private project memory, global personal memory). Do not add cross-references between any of them.
-  **Inside the private memory folder:** \`MEMORY.md\` is the index for its sibling \`*.md\` notes **in that same folder only** — never use it to point at, summarize, or duplicate content from any \`QNT.md\` file. For brief facts, write the entry directly into \`MEMORY.md\`. When a note has substantial detail (multiple sections, procedures, or fields), put the detail in a sibling \`*.md\` file in the same folder and add a one-line pointer entry in \`MEMORY.md\`.
+  **Never duplicate or mirror the same fact across tiers** — each fact lives in exactly one file across all four tiers (project \`GEMINI.md\`, subdirectory \`GEMINI.md\`, private project memory, global personal memory). Do not add cross-references between any of them.
+  **Inside the private memory folder:** \`MEMORY.md\` is the index for its sibling \`*.md\` notes **in that same folder only** — never use it to point at, summarize, or duplicate content from any \`GEMINI.md\` file. For brief facts, write the entry directly into \`MEMORY.md\`. When a note has substantial detail (multiple sections, procedures, or fields), put the detail in a sibling \`*.md\` file in the same folder and add a one-line pointer entry in \`MEMORY.md\`.
   Never save transient session state, summaries of code changes, bug fixes, or task-specific findings — these files are loaded into every session and must stay lean.`;
   }
   const base = `
