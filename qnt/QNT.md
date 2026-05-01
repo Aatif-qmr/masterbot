@@ -4,7 +4,7 @@
 - Name: qnt
 - Role: Intelligence brain for MasterBot trading system
 - Version: 1.0.0
-- Generated: 2026-05-01T21:06:46Z
+- Generated: 2026-05-01T22:54:43Z
 - Model routing: Task-aware (LITE/FLASH/PRO tiers)
 
 ## Mission
@@ -35,7 +35,7 @@ update the system. I act as architect and operator.
 - Mode: PAPER TRADING (dry_run = true)
 - Balance: unavailable
 - Open trades: unknown
-- Sentiment: 0.093 (2026-05-01T21:00:06.253730+00:00)
+- Sentiment: 0.149 (2026-05-01T22:30:04.933032+00:00)
 
 ## Active Strategies
 
@@ -212,9 +212,26 @@ Via script:  subprocess.run(['qnt', '-p', '...'])
 /quota      — show model quota status
 /model_info — show current model routing
 
+## Bridge Commands (available from M1 or M2)
+
+qnt-bot status     — real-time bot snapshot
+qnt-bot start      — start bot in paper mode
+qnt-bot stop       — stop bot gracefully
+qnt-bot restart    — restart bot
+qnt-bot killswitch — emergency stop all trades
+
+qnt-logs           — last 50 log lines
+qnt-logs --follow  — live log stream
+qnt-logs --lines N — last N lines
+
+All commands work from either M1 or M2.
+Device router handles SSH automatically.
+All actions logged to qnt_memory.json.
+
 ## Known Issues Log
 Format: [DATE] FIXED/NOTED: description
 
 [2026-04-28] NOTED: Full system backup created: masterbot_backup_20260428.tar.gz
+[2026-05-02] NOTED: Full system backup created: masterbot_backup_20260502.tar.gz
 
 *(qnt appends here when it fixes issues)*

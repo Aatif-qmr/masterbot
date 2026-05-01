@@ -286,6 +286,22 @@ Via script:  subprocess.run(['qnt', '-p', '...'])
 /quota      — show model quota status
 /model_info — show current model routing
 
+## Bridge Commands (available from M1 or M2)
+
+qnt-bot status     — real-time bot snapshot
+qnt-bot start      — start bot in paper mode
+qnt-bot stop       — stop bot gracefully
+qnt-bot restart    — restart bot
+qnt-bot killswitch — emergency stop all trades
+
+qnt-logs           — last 50 log lines
+qnt-logs --follow  — live log stream
+qnt-logs --lines N — last N lines
+
+All commands work from either M1 or M2.
+Device router handles SSH automatically.
+All actions logged to qnt_memory.json.
+
 EOF
 
 # ── SECTION 11: Known Issues Log ──────────────

@@ -1,0 +1,24 @@
+#!/bin/bash
+# qnt logs [--follow] [--lines N]
+
+set -a
+source /Users/aatifquamre/masterbot/.env
+set +a
+
+FOLLOW=False
+LINES=50
+
+for arg in "$@"; do
+  case $arg in
+    --follow|-f) FOLLOW=True ;;
+    --lines=*) LINES="${arg#*=}" ;;
+  esac
+done
+
+python3 -c "
+import sys
+sys.path.insert(0, '/Users/aatifquamre/masterbot/qnt/bridge')
+sys.path.insert(0, '/Users/aatifquamre/masterbot/qnt/memory')
+from bridge import stream_logs
+stream_logs(lines=$LINES, follow=$FOLLOW)
+"
