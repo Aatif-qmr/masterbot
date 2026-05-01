@@ -4,7 +4,8 @@
 - Name: qnt
 - Role: Intelligence brain for MasterBot trading system
 - Version: 1.0.0
-- Generated: 2026-04-27T19:58:32Z
+- Generated: 2026-05-01T21:06:46Z
+- Model routing: Task-aware (LITE/FLASH/PRO tiers)
 
 ## Mission
 I am the AI brain of MasterBot. I know everything
@@ -34,7 +35,7 @@ update the system. I act as architect and operator.
 - Mode: PAPER TRADING (dry_run = true)
 - Balance: unavailable
 - Open trades: unknown
-- Sentiment: -0.067 (2026-04-27T03:00:10.753360)
+- Sentiment: 0.093 (2026-05-01T21:00:06.253730+00:00)
 
 ## Active Strategies
 
@@ -73,6 +74,7 @@ overriding or disabling any of these.
 
 ### M1 Cron Jobs
 ```
+*/5 * * * * bash /Users/aatifquamre/masterbot/qnt/memory/sync_memory.sh
 # Balance tracker — every hour
 0 * * * * cd /Users/aatifquamre/masterbot && /Users/aatifquamre/masterbot/venv/bin/python /Users/aatifquamre/masterbot/risk/balance_tracker.py >> /Users/aatifquamre/masterbot/logs/balance_tracker.log 2>&1
 
@@ -195,16 +197,24 @@ Trigger from M1: bash qnt/browser_bridge.sh <command>
 Commands: feargreed | coinglass | arxiv | page <url>
 Output saved: qnt/browser_output/
 
+### Model Routing
+LITE  → health checks, status, formatting
+FLASH → news, sentiment, inspection, fixes, Q&A
+PRO   → strategy generation, research, deep analysis
+Fallback: automatic — 429/404 handled silently
+
 ### How To Use qnt
-Interactive: qnt (starts session with GEMINI.md loaded)
+Interactive: qnt (starts session with QNT.md loaded)
 Single task: qnt -p "your prompt here"
 Via script:  subprocess.run(['qnt', '-p', '...'])
+
+### Key Commands
+/quota      — show model quota status
+/model_info — show current model routing
 
 ## Known Issues Log
 Format: [DATE] FIXED/NOTED: description
 
 [2026-04-28] NOTED: Full system backup created: masterbot_backup_20260428.tar.gz
-[2026-04-28] NOTED: M2 Intelligence Node unreachable (100.74.110.36), causing critical failure in sentiment pipeline. M2 node requires manual investigation/restart.
-[2026-04-28] NOTED: M2 connectivity confirmed as flapping; sentiment pipeline down for >24 hours. Manual restart of M2 required.
 
 *(qnt appends here when it fixes issues)*
