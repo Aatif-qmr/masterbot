@@ -304,6 +304,14 @@ qnt-calendar      — 7-day economic/crypto risk calendar
 qnt-sentiment     — detailed sentiment analysis explanation
 qnt-anomaly       — run market anomaly detection manually
 
+## Lab Commands (available from M1 or M2)
+
+qnt-strategy-gen "hypothesis" — generate strategy from idea
+qnt-backtest strategy_name     — run backtest on M2
+qnt-evolve strategy_name       — improve strategy from losers
+qnt-optimize strategy_name     — run hyperopt on M2
+qnt-deploy strategy_file       — deploy to active/ (escalates)
+
 All commands work from either M1 or M2.
 Device router handles SSH automatically.
 All actions logged to qnt_memory.json.

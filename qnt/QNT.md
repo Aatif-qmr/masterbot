@@ -4,7 +4,7 @@
 - Name: qnt
 - Role: Intelligence brain for MasterBot trading system
 - Version: 1.0.0
-- Generated: 2026-05-02T07:54:25Z
+- Generated: 2026-05-02T09:12:19Z
 - Model routing: Task-aware (LITE/FLASH/PRO tiers)
 
 ## Mission
@@ -35,7 +35,7 @@ update the system. I act as architect and operator.
 - Mode: PAPER TRADING (dry_run = true)
 - Balance: unavailable
 - Open trades: unknown
-- Sentiment: 0.098 (2026-05-02T07:30:05.178904+00:00)
+- Sentiment: 0.138 (2026-05-02T09:00:06.020438+00:00)
 
 ## Active Strategies
 
@@ -89,6 +89,7 @@ overriding or disabling any of these.
 0 * * * * source /Users/aatifquamre/masterbot/.env && /Users/aatifquamre/masterbot/venv/bin/python /Users/aatifquamre/masterbot/qnt/oracle/oracle_runner.py calendar >> /Users/aatifquamre/masterbot/logs/oracle.log 2>&1
 */30 * * * * source /Users/aatifquamre/masterbot/.env && /Users/aatifquamre/masterbot/venv/bin/python /Users/aatifquamre/masterbot/qnt/oracle/oracle_runner.py sentiment >> /Users/aatifquamre/masterbot/logs/oracle.log 2>&1
 0 * * * * source /Users/aatifquamre/masterbot/.env && /Users/aatifquamre/masterbot/venv/bin/python /Users/aatifquamre/masterbot/qnt/oracle/oracle_runner.py anomaly >> /Users/aatifquamre/masterbot/logs/oracle.log 2>&1
+0 * * * * source /Users/aatifquamre/masterbot/.env && /Users/aatifquamre/masterbot/venv/bin/python -c "import sys; sys.path.insert(0, '/Users/aatifquamre/masterbot/qnt/shield'); sys.path.insert(0, '/Users/aatifquamre/masterbot/qnt/memory'); from shield import autonomous_shield_check; autonomous_shield_check()" >> /Users/aatifquamre/masterbot/logs/shield.log 2>&1
 ```
 
 ### M2 Cron Jobs
@@ -232,6 +233,14 @@ qnt-logs --lines N — last N lines
 qnt-calendar      — 7-day economic/crypto risk calendar
 qnt-sentiment     — detailed sentiment analysis explanation
 qnt-anomaly       — run market anomaly detection manually
+
+## Lab Commands (available from M1 or M2)
+
+qnt-strategy-gen "hypothesis" — generate strategy from idea
+qnt-backtest strategy_name     — run backtest on M2
+qnt-evolve strategy_name       — improve strategy from losers
+qnt-optimize strategy_name     — run hyperopt on M2
+qnt-deploy strategy_file       — deploy to active/ (escalates)
 
 All commands work from either M1 or M2.
 Device router handles SSH automatically.
