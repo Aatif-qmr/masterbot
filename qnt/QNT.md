@@ -4,7 +4,7 @@
 - Name: qnt
 - Role: Intelligence brain for MasterBot trading system
 - Version: 1.0.0
-- Generated: 2026-05-02T13:34:50Z
+- Generated: 2026-05-02T14:24:35Z
 - Model routing: Task-aware (LITE/FLASH/PRO tiers)
 
 ## Mission
@@ -21,7 +21,7 @@ update the system. I act as architect and operator.
 - Role: Live trading, risk management, monitoring
 - Always running: Freqtrade, supervisord, caffeinate
 - Tailscale IP: 100.90.68.42
-- Web UI: http://127.0.0.1:8080
+- Web UI: http://100.90.68.42:8080
 
 ### M2 — Intelligence Node (On Demand)
 - User: azmatsaif  
@@ -33,9 +33,9 @@ update the system. I act as architect and operator.
 ## Current Bot Status (at time of generation)
 - Freqtrade: 
 - Mode: PAPER TRADING (dry_run = true)
-- Balance: unavailable
-- Open trades: unknown
-- Sentiment: 0.138 (2026-05-02T13:30:03.970045+00:00)
+- Balance: 50000.0 USDT
+- Open trades: 0
+- Sentiment: 0.147 (2026-05-02T14:00:05.889066+00:00)
 
 ## Active Strategies
 
@@ -287,6 +287,8 @@ All actions logged to qnt_memory.json.
 Format: [DATE] FIXED/NOTED: description
 
 [2026-04-28] NOTED: Full system backup created: masterbot_backup_20260428.tar.gz
+[2026-05-02] NOTED: Full system backup created: masterbot_backup_20260502.tar.gz
+[2026-05-02] NOTED: Full system backup created: masterbot_backup_20260502.tar.gz
 [2026-05-02] NOTED: Full system backup created: masterbot_backup_20260502.tar.gz
 [2026-05-02] NOTED: Full system backup created: masterbot_backup_20260502.tar.gz
 

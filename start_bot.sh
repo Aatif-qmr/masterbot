@@ -62,7 +62,7 @@ Risk limits: 3% daily / 7% weekly
 Health: All systems nominal
 🧠 Intelligence: qnt active
 ━━━━━━━━━━━━━━━━━━━━
-Web UI: http://127.0.0.1:8080
+Web UI: http://100.90.68.42:8080 (Tailscale IP)
 qnt: type 'qnt' to interact with the brain
 Next report: Monday 7:00 AM"
 
@@ -74,4 +74,5 @@ echo "  Mode: $MODE | Balance: $BALANCE USDT" | tee -a "$LOG"
 echo "  🧠 Intelligence: qnt active" | tee -a "$LOG"
 echo "  Telegram commands: /status /profit /balance" | tee -a "$LOG"
 echo "  qnt commands: qnt -p \"your question\"" | tee -a "$LOG"
+echo "  Web UI: http://100.90.68.42:8080" | tee -a "$LOG"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" | tee -a "$LOG"

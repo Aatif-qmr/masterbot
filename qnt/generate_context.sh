@@ -48,7 +48,7 @@ cat >> "$OUTPUT" << EOF
 - Role: Live trading, risk management, monitoring
 - Always running: Freqtrade, supervisord, caffeinate
 - Tailscale IP: $(tailscale ip -4 2>/dev/null || echo "check tailscale status")
-- Web UI: http://127.0.0.1:8080
+- Web UI: http://100.90.68.42:8080
 
 ### M2 — Intelligence Node (On Demand)
 - User: azmatsaif  
@@ -71,11 +71,11 @@ except:
     print('unavailable')
 " 2>/dev/null)
 BALANCE=$(curl -s -u "$FREQTRADE_UI_USERNAME:$FREQTRADE_UI_PASSWORD" \
-  http://127.0.0.1:8080/api/v1/balance 2>/dev/null \
+  http://100.90.68.42:8080/api/v1/balance 2>/dev/null \
   | python3 -c "import sys,json; d=json.load(sys.stdin); print(f\"{d.get('total','?')} USDT\")" \
   2>/dev/null || echo "unavailable")
 OPEN_TRADES=$(curl -s -u "$FREQTRADE_UI_USERNAME:$FREQTRADE_UI_PASSWORD" \
-  http://127.0.0.1:8080/api/v1/count 2>/dev/null \
+  http://100.90.68.42:8080/api/v1/count 2>/dev/null \
   | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('current',0))" \
   2>/dev/null || echo "unknown")
 
