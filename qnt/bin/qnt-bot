@@ -9,7 +9,7 @@ set +a
 COMMAND=${1:-status}
 MODE=${2:-paper}
 
-python3 -c "
+qnt-python -c "
 import sys
 sys.path.insert(0, '/Users/aatifquamre/masterbot/qnt/bridge')
 sys.path.insert(0, '/Users/aatifquamre/masterbot/qnt/memory')

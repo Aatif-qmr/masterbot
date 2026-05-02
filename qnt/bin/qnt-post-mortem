@@ -8,7 +8,7 @@ if [ -z "$TRADE_ID" ]; then
   echo "       qnt-post-mortem weekly (for weekly summary)"
   exit 1
 fi
-/Users/aatifquamre/masterbot/venv/bin/python -c "
+qnt-python -c "
 import sys
 sys.path.insert(0, '/Users/aatifquamre/masterbot/qnt/vault')
 sys.path.insert(0, '/Users/aatifquamre/masterbot/qnt/memory')

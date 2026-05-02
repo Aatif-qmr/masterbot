@@ -1,3 +1,4 @@
+import sys, os; home = os.path.expanduser('~'); sys.path.append(os.path.join(home, 'masterbot')); sys.path.append(os.path.join(home, 'masterbot', 'qnt', 'memory')); sys.path.append(os.path.join(home, 'masterbot', 'qnt', 'oracle')); sys.path.append(os.path.join(home, 'masterbot', 'qnt', 'shield'));
 import os
 import sys
 import uuid
@@ -7,7 +8,7 @@ import chromadb
 from chromadb.config import Settings
 
 # Add paths for dependencies
-BASE_DIR = '/Users/aatifquamre/masterbot'
+BASE_DIR = os.path.join(home, 'masterbot')
 sys.path.insert(0, os.path.join(BASE_DIR, 'qnt/memory'))
 
 from memory_manager import log_action, get_device_identity

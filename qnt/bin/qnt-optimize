@@ -4,7 +4,7 @@ source /Users/aatifquamre/masterbot/.env
 set +a
 STRATEGY=${1:-MeanReversionV1}
 EPOCHS=${2:-200}
-/Users/aatifquamre/masterbot/venv/bin/python -c "
+qnt-python -c "
 import sys
 sys.path.insert(0, '/Users/aatifquamre/masterbot/qnt/lab')
 sys.path.insert(0, '/Users/aatifquamre/masterbot/qnt/memory')

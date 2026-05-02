@@ -15,7 +15,7 @@ for arg in "$@"; do
   esac
 done
 
-python3 -c "
+qnt-python -c "
 import sys
 sys.path.insert(0, '/Users/aatifquamre/masterbot/qnt/bridge')
 sys.path.insert(0, '/Users/aatifquamre/masterbot/qnt/memory')

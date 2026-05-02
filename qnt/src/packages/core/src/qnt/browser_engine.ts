@@ -39,6 +39,7 @@ const OUTPUT_DIR = path.join(
 const CHROME_PATHS = [
   '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
   '/Applications/Chromium.app/Contents/MacOS/Chromium',
+  path.join(os.homedir(), '.cache/puppeteer/chrome/mac_arm-147.0.7727.57/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing'),
   '/usr/bin/chromium-browser',
   '/usr/bin/chromium',
 ];

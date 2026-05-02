@@ -92,28 +92,40 @@ def generate_strategy(hypothesis):
     
     return filepath
 
-def run_backtest(strategy_name, timerange='20240101-20260101', timeframe='1h'):
+def run_backtest(strategy_name, timerange='20240101-20260101', timeframe=None):
     """Run backtest on M2."""
+    strat_file = os.path.join(CANDIDATES_DIR, f"{strategy_name}.py")
+    if not os.path.exists(strat_file):
+        # Try finding it if it has a suffix
+        matches = [f for f in os.listdir(CANDIDATES_DIR) if f.startswith(strategy_name)]
+        if matches:
+            strat_file = os.path.join(CANDIDATES_DIR, matches[0])
+            
+    # Auto-detect timeframe if not provided
+    if not timeframe and os.path.exists(strat_file):
+        with open(strat_file, 'r') as f:
+            content = f.read()
+            match = re.search(r"timeframe\s*=\s*['\"]([^'\"]+)['\"]", content)
+            if match:
+                timeframe = match.group(1)
+    
+    if not timeframe:
+        timeframe = '1h' # Default fallback
+
     if DEVICE['device'] == 'M1':
-        # Ensure file exists locally first
-        strat_file = os.path.join(CANDIDATES_DIR, f"{strategy_name}.py")
         if not os.path.exists(strat_file):
-            # Try finding it if it has a suffix
-            matches = [f for f in os.listdir(CANDIDATES_DIR) if f.startswith(strategy_name)]
-            if matches:
-                strat_file = os.path.join(CANDIDATES_DIR, matches[0])
-            else:
-                return "FAIL", f"Strategy {strategy_name} not found in candidates.", {}
+            return "FAIL", f"Strategy {strategy_name} not found in candidates.", {}
 
         # Copy to M2
         subprocess.run([
             "scp", strat_file, f"azmatsaif@100.74.110.36:{M2_PATH}/strategies/candidates/"
         ])
 
-    print(f"Running backtest for {strategy_name} on M2...")
+    print(f"Running backtest for {strategy_name} on M2 ({timeframe})...")
     
     bt_cmd = f"""
       cd {M2_PATH} &&
+      unset PYTHONPATH &&
       source venv/bin/activate &&
       freqtrade backtesting \
         --strategy {strategy_name} \
@@ -245,6 +257,7 @@ def optimize_strategy(strategy_name, epochs=200):
     
     hyp_cmd = f"""
       cd {M2_PATH} &&
+      unset PYTHONPATH &&
       source venv/bin/activate &&
       nohup freqtrade hyperopt \
         --strategy {strategy_name} \

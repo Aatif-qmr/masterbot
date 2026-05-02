@@ -1,0 +1,3 @@
+#!/bin/bash
+# QNT Python wrapper — always uses venv
+exec /Users/aatifquamre/masterbot/venv/bin/python "$@"

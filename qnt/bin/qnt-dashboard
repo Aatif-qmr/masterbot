@@ -8,4 +8,4 @@ echo "Press 'q' to exit (or Ctrl+C for fallback)"
 sleep 1
 
 # Try full TUI first, fallback to static if it fails or if redirected
-/Users/aatifquamre/masterbot/venv/bin/python /Users/aatifquamre/masterbot/qnt/cockpit/cockpit.py 2>/dev/null || /Users/aatifquamre/masterbot/venv/bin/python /Users/aatifquamre/masterbot/qnt/cockpit/cockpit_static.py
+qnt-python /Users/aatifquamre/masterbot/qnt/cockpit/cockpit.py 2>/dev/null || /Users/aatifquamre/masterbot/venv/bin/python /Users/aatifquamre/masterbot/qnt/cockpit/cockpit_static.py
