@@ -1,0 +1,21 @@
+#!/bin/bash
+set -a
+source /Users/aatifquamre/masterbot/.env
+set +a
+TRADE_ID=${1}
+if [ -z "$TRADE_ID" ]; then
+  echo "Usage: qnt-post-mortem <trade_id>"
+  echo "       qnt-post-mortem weekly (for weekly summary)"
+  exit 1
+fi
+/Users/aatifquamre/masterbot/venv/bin/python -c "
+import sys
+sys.path.insert(0, '/Users/aatifquamre/masterbot/qnt/vault')
+sys.path.insert(0, '/Users/aatifquamre/masterbot/qnt/memory')
+sys.path.insert(0, '/Users/aatifquamre/masterbot/qnt/oracle')
+from post_mortem import generate_post_mortem, generate_weekly_post_mortem
+if '$TRADE_ID' == 'weekly':
+    print(generate_weekly_post_mortem())
+else:
+    print(generate_post_mortem(int('$TRADE_ID')))
+"

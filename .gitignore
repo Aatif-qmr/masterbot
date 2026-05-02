@@ -29,3 +29,4 @@ qnt/memory/qnt_memory.json
 qnt/memory/.sync_queue
 qnt/memory/*.lock
 qnt/memory/*.tmp
+qnt/vault/chroma_db/
