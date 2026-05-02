@@ -1,0 +1,11 @@
+#!/bin/bash
+set -a
+source /Users/aatifquamre/masterbot/.env
+set +a
+/Users/aatifquamre/masterbot/venv/bin/python -c "
+import sys
+sys.path.insert(0, '/Users/aatifquamre/masterbot/qnt/oracle')
+sys.path.insert(0, '/Users/aatifquamre/masterbot/qnt/memory')
+from oracle_sentiment import explain_sentiment
+print(explain_sentiment())
+"

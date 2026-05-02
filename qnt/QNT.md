@@ -4,7 +4,7 @@
 - Name: qnt
 - Role: Intelligence brain for MasterBot trading system
 - Version: 1.0.0
-- Generated: 2026-05-01T22:54:43Z
+- Generated: 2026-05-02T07:54:25Z
 - Model routing: Task-aware (LITE/FLASH/PRO tiers)
 
 ## Mission
@@ -35,7 +35,7 @@ update the system. I act as architect and operator.
 - Mode: PAPER TRADING (dry_run = true)
 - Balance: unavailable
 - Open trades: unknown
-- Sentiment: 0.149 (2026-05-01T22:30:04.933032+00:00)
+- Sentiment: 0.098 (2026-05-02T07:30:05.178904+00:00)
 
 ## Active Strategies
 
@@ -86,6 +86,9 @@ overriding or disabling any of these.
 
 # Weekly backup — Sunday 2am
 0 2 * * 0 cd /Users/aatifquamre/masterbot && /bin/bash /Users/aatifquamre/masterbot/automation/backup.sh >> /Users/aatifquamre/masterbot/logs/backup_cron.log 2>&1
+0 * * * * source /Users/aatifquamre/masterbot/.env && /Users/aatifquamre/masterbot/venv/bin/python /Users/aatifquamre/masterbot/qnt/oracle/oracle_runner.py calendar >> /Users/aatifquamre/masterbot/logs/oracle.log 2>&1
+*/30 * * * * source /Users/aatifquamre/masterbot/.env && /Users/aatifquamre/masterbot/venv/bin/python /Users/aatifquamre/masterbot/qnt/oracle/oracle_runner.py sentiment >> /Users/aatifquamre/masterbot/logs/oracle.log 2>&1
+0 * * * * source /Users/aatifquamre/masterbot/.env && /Users/aatifquamre/masterbot/venv/bin/python /Users/aatifquamre/masterbot/qnt/oracle/oracle_runner.py anomaly >> /Users/aatifquamre/masterbot/logs/oracle.log 2>&1
 ```
 
 ### M2 Cron Jobs
@@ -223,6 +226,12 @@ qnt-bot killswitch — emergency stop all trades
 qnt-logs           — last 50 log lines
 qnt-logs --follow  — live log stream
 qnt-logs --lines N — last N lines
+
+## Oracle Commands (available from M1 or M2)
+
+qnt-calendar      — 7-day economic/crypto risk calendar
+qnt-sentiment     — detailed sentiment analysis explanation
+qnt-anomaly       — run market anomaly detection manually
 
 All commands work from either M1 or M2.
 Device router handles SSH automatically.

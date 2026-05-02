@@ -298,6 +298,12 @@ qnt-logs           — last 50 log lines
 qnt-logs --follow  — live log stream
 qnt-logs --lines N — last N lines
 
+## Oracle Commands (available from M1 or M2)
+
+qnt-calendar      — 7-day economic/crypto risk calendar
+qnt-sentiment     — detailed sentiment analysis explanation
+qnt-anomaly       — run market anomaly detection manually
+
 All commands work from either M1 or M2.
 Device router handles SSH automatically.
 All actions logged to qnt_memory.json.
