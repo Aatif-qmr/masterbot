@@ -1,18 +1,35 @@
 #!/bin/bash
+# qnt-recall "natural language query"
+
 set -a
 source /Users/aatifquamre/masterbot/.env
 set +a
-QUERY="$*"
+
+QUERY="$1"
 if [ -z "$QUERY" ]; then
-  echo "Usage: qnt-recall <search query>"
-  echo "Example: qnt-recall what happened during CPI releases"
-  exit 1
+    echo "Usage: qnt-recall \"your query here\""
+    exit 1
 fi
-/Users/aatifquamre/masterbot/qnt/bin/qnt-python -c "
+
+# Execute on M2 via SSH
+ssh azmatsaif@100.74.110.36 "
+/Users/azmatsaif/masterbot/venv/bin/python -c \"
 import sys
-sys.path.insert(0, '/Users/aatifquamre/masterbot/qnt/vault')
-sys.path.insert(0, '/Users/aatifquamre/masterbot/qnt/memory')
-from vault import search, format_results
-results = search('''$QUERY''')
-print(format_results(results))
+import os
+import json
+sys.path.insert(0, '/Users/azmatsaif/masterbot/qnt/vault')
+from vault import recall_lessons
+results = recall_lessons('$QUERY', n_results=3)
+if results and results['documents']:
+    print('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')
+    print('🧠 QNT SEMANTIC RECALL')
+    print('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')
+    for i, doc in enumerate(results['documents'][0]):
+        meta = results['metadatas'][0][i]
+        print(f'[Result {i+1}] - {meta.get(\\\"close_date\\\", \\\"UNK\\\")}')
+        print(f'   {doc}')
+        print('---')
+else:
+    print('No similar lessons found in The Vault.')
+\"
 "

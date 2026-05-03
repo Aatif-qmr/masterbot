@@ -1,13 +1,22 @@
 #!/bin/bash
+# qnt-library: Show vault statistics
+
 set -a
 source /Users/aatifquamre/masterbot/.env
 set +a
-/Users/aatifquamre/masterbot/qnt/bin/qnt-python -c "
+
+ssh azmatsaif@100.74.110.36 "
+/Users/azmatsaif/masterbot/venv/bin/python -c \"
 import sys
-sys.path.insert(0, '/Users/aatifquamre/masterbot/qnt/vault')
-sys.path.insert(0, '/Users/aatifquamre/masterbot/qnt/memory')
-from vault import get_winning_patterns, get_collection_stats
-print(get_collection_stats())
-print('')
-print(get_winning_patterns())
+sys.path.insert(0, '/Users/azmatsaif/masterbot/qnt/vault')
+from vault import get_collection_stats
+stats = get_collection_stats()
+print('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')
+print('📚 QNT STRATEGY LIBRARY (THE VAULT)')
+print('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')
+print(f'Total Lessons/Entries: {stats.get(\\\"entry_count\\\", 0)}')
+print(f'Database Engine:       ChromaDB (Persistent)')
+print(f'Location:              M2 Intelligence Node')
+print('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')
+\"
 "

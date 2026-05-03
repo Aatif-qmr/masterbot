@@ -1,17 +1,25 @@
 #!/bin/bash
+# qnt-journal "your manual insight here"
+
 set -a
 source /Users/aatifquamre/masterbot/.env
 set +a
-NOTE="$*"
+
+NOTE="$1"
 if [ -z "$NOTE" ]; then
-  echo "Usage: qnt-journal <your note>"
-  echo "Example: qnt-journal BTC dropped because of Fed announcement"
-  exit 1
+    echo "Usage: qnt-journal \"your insight here\""
+    exit 1
 fi
-/Users/aatifquamre/masterbot/qnt/bin/qnt-python -c "
+
+ID="manual_$(date +%s)"
+TS="$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
+
+ssh azmatsaif@100.74.110.36 "
+/Users/azmatsaif/masterbot/venv/bin/python -c \"
 import sys
-sys.path.insert(0, '/Users/aatifquamre/masterbot/qnt/vault')
-sys.path.insert(0, '/Users/aatifquamre/masterbot/qnt/memory')
-from vault import journal_entry
-print(journal_entry('''$NOTE'''))
+sys.path.insert(0, '/Users/azmatsaif/masterbot/qnt/vault')
+from vault import store_lesson
+store_lesson('$ID', '$NOTE', {'type':'manual_journal', 'close_date':'$TS'})
+print('Insight saved to The Vault.')
+\"
 "
