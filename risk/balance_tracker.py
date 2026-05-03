@@ -43,25 +43,27 @@ def update_balance_state(current_balance: float):
     return state
 
 def get_balance_from_freqtrade_api():
-    total_usdt = 0.0
+    """
+    Fetches COMBINED USDT balance from all 5 Freqtrade instances.
+    Returns sum of all running instance balances.
+    """
+    total = 0.0
+    found = 0
     ports = [8080, 8081, 8082, 8083, 8084]
-    found_any = False
 
     for port in ports:
         url = f'http://100.90.68.42:{port}/api/v1/balance'
         try:
             res = requests.get(url, auth=(USERNAME, PASSWORD), timeout=5)
-            res.raise_for_status()
-            data = res.json()
-            for b in data.get('currencies', []):
-                if b['currency'] == 'USDT':
-                    total_usdt += float(b['free'])
-                    found_any = True
-                    break
+            if res.status_code == 200:
+                data = res.json()
+                # Use top-level 'total' for account summary
+                total += float(data.get('total', 0))
+                found += 1
         except Exception as e:
             print(f"API Error on port {port}: {e}")
     
-    return total_usdt if found_any else None
+    return total if found > 0 else None
 
 if __name__ == '__main__':
     balance = get_balance_from_freqtrade_api()

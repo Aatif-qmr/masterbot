@@ -6,9 +6,11 @@ import pandas as pd
 import requests
 from datetime import datetime, timezone, timedelta
 from requests.auth import HTTPBasicAuth
+from dotenv import load_dotenv
 
 # Add paths
 BASE_DIR = '/Users/aatifquamre/masterbot'
+load_dotenv(os.path.join(BASE_DIR, '.env'))
 sys.path.insert(0, os.path.join(BASE_DIR, 'qnt/memory'))
 sys.path.insert(0, os.path.join(BASE_DIR, 'qnt/bridge'))
 sys.path.insert(0, os.path.join(BASE_DIR, 'qnt/oracle'))
@@ -217,7 +219,7 @@ def get_exposure():
     except Exception as e:
         return f"Error getting exposure: {e}"
 
-def risk_check():
+def risk_check(silent=False):
     """Audit system against risk rules across all instances."""
     results = []
     fails = 0
@@ -261,7 +263,8 @@ def risk_check():
         for status in all_status:
             total_open += len(status)
             for t in status:
-                size = (t['stake_amount'] / current_bal) * 100 if current_bal > 0 else 0
+                stake = t.get('stake_amount', 0)
+                size = (stake / current_bal) * 100 if current_bal > 0 else 0
                 if size > max_pos_size: max_pos_size = size
             
         if max_pos_size >= 10.0:
@@ -341,9 +344,21 @@ def risk_check():
             f"Overall: {overall}"
         ])
 
-        if fails > 0:
-            send_notify("Risk Audit Failure", "\n".join(output), level="CRITICAL")
-            log_action("risk_audit_fail", f"{fails} fails, {warnings} warns", escalated=True)
+        if fails > 0 and not silent:
+            # Check cooldown
+            last_alert = mem.get('shield_last_alert_time', '')
+            should_alert = True
+            if last_alert:
+                last_alert_dt = datetime.fromisoformat(last_alert.replace('Z', '+00:00'))
+                if (datetime.now(timezone.utc) - last_alert_dt).total_seconds() < 3600:
+                    should_alert = False
+
+            if should_alert:
+                send_notify("Risk Audit Failure", "\n".join(output), level="CRITICAL")
+                mem['shield_last_alert_time'] = datetime.now(timezone.utc).isoformat() + 'Z'
+                from memory_manager import save_memory
+                save_memory(mem)
+                log_action("risk_audit_fail", f"{fails} fails, {warnings} warns", escalated=True)
         else:
             log_action("risk_audit_pass", f"{warnings} warnings")
             
@@ -403,22 +418,38 @@ def get_balance():
 def autonomous_shield_check():
     """Hourly autonomous risk audit."""
     print(f"[{datetime.now()}] Running autonomous shield check...")
-    audit_text = risk_check()
+    audit_text = risk_check(silent=True) # Don't alert from risk_check itself
+    
     try:
         with open(BALANCE_STATE_PATH, 'r') as f:
             b_state = json.load(f)
         all_balance = call_freqtrade_api_all("balance")
         current_bal = sum([b.get('total', 0) for b in all_balance])
         if current_bal == 0: current_bal = 50000.0
+        
         week_drawdown = (b_state['start_of_week'] - current_bal) / b_state['start_of_week'] * 100 if b_state['start_of_week'] > 0 else 0
+        
         if week_drawdown > 5.0:
-            send_escalation(
-                situation=f"Weekly drawdown is approaching critical limit: {week_drawdown:.1f}%",
-                options=["Reduce all positions by 50%", "Stop new entries only", "Continue monitoring", "Stop bot completely"],
-                recommendation="Option 2 — Stop new entries to prevent further drawdown while maintaining current hedges.",
-                context=audit_text
-            )
-    except: pass
+            mem = load_memory()
+            last_alert = mem.get('shield_last_escalation_time', '')
+            should_escalate = True
+            if last_alert:
+                last_alert_dt = datetime.fromisoformat(last_alert.replace('Z', '+00:00'))
+                if (datetime.now(timezone.utc) - last_alert_dt).total_seconds() < 3600:
+                    should_escalate = False
+
+            if should_escalate:
+                send_escalation(
+                    situation=f"Weekly drawdown is approaching critical limit: {week_drawdown:.1f}%",
+                    options=["Reduce all positions by 50%", "Stop new entries only", "Continue monitoring", "Stop bot completely"],
+                    recommendation="Option 2 — Stop new entries to prevent further drawdown while maintaining current hedges.",
+                    context=audit_text
+                )
+                mem['shield_last_escalation_time'] = datetime.now(timezone.utc).isoformat() + 'Z'
+                from memory_manager import save_memory
+                save_memory(mem)
+    except Exception as e:
+        print(f"Error in autonomous shield check: {e}")
 
 if __name__ == "__main__":
     import sys
