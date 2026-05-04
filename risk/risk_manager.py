@@ -71,13 +71,13 @@ def get_aggregated_balance():
     pwd = os.getenv('FREQTRADE_UI_PASSWORD')
     total = 0.0
     found = 0
-    # Use Tailscale IP for M1
-    for port in [8080, 8081, 8082, 8083, 8084]:
+    # Use localhost/127.0.0.1 for internal speed and reliability
+    for port in [8080, 8081, 8082, 8083, 8084, 8085]:
         try:
             r = requests.get(
-                f'http://100.90.68.42:{port}/api/v1/balance',
+                f'http://127.0.0.1:{port}/api/v1/balance',
                 auth=(user, pwd),
-                timeout=2
+                timeout=5
             )
             if r.status_code == 200:
                 total += float(r.json().get('total', 0))
@@ -216,6 +216,33 @@ def check_order_rate(trades_last_hour: int, max_trades_per_hour: int = 10) -> bo
         return False
     return True
 
+def check_sentiment(min_signal: str = 'NEUTRAL') -> bool:
+    """Blocks entries based on global sentiment score."""
+    try:
+        from sentiment.reader import get_current_sentiment, get_sentiment_signal
+        
+        sentiment = get_current_sentiment()
+        signal = get_sentiment_signal()
+        
+        # Mapping signals to numeric ranks for comparison
+        # Fail closed on UNAVAILABLE (rank 0)
+        ranks = {'BEARISH': 0, 'NEUTRAL': 1, 'BULLISH': 2, 'UNAVAILABLE': 0} 
+        
+        current_rank = ranks.get(signal, 0)
+        required_rank = ranks.get(min_signal, 1)
+        
+        if current_rank < required_rank:
+            msg = (f"SENTIMENT BLOCK\n"
+                   f"Current Signal: {signal} ({sentiment.get('score', 0.0):.3f})\n"
+                   f"Required: {min_signal}\n"
+                   f"ACTION: New entries blocked.")
+            logging.warning(msg.replace('\n', ' | '))
+            return False
+        return True
+    except Exception as e:
+        logging.error(f"Error in sentiment check: {e}")
+        return True # Default to True to avoid total halt if reader code has a bug
+
 def check_consecutive_losses(recent_trades: list, max_consecutive: int = 3) -> bool:
     count = 0
     last_loss_time = None
@@ -257,7 +284,8 @@ def check_consecutive_losses(recent_trades: list, max_consecutive: int = 3) -> b
     return True
 
 def run_all_checks(current_balance, start_of_day_balance, start_of_week_balance, 
-                   trade_amount_usdt, trades_last_hour, recent_trades) -> dict:
+                   trade_amount_usdt, trades_last_hour, recent_trades,
+                   min_sentiment: str = 'NEUTRAL') -> dict:
     
     # Auto-aggregate if current_balance looks like a local instance balance
     if current_balance < (start_of_day_balance * 0.5):
@@ -269,7 +297,8 @@ def run_all_checks(current_balance, start_of_day_balance, start_of_week_balance,
         "weekly_drawdown": check_weekly_drawdown(current_balance, start_of_week_balance),
         "position_size": check_position_size(trade_amount_usdt, current_balance),
         "order_rate": check_order_rate(trades_last_hour),
-        "consecutive_losses": check_consecutive_losses(recent_trades)
+        "consecutive_losses": check_consecutive_losses(recent_trades),
+        "sentiment": check_sentiment(min_sentiment)
     }
     
     blocking_reasons = [k for k, v in checks.items() if not v]

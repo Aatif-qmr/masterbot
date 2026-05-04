@@ -49,7 +49,7 @@ def get_db_path():
 def call_freqtrade_api_all(endpoint, method='GET', data=None):
     """Aggregate data from all 5 strategy instances."""
     results = []
-    ports = [8080, 8081, 8082, 8083, 8084]
+    ports = [8080, 8081, 8082, 8083, 8084, 8085]
     FT_USER = os.getenv("FREQTRADE_UI_USERNAME")
     FT_PASS = os.getenv("FREQTRADE_UI_PASSWORD")
     

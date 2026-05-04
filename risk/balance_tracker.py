@@ -49,7 +49,7 @@ def get_balance_from_freqtrade_api():
     """
     total = 0.0
     found = 0
-    ports = [8080, 8081, 8082, 8083, 8084]
+    ports = [8080, 8081, 8082, 8083, 8084, 8085]
 
     for port in ports:
         url = f'http://100.90.68.42:{port}/api/v1/balance'

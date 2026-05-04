@@ -1,0 +1,87 @@
+{
+    "strategy": "MicroScalpV1",
+    "timeframe": "1m",
+    "max_open_trades": 2,
+    "stake_currency": "USDT",
+    "stake_amount": 500,
+    "tradable_balance_ratio": 0.99,
+    "dry_run": true,
+    "dry_run_wallet": 10000,
+    "exchange": {
+        "name": "binance",
+        "key": "",
+        "secret": "",
+        "pair_whitelist": [
+            "BTC/USDT",
+            "ETH/USDT",
+            "SOL/USDT",
+            "BNB/USDT",
+            "XRP/USDT"
+        ],
+        "pair_blacklist": []
+    },
+    "pairlists": [
+        {
+            "method": "StaticPairList"
+        }
+    ],
+    "api_server": {
+        "enabled": true,
+        "listen_ip_address": "100.90.68.42",
+        "listen_port": 8085,
+        "verbosity": "error",
+        "enable_openapi": false,
+        "jwt_secret_key": "super_secret_jwt_key",
+        "CORS_origins": [
+            "http://100.74.110.36:8080",
+            "http://shahids-macbook-air:8080"
+        ],
+        "username": "Aatif-qmr",
+        "password": "2001"
+    },
+    "bot_name": "micro_scalp_bot",
+    "initial_state": "running",
+    "force_entry_enable": false,
+    "internals": {
+        "process_throttle_secs": 2
+    },
+    "order_types": {
+        "entry": "limit",
+        "exit": "limit",
+        "emergency_exit": "market",
+        "force_entry": "market",
+        "force_exit": "market",
+        "stoploss": "market",
+        "stoploss_on_exchange": true,
+        "stoploss_on_exchange_interval": 60
+    },
+    "freqai": {
+        "enabled": true,
+        "purge_old_models": 2,
+        "train_period_days": 60,
+        "backtest_period_days": 7,
+        "live_retrain_when_model_expires": true,
+        "expiration_hours": 24,
+        "write_metrics_to_disk": true,
+        "feature_parameters": {
+            "include_timeframes": ["1m", "5m", "15m", "1h"],
+            "include_corr_pairlist": ["BTC/USDT", "ETH/USDT"],
+            "label_period_candles": 15,
+            "include_shifted_candles": 0,
+            "DI_threshold": 0.9,
+            "weight_factor": 0.7,
+            "principal_component_analysis": false,
+            "use_SVM_to_remove_outliers": true,
+            "indicator_max_period": 20
+        },
+        "data_split_parameters": {
+            "test_size": 0.25,
+            "random_state": 42
+        },
+        "model_training_parameters": {
+            "n_estimators": 100,
+            "learning_rate": 0.1,
+            "max_depth": 6
+        }
+    }
+}
