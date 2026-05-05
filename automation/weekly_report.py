@@ -12,38 +12,52 @@ load_dotenv('/Users/aatifquamre/masterbot/.env')
 TELEGRAM_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
 TELEGRAM_CHAT_ID = os.getenv('TELEGRAM_CHAT_ID')
 
-DB_PATH = '/Users/aatifquamre/masterbot/user_data/tradesv3.dryrun.sqlite'
+DB_PATHS = [
+    '/Users/aatifquamre/masterbot/user_data/mean_reversion.sqlite',
+    '/Users/aatifquamre/masterbot/user_data/trend_follow.sqlite',
+    '/Users/aatifquamre/masterbot/user_data/scalp.sqlite',
+    '/Users/aatifquamre/masterbot/user_data/swing.sqlite',
+    '/Users/aatifquamre/masterbot/user_data/daily.sqlite'
+]
 REPORT_DIR = Path('/Users/aatifquamre/masterbot/logs/reports/')
 REPORT_DIR.mkdir(parents=True, exist_ok=True)
 
 SENTIMENT_PATH = '/Users/aatifquamre/masterbot/sentiment/scores/history.csv'
 RISK_LOG = '/Users/aatifquamre/masterbot/logs/risk_manager.log'
 
-def get_weekly_trades(db_path: str, days_ago_start=7, days_ago_end=0) -> list:
-    if not os.path.exists(db_path):
-        return []
+def get_weekly_trades(db_paths: list, days_ago_start=7, days_ago_end=0) -> list:
+    all_trades = []
     
-    try:
-        conn = sqlite3.connect(db_path)
-        conn.row_factory = sqlite3.Row
-        cursor = conn.cursor()
+    now = datetime.now(timezone.utc)
+    start_date = (now - timedelta(days=days_ago_start)).strftime('%Y-%m-%d %H:%M:%S')
+    end_date = (now - timedelta(days=days_ago_end)).strftime('%Y-%m-%d %H:%M:%S')
+
+    for db_path in db_paths:
+        if not os.path.exists(db_path):
+            continue
         
-        now = datetime.now(timezone.utc)
-        start_date = (now - timedelta(days=days_ago_start)).strftime('%Y-%m-%d %H:%M:%S')
-        end_date = (now - timedelta(days=days_ago_end)).strftime('%Y-%m-%d %H:%M:%S')
-        
-        query = """
-            SELECT * FROM trades 
-            WHERE close_date >= ? AND close_date <= ? AND is_open = 0
-            ORDER BY close_date DESC
-        """
-        cursor.execute(query, (start_date, end_date))
-        trades = [dict(row) for row in cursor.fetchall()]
-        conn.close()
-        return trades
-    except Exception as e:
-        print(f"DB Error: {e}")
-        return []
+        try:
+            conn = sqlite3.connect(db_path)
+            conn.row_factory = sqlite3.Row
+            cursor = conn.cursor()
+            
+            # Freqtrade schema mapping: close_profit -> profit_ratio, close_profit_abs -> profit_abs
+            query = """
+                SELECT *, 
+                       close_profit AS profit_ratio, 
+                       close_profit_abs AS profit_abs
+                FROM trades 
+                WHERE close_date >= ? AND close_date <= ? AND is_open = 0
+                ORDER BY close_date DESC
+            """
+            cursor.execute(query, (start_date, end_date))
+            trades = [dict(row) for row in cursor.fetchall()]
+            all_trades.extend(trades)
+            conn.close()
+        except Exception as e:
+            print(f"DB Error ({os.path.basename(db_path)}): {e}")
+            
+    return all_trades
 
 def calculate_metrics(trades: list) -> dict:
     if not trades:
@@ -110,13 +124,29 @@ def get_sentiment_correlation():
 def get_risk_events():
     events = {"drawdown_warnings": 0, "drawdown_blocks": 0, "sentiment_blocks": 0, "risk_blocks": 0}
     if not os.path.exists(RISK_LOG): return events
+    
+    now = datetime.now()
+    one_week_ago = now - timedelta(days=7)
+    
     try:
         with open(RISK_LOG, 'r') as f:
             for line in f:
-                if 'WARNING' in line and 'drawdown' in line: events['drawdown_warnings'] += 1
-                if 'CRITICAL' in line and 'LIMIT HIT' in line: events['drawdown_blocks'] += 1
-                if 'Sentiment BLOCK' in line: events['sentiment_blocks'] += 1
-                if 'RISK BLOCK' in line: events['risk_blocks'] += 1
+                line_upper = line.upper()
+                parts = line.split(' | ')
+                if len(parts) < 3: continue
+                
+                try:
+                    # Format: 2026-05-03 02:29:44,975
+                    log_time_str = parts[0].split(',')[0]
+                    log_time = datetime.strptime(log_time_str, '%Y-%m-%d %H:%M:%S')
+                    if log_time < one_week_ago: continue
+                except:
+                    continue
+
+                if 'WARNING' in line_upper and 'DRAWDOWN' in line_upper: events['drawdown_warnings'] += 1
+                if 'LIMIT HIT' in line_upper: events['drawdown_blocks'] += 1
+                if 'SENTIMENT BLOCK' in line_upper: events['sentiment_blocks'] += 1
+                if 'RISK BLOCK' in line_upper or 'RISK CHECKS BLOCKED' in line_upper: events['risk_blocks'] += 1
     except: pass
     return events
 
@@ -124,10 +154,11 @@ def get_qnt_intelligence(current, sentiment):
     import subprocess
     # Use a simpler prompt for faster response
     prompt = f"Act as MasterBot brain. Analyze: {current['total_profit_usdt']} USDT profit, {current['win_rate_pct']}% win rate. Sentiment: {sentiment.get('avg_sentiment_score', 'N/A')}. Give exactly 2 sentences of tactical advice."
+    qnt_path = '/Users/aatifquamre/.nvm/versions/node/v20.20.2/bin/qnt'
     try:
         result = subprocess.run(
-            ['qnt', '-p', prompt, '--output-format', 'text'],
-            capture_output=True, text=True, timeout=60, cwd='/Users/aatifquamre/masterbot'
+            [qnt_path, '-m', 'flash', '-p', prompt, '--output-format', 'text'],
+            capture_output=True, text=True, timeout=180, cwd='/Users/aatifquamre/masterbot'
         )
         if result.returncode == 0 and result.stdout.strip():
             # Extract first two sentences to be safe
@@ -142,56 +173,47 @@ def get_qnt_weekly_brief() -> str:
     """
     Ask qnt for a market intelligence summary
     to append to the weekly Telegram report.
-    Timeout after 60 seconds — report sends
-    even if qnt is slow or unavailable.
+    Timeout after 180 seconds.
     """
     import subprocess
+    qnt_path = '/Users/aatifquamre/.nvm/versions/node/v20.20.2/bin/qnt'
 
     try:
         result = subprocess.run(
-            ['qnt', '-p',
-             'Generate a concise weekly market '
-             'intelligence summary for MasterBot. '
-             'Cover: overall market sentiment this week, '
-             'any major crypto events or news, '
-             'funding rate trend, and one sentence on '
-             'what to watch next week. '
-             'Maximum 150 words. Plain text only.'],
+            [qnt_path, '-m', 'flash', '-p',
+             'Generate a concise weekly market intelligence summary. '
+             'Cover: sentiment, major news, funding rate, and outlook. '
+             'Maximum 100 words. Plain text only.'],
             capture_output=True,
             text=True,
-            timeout=60,
+            timeout=180,
             cwd='/Users/aatifquamre/masterbot'
         )
         if result.stdout.strip():
             return result.stdout.strip()
-        return "qnt market brief unavailable this week."
+        
+        err_msg = result.stderr.strip() if result.stderr else "Empty response"
+        return f"qnt brief unavailable: {err_msg[:60]}"
     except Exception as e:
         return f"qnt brief error: {str(e)[:80]}"
 
+def get_m2_resource_report() -> str:
+    """Fetches resource report from M2 node."""
+    import subprocess
+    try:
+        cmd = ['ssh', f"azmatsaif@{os.getenv('M2_TAILSCALE_IP')}", 
+               '/Users/azmatsaif/masterbot/venv/bin/python -c "'
+               'import sys; sys.path.insert(0, \'/Users/azmatsaif/masterbot/qnt/shadow\'); '
+               'from resource_monitor import get_daily_report; '
+               'print(get_daily_report())"']
+        result = subprocess.run(cmd, capture_output=True, text=True, timeout=30)
+        return result.stdout.strip()
+    except:
+        return "M2 resource report unavailable"
+
 def format_telegram_report(current, previous, sentiment, risk, intel, week_start, week_end, qnt_brief):
-    next_monday = (datetime.now() + timedelta(days=(7 - datetime.now().weekday()))).strftime('%Y-%m-%d')
-    
-    if current['total_trades'] == 0:
-        perf_str = "No trades closed this week."
-    else:
-        perf_str = (f"Trades: {current['total_trades']} ({current['winning_trades']}W / {current['losing_trades']}L)\n"
-                    f"Win Rate: {current['win_rate_pct']}%\n"
-                    f"Net P&L: {current['total_profit_usdt']:+} USDT\n"
-                    f"Avg per trade: {current['avg_profit_per_trade_usdt']:+} USDT\n"
-                    f"Fees paid: {current['total_fees_usdt']} USDT")
-
-    strat_str = ""
-    for name, data in current['by_strategy'].items():
-        strat_str += f"• {name} | {data['trades']} trades | {data['profit']:+.2f} | {data['win_rate']}%\n"
-
-    sent_str = "No data"
-    if sentiment:
-        sent_str = (f"Avg Score: {sentiment['avg_sentiment_score']} ({sentiment['sentiment_label']})\n"
-                    f"Bullish: {sentiment['days_bullish']} | Neutral: {sentiment['days_neutral']} | Bearish: {sentiment['days_bearish']}")
-
-    comp_trades = f"{current['total_trades']} vs {previous['total_trades']}"
-    wr_arrow = "↑" if current['win_rate_pct'] > previous['win_rate_pct'] else "↓" if current['win_rate_pct'] < previous['win_rate_pct'] else "→"
-    pl_arrow = "↑" if current['total_profit_usdt'] > previous['total_profit_usdt'] else "↓"
+...
+    m2_report = get_m2_resource_report()
 
     return f"""📈 MasterBot Weekly Report
 Week: {week_start} → {week_end}
@@ -225,6 +247,9 @@ Sentiment blocks: {risk['sentiment_blocks']}
 🧠 QNT Intelligence Brief
 {qnt_brief}
 
+️ M2 RESOURCE REPORT (SHADOW HYPEROPT)
+{m2_report}
+
 ──────────────────────
 Mode: PAPER TRADING
 Next report: Monday {next_monday}
@@ -251,8 +276,8 @@ if __name__ == '__main__':
     today = datetime.now(timezone.utc)
     week_start, week_end = (today - timedelta(days=7)).strftime('%Y-%m-%d'), today.strftime('%Y-%m-%d')
     
-    trades = get_weekly_trades(DB_PATH, 7, 0)
-    prev_trades = get_weekly_trades(DB_PATH, 14, 7)
+    trades = get_weekly_trades(DB_PATHS, 7, 0)
+    prev_trades = get_weekly_trades(DB_PATHS, 14, 7)
     
     curr_metrics = calculate_metrics(trades)
     prev_metrics = calculate_metrics(prev_trades)

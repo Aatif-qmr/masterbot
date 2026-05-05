@@ -62,19 +62,12 @@ class MeanReversionV1(IStrategy):
     INTERFACE_VERSION = 3
     timeframe = '1h'
     
-    # Optimized Parameters
-    buy_params = {
-
-        "bb_period": 31,
-        "bb_std": 1.8,
-        "buy_rsi": 32
-
-    }
-    sell_params = {
-
-        "sell_rsi": 68
-
-    }
+    # Hyperoptable Parameters
+    buy_rsi = IntParameter(20, 40, default=32, space='buy')
+    bb_period = IntParameter(20, 50, default=31, space='buy')
+    bb_std = DecimalParameter(1.5, 2.5, default=1.8, space='buy')
+    
+    sell_rsi = IntParameter(60, 80, default=68, space='sell')
     minimal_roi = {
         "0": 0.426,
         "226": 0.13,
@@ -131,9 +124,9 @@ class MeanReversionV1(IStrategy):
         # Standard Indicators with optimized params
         dataframe['rsi'] = ta.rsi(dataframe['close'], length=14)
         
-        bb = ta.bbands(dataframe['close'], length=self.buy_params['bb_period'], std=self.buy_params['bb_std'])
-        dataframe['bb_lower'] = bb[f'BBL_{self.buy_params["bb_period"]}_{self.buy_params["bb_std"]}']
-        dataframe['bb_middle'] = bb[f'BBM_{self.buy_params["bb_period"]}_{self.buy_params["bb_std"]}']
+        bb = ta.bbands(dataframe['close'], length=self.bb_period.value, std=self.bb_std.value)
+        dataframe['bb_lower'] = bb[f'BBL_{self.bb_period.value}_{self.bb_std.value}']
+        dataframe['bb_middle'] = bb[f'BBM_{self.bb_period.value}_{self.bb_std.value}']
             
         dataframe = merge_macro_data(dataframe)
         return dataframe
@@ -146,7 +139,7 @@ class MeanReversionV1(IStrategy):
 
         dataframe.loc[
             (
-                (dataframe['rsi'] < self.buy_params['buy_rsi']) &
+                (dataframe['rsi'] < self.buy_rsi.value) &
                 (dataframe['close'] < dataframe['bb_lower']) &
                 (regime_ok) &
                 (confidence_ok)
@@ -157,8 +150,7 @@ class MeanReversionV1(IStrategy):
     def populate_exit_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         dataframe.loc[
             (
-                (dataframe['rsi'] > self.sell_params['sell_rsi']) |
-                (dataframe['close'] > dataframe['bb_middle'])
+                (dataframe['rsi'] > self.sell_rsi.value)
             ),
             'exit_long'] = 1
         return dataframe
