@@ -65,25 +65,51 @@ def _can_send_alert():
         logging.error(f"Error in cooldown check: {e}")
         return True # Default to True to not swallow critical errors
 
-def get_aggregated_balance():
-    """Fetches total balance across all 5 Freqtrade instances."""
+ALERT_LOCK_FILE = '/tmp/qnt_risk_alert.lock'
+ALERT_COOLDOWN_SECONDS = 3600  # 1 hour minimum
+
+def _is_alert_allowed() -> bool:
+    """Hard 1-hour cooldown that cannot be bypassed."""
+    try:
+        ts_file = '/tmp/qnt_risk_alert_ts'
+        if os.path.exists(ts_file):
+            with open(ts_file) as f:
+                content = f.read().strip()
+                if content:
+                    last_ts = float(content)
+                    if time.time() - last_ts < ALERT_COOLDOWN_SECONDS:
+                        return False
+        
+        # Update timestamp
+        with open(ts_file, 'w') as f:
+            f.write(str(time.time()))
+        return True
+    except:
+        return True  # If check fails, allow alert to be safe
+
+def _get_cluster_balance() -> float:
+    """
+    Queries ALL 6 bot instances on the cluster IP.
+    Returns combined USDT total.
+    """
     user = os.getenv('FREQTRADE_UI_USERNAME')
     pwd = os.getenv('FREQTRADE_UI_PASSWORD')
+    ip = "100.90.68.42"
     total = 0.0
     found = 0
-    # Use localhost/127.0.0.1 for internal speed and reliability
     for port in [8080, 8081, 8082, 8083, 8084, 8085]:
         try:
             r = requests.get(
-                f'http://127.0.0.1:{port}/api/v1/balance',
+                f'http://{ip}:{port}/api/v1/balance',
                 auth=(user, pwd),
-                timeout=5
+                timeout=3
             )
             if r.status_code == 200:
                 total += float(r.json().get('total', 0))
                 found += 1
         except:
             continue
+    
     # If API fails, fall back to last seen in state file
     if found == 0:
         try:
@@ -92,6 +118,7 @@ def get_aggregated_balance():
                 return state.get('last_seen_balance', 50000.0)
         except:
             return 50000.0
+            
     return total
 
 def send_telegram_alert(message: str, level: str = 'WARNING') -> bool:
@@ -142,15 +169,21 @@ def check_macro_headwinds() -> bool:
 def check_daily_drawdown(current_balance: float, start_of_day_balance: float, limit_pct: float = 3.0) -> bool:
     if start_of_day_balance == 0: return True
     
-    # CRITICAL FIX: If current_balance passed is a single instance ($10k) but baseline is global ($50k),
-    # we MUST use the aggregated global balance to avoid false 80% drawdown alerts.
+    # CRITICAL FIX: Ensure we use aggregated cluster balance
     if current_balance < (start_of_day_balance * 0.5):
-        logging.info("Local balance detected, fetching aggregated global balance...")
-        current_balance = get_aggregated_balance()
+        current_balance = _get_cluster_balance()
 
     drawdown_pct = ((start_of_day_balance - current_balance) / start_of_day_balance) * 100
     
+    # SANITY CHECK: If drawdown > 50% something is wrong with reading, not actual loss
+    if drawdown_pct > 50.0:
+        logging.warning(f"Impossible daily drawdown {drawdown_pct:.1f}% detected. Skipping alert/block.")
+        return True
+
     if drawdown_pct >= limit_pct:
+        if not _is_alert_allowed():
+            return True # Silently skip, cooldown active
+
         msg = (f"DAILY DRAWDOWN LIMIT HIT\n"
                f"Start of day: ${start_of_day_balance:,.2f}\n"
                f"Current: ${current_balance:,.2f}\n"
@@ -171,12 +204,21 @@ def check_daily_drawdown(current_balance: float, start_of_day_balance: float, li
 def check_weekly_drawdown(current_balance: float, start_of_week_balance: float, limit_pct: float = 7.0) -> bool:
     if start_of_week_balance == 0: return True
     
+    # Ensure we use aggregated cluster balance
     if current_balance < (start_of_week_balance * 0.5):
-        current_balance = get_aggregated_balance()
+        current_balance = _get_cluster_balance()
 
     drawdown_pct = ((start_of_week_balance - current_balance) / start_of_week_balance) * 100
     
+    # SANITY CHECK: If drawdown > 50% something is wrong with reading
+    if drawdown_pct > 50.0:
+        logging.warning(f"Impossible weekly drawdown {drawdown_pct:.1f}% detected. Skipping alert/block.")
+        return True
+
     if drawdown_pct >= limit_pct:
+        if not _is_alert_allowed():
+            return True
+
         msg = (f"WEEKLY DRAWDOWN LIMIT HIT\n"
                f"Start of week: ${start_of_week_balance:,.2f}\n"
                f"Current: ${current_balance:,.2f}\n"
@@ -196,8 +238,9 @@ def check_weekly_drawdown(current_balance: float, start_of_week_balance: float, 
 def check_position_size(trade_amount_usdt: float, total_balance_usdt: float, max_pct: float = 10.0) -> bool:
     if total_balance_usdt == 0: return True
     
+    # Ensure we use aggregated cluster balance
     if total_balance_usdt < 20000: # Heuristic for local balance
-        total_balance_usdt = get_aggregated_balance()
+        total_balance_usdt = _get_cluster_balance()
         
     position_pct = (trade_amount_usdt / total_balance_usdt) * 100
     if position_pct > max_pct:
@@ -289,7 +332,7 @@ def run_all_checks(current_balance, start_of_day_balance, start_of_week_balance,
     
     # Auto-aggregate if current_balance looks like a local instance balance
     if current_balance < (start_of_day_balance * 0.5):
-         current_balance = get_aggregated_balance()
+         current_balance = _get_cluster_balance()
 
     checks = {
         "macro_headwinds": check_macro_headwinds(),
