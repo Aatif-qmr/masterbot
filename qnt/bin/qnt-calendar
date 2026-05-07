@@ -1,11 +1,12 @@
 #!/bin/bash
+BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 set -a
-source /Users/aatifquamre/masterbot/.env
+source $BASE_DIR/.env
 set +a
-/Users/aatifquamre/masterbot/qnt/bin/qnt-python -c "
+$BASE_DIR/qnt/bin/qnt-python -c "
 import sys
-sys.path.insert(0, '/Users/aatifquamre/masterbot/qnt/oracle')
-sys.path.insert(0, '/Users/aatifquamre/masterbot/qnt/memory')
+sys.path.insert(0, '$BASE_DIR/qnt/oracle')
+sys.path.insert(0, '$BASE_DIR/qnt/memory')
 from oracle_calendar import get_weekly_calendar
 print(get_weekly_calendar())
 "

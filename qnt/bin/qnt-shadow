@@ -1,6 +1,7 @@
 #!/bin/bash
+BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 set -a
-source /Users/aatifquamre/masterbot/.env
+source $BASE_DIR/.env
 set +a
 
 SUBCMD=${1:-status}
@@ -9,33 +10,33 @@ case $SUBCMD in
   status)
     echo "=== Shadow Hyperopt Status ==="
     ssh azmatsaif@$M2_TAILSCALE_IP \
-      "source /Users/azmatsaif/masterbot/venv/bin/activate && \
-       supervisorctl -c /Users/azmatsaif/masterbot/config/supervisord_shadow.conf status"
+      "source $BASE_DIR/venv/bin/activate && \
+       supervisorctl -c $BASE_DIR/config/supervisord_shadow.conf status"
     echo ""
     echo "=== M2 Resource State ==="
     ssh azmatsaif@$M2_TAILSCALE_IP \
-      "python3 -c \"import json, sys; d=json.load(open('/Users/azmatsaif/masterbot/qnt/shadow/resource_state.json')); print(json.dumps(d[-1], indent=2))\" 2>/dev/null || echo 'Waiting for initial snapshot...'"
+      "python3 -c \"import json, sys; d=json.load(open('$BASE_DIR/qnt/shadow/resource_state.json')); print(json.dumps(d[-1], indent=2))\" 2>/dev/null || echo 'Waiting for initial snapshot...'"
     ;;
   report)
     echo "=== M2 Shadow Hyperopt Daily Report ==="
     ssh azmatsaif@$M2_TAILSCALE_IP \
-      "/Users/azmatsaif/masterbot/venv/bin/python -c \"
+      "$BASE_DIR/venv/bin/python -c \"
 import sys
-sys.path.insert(0, '/Users/azmatsaif/masterbot/qnt/shadow')
+sys.path.insert(0, '$BASE_DIR/qnt/shadow')
 from resource_monitor import get_daily_report
 print(get_daily_report())
 \""
     ;;
   pause)
     ssh azmatsaif@$M2_TAILSCALE_IP \
-      "source /Users/azmatsaif/masterbot/venv/bin/activate && \
-       supervisorctl -c /Users/azmatsaif/masterbot/config/supervisord_shadow.conf stop shadow_hyperopt"
+      "source $BASE_DIR/venv/bin/activate && \
+       supervisorctl -c $BASE_DIR/config/supervisord_shadow.conf stop shadow_hyperopt"
     echo "Shadow Hyperopt paused on M2"
     ;;
   resume)
     ssh azmatsaif@$M2_TAILSCALE_IP \
-      "source /Users/azmatsaif/masterbot/venv/bin/activate && \
-       supervisorctl -c /Users/azmatsaif/masterbot/config/supervisord_shadow.conf start shadow_hyperopt"
+      "source $BASE_DIR/venv/bin/activate && \
+       supervisorctl -c $BASE_DIR/config/supervisord_shadow.conf start shadow_hyperopt"
     echo "Shadow Hyperopt resumed on M2"
     ;;
   *)

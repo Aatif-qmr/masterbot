@@ -1,14 +1,15 @@
 #!/bin/bash
+BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 # qnt-library: Show vault statistics
 
 set -a
-source /Users/aatifquamre/masterbot/.env
+source $BASE_DIR/.env
 set +a
 
 ssh azmatsaif@100.74.110.36 "
-/Users/azmatsaif/masterbot/venv/bin/python -c \"
+$BASE_DIR/venv/bin/python -c \"
 import sys
-sys.path.insert(0, '/Users/azmatsaif/masterbot/qnt/vault')
+sys.path.insert(0, '$BASE_DIR/qnt/vault')
 from vault import get_collection_stats
 stats = get_collection_stats()
 print('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')

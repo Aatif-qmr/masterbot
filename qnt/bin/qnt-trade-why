@@ -1,3 +1,4 @@
 #!/bin/bash
+BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 # Alias for qnt-post-mortem <id>
-/Users/aatifquamre/masterbot/qnt/bin/qnt-post-mortem "$@"
+$BASE_DIR/qnt/bin/qnt-post-mortem "$@"

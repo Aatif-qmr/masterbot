@@ -1,5 +1,6 @@
 #!/bin/bash
+BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 # qnt-calendar-gate [status|pause|resume|auto]
 # Unified macro risk gate for MasterBot
 
-/Users/aatifquamre/masterbot/qnt/bin/qnt-python /Users/aatifquamre/masterbot/qnt/src/calendar_gate.py "$@"
+$BASE_DIR/qnt/bin/qnt-python $BASE_DIR/qnt/src/calendar_gate.py "$@"

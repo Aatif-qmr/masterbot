@@ -1,8 +1,9 @@
 #!/bin/bash
+BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 # qnt-recall "natural language query"
 
 set -a
-source /Users/aatifquamre/masterbot/.env
+source $BASE_DIR/.env
 set +a
 
 QUERY="$1"
@@ -13,11 +14,11 @@ fi
 
 # Execute on M2 via SSH
 ssh azmatsaif@100.74.110.36 "
-/Users/azmatsaif/masterbot/venv/bin/python -c \"
+$BASE_DIR/venv/bin/python -c \"
 import sys
 import os
 import json
-sys.path.insert(0, '/Users/azmatsaif/masterbot/qnt/vault')
+sys.path.insert(0, '$BASE_DIR/qnt/vault')
 from vault import recall_lessons
 results = recall_lessons('$QUERY', n_results=3)
 if results and results['documents']:

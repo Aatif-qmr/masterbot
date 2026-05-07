@@ -1,8 +1,9 @@
 #!/bin/bash
+BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 # qnt-journal "your manual insight here"
 
 set -a
-source /Users/aatifquamre/masterbot/.env
+source $BASE_DIR/.env
 set +a
 
 NOTE="$1"
@@ -15,9 +16,9 @@ ID="manual_$(date +%s)"
 TS="$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
 
 ssh azmatsaif@100.74.110.36 "
-/Users/azmatsaif/masterbot/venv/bin/python -c \"
+$BASE_DIR/venv/bin/python -c \"
 import sys
-sys.path.insert(0, '/Users/azmatsaif/masterbot/qnt/vault')
+sys.path.insert(0, '$BASE_DIR/qnt/vault')
 from vault import store_lesson
 store_lesson('$ID', '$NOTE', {'type':'manual_journal', 'close_date':'$TS'})
 print('Insight saved to The Vault.')

@@ -1,6 +1,7 @@
 #!/bin/bash
+BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 set -a
-source /Users/aatifquamre/masterbot/.env
+source $BASE_DIR/.env
 set +a
 TRADE_ID=${1}
 if [ -z "$TRADE_ID" ]; then
@@ -8,11 +9,11 @@ if [ -z "$TRADE_ID" ]; then
   echo "       qnt-post-mortem weekly (for weekly summary)"
   exit 1
 fi
-/Users/aatifquamre/masterbot/qnt/bin/qnt-python -c "
+$BASE_DIR/qnt/bin/qnt-python -c "
 import sys
-sys.path.insert(0, '/Users/aatifquamre/masterbot/qnt/vault')
-sys.path.insert(0, '/Users/aatifquamre/masterbot/qnt/memory')
-sys.path.insert(0, '/Users/aatifquamre/masterbot/qnt/oracle')
+sys.path.insert(0, '$BASE_DIR/qnt/vault')
+sys.path.insert(0, '$BASE_DIR/qnt/memory')
+sys.path.insert(0, '$BASE_DIR/qnt/oracle')
 from post_mortem import generate_post_mortem, generate_weekly_post_mortem
 if '$TRADE_ID' == 'weekly':
     print(generate_weekly_post_mortem())

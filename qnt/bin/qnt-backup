@@ -1,6 +1,7 @@
 #!/bin/bash
+BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 set -a
-source /Users/aatifquamre/masterbot/.env
+source $BASE_DIR/.env
 set +a
 
 SUBCMD=${1:-run}
@@ -8,25 +9,25 @@ SUBCMD=${1:-run}
 case $SUBCMD in
   run)
     echo "Running full Cloud (R2 + Google Drive) backup..."
-    /Users/aatifquamre/masterbot/venv/bin/python -c "
+    $BASE_DIR/venv/bin/python -c "
 import sys
-sys.path.insert(0, '/Users/aatifquamre/masterbot/qnt/backup')
+sys.path.insert(0, '$BASE_DIR/qnt/backup')
 from r2_backup import run_full_backup
 run_full_backup()
 "
     ;;
   list)
-    /Users/aatifquamre/masterbot/venv/bin/python -c "
+    $BASE_DIR/venv/bin/python -c "
 import sys
-sys.path.insert(0, '/Users/aatifquamre/masterbot/qnt/backup')
+sys.path.insert(0, '$BASE_DIR/qnt/backup')
 from r2_backup import list_backups
 list_backups()
 "
     ;;
   restore)
-    /Users/aatifquamre/masterbot/venv/bin/python -c "
+    $BASE_DIR/venv/bin/python -c "
 import sys
-sys.path.insert(0, '/Users/aatifquamre/masterbot/qnt/backup')
+sys.path.insert(0, '$BASE_DIR/qnt/backup')
 from r2_backup import restore_latest_sqlite
 restore_latest_sqlite()
 "

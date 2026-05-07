@@ -1,5 +1,6 @@
 #!/bin/bash
+BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 # qnt-correlate
 # Analyzes trade correlations between strategies
 
-/Users/aatifquamre/masterbot/qnt/bin/qnt-python /Users/aatifquamre/masterbot/qnt/src/correlate.py "$@"
+$BASE_DIR/qnt/bin/qnt-python $BASE_DIR/qnt/src/correlate.py "$@"

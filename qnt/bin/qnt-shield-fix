@@ -2,7 +2,7 @@
 # qnt-shield-fix
 # Automated security remediation tool for QNT
 
-BASE_DIR="/Users/aatifquamre/masterbot"
+BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 cd "$BASE_DIR"
 
 echo "🛠️ QNT Shield Fix: Starting automated remediation..."
@@ -29,4 +29,4 @@ fi
 
 # 4. Verification
 echo -e "\n🛡️ Remediation complete. Running verification..."
-/Users/aatifquamre/masterbot/qnt/bin/qnt-audit quick
+$BASE_DIR/qnt/bin/qnt-audit quick

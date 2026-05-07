@@ -1,18 +1,19 @@
 #!/bin/bash
+BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 # qnt bot [start|stop|restart|status|killswitch]
 # Works from M1 or M2
 
 set -a
-source /Users/aatifquamre/masterbot/.env
+source $BASE_DIR/.env
 set +a
 
 COMMAND=${1:-status}
 MODE=${2:-paper}
 
-/Users/aatifquamre/masterbot/qnt/bin/qnt-python -c "
+$BASE_DIR/qnt/bin/qnt-python -c "
 import sys
-sys.path.insert(0, '/Users/aatifquamre/masterbot/qnt/bridge')
-sys.path.insert(0, '/Users/aatifquamre/masterbot/qnt/memory')
+sys.path.insert(0, '$BASE_DIR/qnt/bridge')
+sys.path.insert(0, '$BASE_DIR/qnt/memory')
 from bridge import bot_status, bot_start, bot_stop, bot_restart, killswitch
 
 cmd = '$COMMAND'

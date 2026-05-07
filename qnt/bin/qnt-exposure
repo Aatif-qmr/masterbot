@@ -1,5 +1,6 @@
 #!/bin/bash
+BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 # qnt-exposure
 # Unified risk and exposure aggregator
 
-/Users/aatifquamre/masterbot/qnt/bin/qnt-python /Users/aatifquamre/masterbot/qnt/src/exposure_aggregator.py "$@"
+$BASE_DIR/qnt/bin/qnt-python $BASE_DIR/qnt/src/exposure_aggregator.py "$@"

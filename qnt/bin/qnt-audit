@@ -2,7 +2,7 @@
 # qnt-audit [full|quick]
 # Unified Security & Permission Auditor for MasterBot
 
-BASE_DIR="/Users/aatifquamre/masterbot"
+BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 cd "$BASE_DIR"
 
 # 1. Run the Shell Security Check

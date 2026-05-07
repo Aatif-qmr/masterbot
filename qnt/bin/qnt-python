@@ -1,3 +1,6 @@
 #!/bin/bash
 # QNT Python wrapper — always uses venv
-exec /Users/aatifquamre/masterbot/venv/bin/python "$@"
+# Works on M1 or M2
+
+BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+exec "$BASE_DIR/venv/bin/python" "$@"

@@ -1,6 +1,7 @@
 #!/bin/bash
+BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 set -a
-source /Users/aatifquamre/masterbot/.env
+source $BASE_DIR/.env
 set +a
 
 echo "Starting QNT Dashboard..."
@@ -8,4 +9,4 @@ echo "Press 'q' to exit (or Ctrl+C for fallback)"
 sleep 1
 
 # Try full TUI first, fallback to static if it fails or if redirected
-/Users/aatifquamre/masterbot/qnt/bin/qnt-python /Users/aatifquamre/masterbot/qnt/cockpit/cockpit.py 2>/dev/null || /Users/aatifquamre/masterbot/venv/bin/python /Users/aatifquamre/masterbot/qnt/cockpit/cockpit_static.py
+$BASE_DIR/qnt/bin/qnt-python $BASE_DIR/qnt/cockpit/cockpit.py 2>/dev/null || $BASE_DIR/venv/bin/python $BASE_DIR/qnt/cockpit/cockpit_static.py

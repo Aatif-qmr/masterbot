@@ -1,5 +1,6 @@
 #!/bin/bash
+BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 # qnt-backtest-sweep
 # Runs a strategy against multiple market regimes
 
-/Users/aatifquamre/masterbot/qnt/bin/qnt-python /Users/aatifquamre/masterbot/qnt/src/backtest_sweep.py "$@"
+$BASE_DIR/qnt/bin/qnt-python $BASE_DIR/qnt/src/backtest_sweep.py "$@"
