@@ -138,8 +138,9 @@ def check_log_sizes():
 
 def check_qnt_status():
     try:
-        # Run 'qnt /model_info' as a simple check
-        result = subprocess.run(['/usr/local/bin/qnt', '/model_info'], capture_output=True, text=True, timeout=45)
+        # Detect qnt binary
+        qnt_bin = shutil.which('qnt') or '/usr/local/bin/qnt'
+        result = subprocess.run([qnt_bin, '/model_info'], capture_output=True, text=True, timeout=45)
         if result.returncode == 0:
             return {
                 'name': 'QNT Status',
