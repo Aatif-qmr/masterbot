@@ -1,0 +1,37 @@
+#!/bin/bash
+set -a
+source /Users/aatifquamre/masterbot/.env
+set +a
+
+SUBCMD=${1:-run}
+
+case $SUBCMD in
+  run)
+    echo "Running full R2 backup..."
+    /Users/aatifquamre/masterbot/venv/bin/python -c "
+import sys
+sys.path.insert(0, '/Users/aatifquamre/masterbot/qnt/backup')
+from r2_backup import run_full_backup
+run_full_backup()
+"
+    ;;
+  list)
+    /Users/aatifquamre/masterbot/venv/bin/python -c "
+import sys
+sys.path.insert(0, '/Users/aatifquamre/masterbot/qnt/backup')
+from r2_backup import list_backups
+list_backups()
+"
+    ;;
+  restore)
+    /Users/aatifquamre/masterbot/venv/bin/python -c "
+import sys
+sys.path.insert(0, '/Users/aatifquamre/masterbot/qnt/backup')
+from r2_backup import restore_latest_sqlite
+restore_latest_sqlite()
+"
+    ;;
+  *)
+    echo "Usage: qnt-backup [run|list|restore]"
+    ;;
+esac

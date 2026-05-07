@@ -1,24 +1,34 @@
 #!/bin/bash
-# Masterbot Weekly Backup
+# Masterbot Weekly Backup (R2 + GitHub)
 
 BASE_DIR="/Users/aatifquamre/masterbot"
-BACKUP_DIR="$BASE_DIR/logs/reports/backups"
 DATE=$(date +%Y%m%d)
 
-mkdir -p "$BACKUP_DIR"
+# 1. Cloudflare R2 Backup (SQLite, ChromaDB, Models)
+echo "Backing up to Cloudflare R2..."
+$BASE_DIR/qnt/bin/qnt-backup run
 
-# Zip important data
+# 2. GitHub Backup (Strategies, Configs)
+echo "Backing up to GitHub..."
 cd "$BASE_DIR"
-tar -czf "$BACKUP_DIR/masterbot_backup_$DATE.tar.gz" \
-    config/*.json .env \
-    user_data/*.sqlite \
-    strategies/active/*.py \
-    risk/balance_state.json
+git add strategies/ config/ risk/ sentiment/ automation/ qnt/
+git commit -m "backup: weekly state $(date +%Y-%m-%d)" --allow-empty
+git push
 
-# Only keep last 4 backups
-ls -t "$BACKUP_DIR"/masterbot_backup_*.tar.gz | tail -n +5 | xargs rm -f -- 2>/dev/null
-
-echo "Backup created: masterbot_backup_$DATE.tar.gz"
+# 3. Telegram Notification
+if [ -f "$BASE_DIR/.env" ]; then
+  source "$BASE_DIR/.env"
+  if [ ! -z "$TELEGRAM_BOT_TOKEN" ] && [ ! -z "$TELEGRAM_CHAT_ID" ]; then
+    curl -s -X POST \
+      "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+      -d chat_id="${TELEGRAM_CHAT_ID}" \
+      -d text="✅ Weekly backup complete.
+Date: $(date)
+R2: SQLite + ChromaDB + Models uploaded
+GitHub: Strategies and configs pushed
+Storage: Cloudflare R2 (free tier)" > /dev/null
+  fi
+fi
 
 # Log to QNT operational history
-echo "[$(date +%Y-%m-%d)] NOTED: Full system backup created: masterbot_backup_$DATE.tar.gz" >> "$BASE_DIR/qnt/.issues_log"
+echo "[$(date +%Y-%m-%d)] NOTED: Full system backup completed (R2 + GitHub)." >> "$BASE_DIR/qnt/.issues_log"
