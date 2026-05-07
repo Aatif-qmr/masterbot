@@ -57,12 +57,13 @@ export const PREVIEW_GEMINI_3_1_CUSTOM_TOOLS_MODEL =
 export const PREVIEW_GEMINI_FLASH_MODEL = 'gemini-3-flash-preview';
 export const PREVIEW_GEMINI_3_1_FLASH_LITE_MODEL =
   'gemini-3.1-flash-lite-preview';
-export const DEFAULT_GEMINI_MODEL = 'gemini-2.5-pro';
-export const DEFAULT_GEMINI_FLASH_MODEL = 'gemini-2.5-flash';
-export const DEFAULT_GEMINI_FLASH_LITE_MODEL = 'gemini-2.5-flash-lite';
 
 export const GEMMA_4_31B_IT_MODEL = 'gemma-4-31b-it';
 export const GEMMA_4_26B_A4B_IT_MODEL = 'gemma-4-26b-a4b-it';
+
+export const DEFAULT_GEMINI_MODEL = 'gemini-2.5-pro';
+export const DEFAULT_GEMINI_FLASH_MODEL = 'gemini-2.5-flash';
+export const DEFAULT_GEMINI_FLASH_LITE_MODEL = 'gemini-2.5-flash-lite';
 
 export const VALID_GEMINI_MODELS = new Set([
   PREVIEW_GEMINI_MODEL,
@@ -70,12 +71,11 @@ export const VALID_GEMINI_MODELS = new Set([
   PREVIEW_GEMINI_3_1_CUSTOM_TOOLS_MODEL,
   PREVIEW_GEMINI_FLASH_MODEL,
   PREVIEW_GEMINI_3_1_FLASH_LITE_MODEL,
+  GEMMA_4_31B_IT_MODEL,
+  GEMMA_4_26B_A4B_IT_MODEL,
   DEFAULT_GEMINI_MODEL,
   DEFAULT_GEMINI_FLASH_MODEL,
   DEFAULT_GEMINI_FLASH_LITE_MODEL,
-
-  GEMMA_4_31B_IT_MODEL,
-  GEMMA_4_26B_A4B_IT_MODEL,
 ]);
 
 export const PREVIEW_GEMINI_MODEL_AUTO = 'auto-gemini-3';
@@ -151,7 +151,7 @@ export function resolveModel(
       break;
     }
     case GEMINI_MODEL_ALIAS_FLASH: {
-      resolved = DEFAULT_GEMINI_FLASH_MODEL;
+      resolved = PREVIEW_GEMINI_FLASH_MODEL;
       break;
     }
     case GEMINI_MODEL_ALIAS_FLASH_LITE: {
@@ -263,10 +263,6 @@ export function getDisplayString(
       return 'Auto (Gemini 3)';
     case DEFAULT_GEMINI_MODEL_AUTO:
       return 'Auto (Gemini 2.5)';
-    case GEMMA_4_31B_IT_MODEL:
-      return GEMMA_4_31B_IT_MODEL;
-    case GEMMA_4_26B_A4B_IT_MODEL:
-      return GEMMA_4_26B_A4B_IT_MODEL;
     case GEMINI_MODEL_ALIAS_PRO:
       return PREVIEW_GEMINI_MODEL;
     case GEMINI_MODEL_ALIAS_FLASH:
@@ -346,29 +342,19 @@ export function isGemini3Model(
   }
 
   const resolved = resolveModel(model);
-  return (
-    /^gemini-3(\.|-|$)/.test(resolved) ||
-    resolved.includes('gemini-3.1-flash-lite-preview') ||
-    resolved.includes('gemini-3-flash-preview') ||
-    resolved.includes('gemini-3.1-pro-preview-customtools')
-  );
+  return /^gemini-3(\.|-|$)/.test(resolved);
 }
 
 /**
  * Checks if the model is a Gemini 2.x model.
  *
  * @param model The model name to check.
- * @returns True if the model is a Gemini 2.x model.
+ * @returns True if the model is a Gemini-2.x model.
  */
 export function isGemini2Model(model: string): boolean {
   // This is legacy behavior, will remove this when gemini 2 models are no
   // longer needed.
-  return (
-    /^gemini-2(\.|$)/.test(model) ||
-    model.includes('gemini-2.5-flash') ||
-    model.includes('gemini-2.5-pro') ||
-    model.includes('gemini-2.5-flash-lite')
-  );
+  return /^gemini-2(\.|$)/.test(model);
 }
 
 /**
@@ -458,13 +444,9 @@ export function isActiveModel(
   useGemini3_1: boolean = false,
   useGemini3_1FlashLite: boolean = false,
   useCustomToolModel: boolean = false,
-  experimentalGemma: boolean = false,
 ): boolean {
   if (!VALID_GEMINI_MODELS.has(model)) {
     return false;
-  }
-  if (model === GEMMA_4_31B_IT_MODEL || model === GEMMA_4_26B_A4B_IT_MODEL) {
-    return experimentalGemma;
   }
   if (model === PREVIEW_GEMINI_3_1_FLASH_LITE_MODEL) {
     return useGemini3_1FlashLite;

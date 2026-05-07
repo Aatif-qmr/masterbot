@@ -185,8 +185,21 @@ Hard rules I follow without exception:
 - Restart Freqtrade in production
 - Run stop_bot.sh
 
+### Google Workspace Automation (MAX UTILIZATION)
+- **MasterBot Vault:** Organized folder structure in Google Drive (`id: 11TJ77LppWiUVz5Cl2i3n40iOWFrAWgEZ`).
+- **Automated Reporter:** Python script at `automation/workspace_reporter.py`.
+    - Generates rich-text Google Docs with trade stats.
+    - Automatically emails report links to `aatifqmr@gmail.com`.
+- **Calendar Risk-Sync:** (Available) Maps economic events to high-volatility zones.
+
+### SQLite Database Analysis (NEW)
+- Direct integration with `user_data/tradesv3.sqlite`
+- Use natural language to query trade history, win rates, and drawdown
+- Autonomous performance reporting and anomaly detection in trades
+
 ### Always Safe To Do Without Asking
 - Read any log file
+- Use `cat` to read files and `for` loops for batch operations
 - Run health_check.py (read-only)
 - Check sentiment scores
 - Read strategy files
@@ -290,6 +303,8 @@ Format: [DATE] FIXED/NOTED: description
 [2026-05-03] FIXED: Consecutive losses circuit breaker was sticky; added 1-hour cooldown reset logic in risk_manager.py, updated all active strategies, candidate strategies, and the lab strategy generator (lab.py).
 [2026-05-03] FIXED: Balance tracker only queried one of five Freqtrade instances, causing reported balance to drop and trigger drawdown blocks; updated risk/balance_tracker.py to sum all 5 instance balances.
 [2026-05-03] FIXED: DailyTrendV1, SwingV1, and ScalpV1 were failing with AttributeErrors due to incorrect pandas_ta and DataProvider API usage; updated strategies to use manual crossing and correct merge_informative_pair/get_pair_dataframe methods. All instances restarted and verified RUNNING.
+[2026-05-04] VERIFIED: MeanReversionV1 and TrendFollowV1 confirmed healthy; they were non-impacted by the AttributeError bug due to single-timeframe architecture, but are fully updated with the v1.1 circuit breaker cooldown.
+[2026-05-08] FIXED: SQLite MCP server was disconnected due to incorrect package name '@modelcontextprotocol/server-sqlite' in .qnt/settings.json. Updated to 'mcp-server-sqlite' and verified connectivity.
 
 
 *(qnt appends here when it fixes issues)*

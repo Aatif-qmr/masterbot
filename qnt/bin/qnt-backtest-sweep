@@ -1,0 +1,5 @@
+#!/bin/bash
+# qnt-backtest-sweep
+# Runs a strategy against multiple market regimes
+
+/Users/aatifquamre/masterbot/qnt/bin/qnt-python /Users/aatifquamre/masterbot/qnt/src/backtest_sweep.py "$@"

@@ -1,20 +1,20 @@
-# Gemini CLI
+# QNT CLI
 
-[![Gemini CLI CI](https://github.com/google-gemini/gemini-cli/actions/workflows/ci.yml/badge.svg)](https://github.com/google-gemini/gemini-cli/actions/workflows/ci.yml)
-[![Gemini CLI E2E (Chained)](https://github.com/google-gemini/gemini-cli/actions/workflows/chained_e2e.yml/badge.svg)](https://github.com/google-gemini/gemini-cli/actions/workflows/chained_e2e.yml)
+[![QNT CLI CI](https://github.com/google-gemini/gemini-cli/actions/workflows/ci.yml/badge.svg)](https://github.com/google-gemini/gemini-cli/actions/workflows/ci.yml)
+[![QNT CLI E2E (Chained)](https://github.com/google-gemini/gemini-cli/actions/workflows/chained_e2e.yml/badge.svg)](https://github.com/google-gemini/gemini-cli/actions/workflows/chained_e2e.yml)
 [![Version](https://img.shields.io/npm/v/@google/gemini-cli)](https://www.npmjs.com/package/@google/gemini-cli)
 [![License](https://img.shields.io/github/license/google-gemini/gemini-cli)](https://github.com/google-gemini/gemini-cli/blob/main/LICENSE)
 [![View Code Wiki](https://assets.codewiki.google/readme-badge/static.svg)](https://codewiki.google/github.com/google-gemini/gemini-cli?utm_source=badge&utm_medium=github&utm_campaign=github.com/google-gemini/gemini-cli)
 
-![Gemini CLI Screenshot](/docs/assets/gemini-screenshot.png)
+![QNT CLI Screenshot](/docs/assets/gemini-screenshot.png)
 
-Gemini CLI is an open-source AI agent that brings the power of Gemini directly
+QNT CLI is an open-source AI agent that brings the power of Gemini directly
 into your terminal. It provides lightweight access to Gemini, giving you the
 most direct path from your prompt to our model.
 
-Learn all about Gemini CLI in our [documentation](https://geminicli.com/docs/).
+Learn all about QNT CLI in our [documentation](https://geminicli.com/docs/).
 
-## 🚀 Why Gemini CLI?
+## 🚀 Why QNT CLI?
 
 - **🎯 Free tier**: 60 requests/min and 1,000 requests/day with personal Google
   account.
@@ -30,7 +30,7 @@ Learn all about Gemini CLI in our [documentation](https://geminicli.com/docs/).
 ## 📦 Installation
 
 See
-[Gemini CLI installation, execution, and releases](https://www.geminicli.com/docs/get-started/installation)
+[QNT CLI installation, execution, and releases](https://www.geminicli.com/docs/get-started/installation)
 for recommended system specifications and a detailed installation guide.
 
 ### Quick Install
@@ -67,7 +67,7 @@ sudo port install gemini-cli
 conda create -y -n gemini_env -c conda-forge nodejs
 conda activate gemini_env
 
-# Install Gemini CLI globally via npm (inside the environment)
+# Install QNT CLI globally via npm (inside the environment)
 npm install -g @google/gemini-cli
 ```
 
@@ -131,8 +131,8 @@ npm install -g @google/gemini-cli@nightly
 
 ### GitHub Integration
 
-Integrate Gemini CLI directly into your GitHub workflows with
-[**Gemini CLI GitHub Action**](https://github.com/google-github-actions/run-gemini-cli):
+Integrate QNT CLI directly into your GitHub workflows with
+[**QNT CLI GitHub Action**](https://github.com/google-github-actions/run-gemini-cli):
 
 - **Pull Request Reviews**: Automated code review with contextual feedback and
   suggestions
@@ -161,7 +161,7 @@ for details)
 - **No API key management** - just sign in with your Google account
 - **Automatic updates** to latest models
 
-#### Start Gemini CLI, then choose _Sign in with Google_ and follow the browser authentication flow when prompted
+#### Start QNT CLI, then choose _Sign in with Google_ and follow the browser authentication flow when prompted
 
 ```bash
 gemini
@@ -294,7 +294,7 @@ gemini
 - [**Custom Commands**](https://www.geminicli.com/docs/cli/custom-commands) -
   Create your own reusable commands.
 - [**Context Files (GEMINI.md)**](https://www.geminicli.com/docs/cli/gemini-md) -
-  Provide persistent context to Gemini CLI.
+  Provide persistent context to QNT CLI.
 - [**Checkpointing**](https://www.geminicli.com/docs/cli/checkpointing) - Save
   and resume conversations.
 - [**Token Caching**](https://www.geminicli.com/docs/cli/token-caching) -
@@ -314,7 +314,7 @@ gemini
 ### Advanced Topics
 
 - [**Headless Mode (Scripting)**](https://www.geminicli.com/docs/cli/headless) -
-  Use Gemini CLI in automated workflows.
+  Use QNT CLI in automated workflows.
 - [**IDE Integration**](https://www.geminicli.com/docs/ide-integration) - VS
   Code companion.
 - [**Sandboxing & Security**](https://www.geminicli.com/docs/cli/sandbox) - Safe
@@ -340,7 +340,7 @@ gemini
 
 ### Using MCP Servers
 
-Configure MCP servers in `~/.gemini/settings.json` to extend Gemini CLI with
+Configure MCP servers in `~/.gemini/settings.json` to extend QNT CLI with
 custom tools:
 
 ```text
@@ -355,7 +355,7 @@ for setup instructions.
 
 ## 🤝 Contributing
 
-We welcome contributions! Gemini CLI is fully open source (Apache 2.0), and we
+We welcome contributions! QNT CLI is fully open source (Apache 2.0), and we
 encourage the community to:
 
 - Report bugs and suggest features.

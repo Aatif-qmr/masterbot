@@ -17,9 +17,32 @@ from memory_manager import load_memory, log_action
 from vault import add_trade_memory, add_entry
 from oracle_calendar import calculate_risk_level
 
-DB_PATH = os.path.join(BASE_DIR, 'user_data/tradesv3.dryrun.sqlite')
-if not os.path.exists(DB_PATH):
-    DB_PATH = os.path.join(BASE_DIR, 'user_data/tradesv3.sqlite')
+def get_db_path():
+    paths = [
+        os.path.join(BASE_DIR, 'user_data/tradesv3.dryrun.sqlite'),
+        os.path.join(BASE_DIR, 'user_data/tradesv3.sqlite'),
+        os.path.join(BASE_DIR, 'user_data/mean_reversion.sqlite'),
+        os.path.join(BASE_DIR, 'user_data/trend_follow.sqlite'),
+        os.path.join(BASE_DIR, 'user_data/scalp.sqlite'),
+        os.path.join(BASE_DIR, 'user_data/swing.sqlite'),
+        os.path.join(BASE_DIR, 'user_data/daily.sqlite'),
+    ]
+    for p in paths:
+        if os.path.exists(p):
+            # Check if trades table exists and has data
+            try:
+                conn = sqlite3.connect(p)
+                cursor = conn.cursor()
+                cursor.execute("SELECT count(*) FROM trades")
+                count = cursor.fetchone()[0]
+                conn.close()
+                if count > 0:
+                    return p
+            except:
+                continue
+    return paths[0] # Fallback
+
+DB_PATH = get_db_path()
 
 SENTIMENT_CSV = os.path.join(BASE_DIR, 'sentiment/scores/history.csv')
 
@@ -28,13 +51,33 @@ def generate_post_mortem(trade_id):
     print(f"Generating post-mortem for trade {trade_id}...")
     
     try:
-        conn = sqlite3.connect(DB_PATH)
-        query = f"SELECT * FROM trades WHERE trade_id={trade_id}"
-        trades = pd.read_sql_query(query, conn)
-        conn.close()
+        # Find which DB has this trade
+        db_to_use = DB_PATH
+        databases = [
+            os.path.join(BASE_DIR, 'user_data/tradesv3.dryrun.sqlite'),
+            os.path.join(BASE_DIR, 'user_data/tradesv3.sqlite'),
+            os.path.join(BASE_DIR, 'user_data/mean_reversion.sqlite'),
+            os.path.join(BASE_DIR, 'user_data/trend_follow.sqlite'),
+            os.path.join(BASE_DIR, 'user_data/scalp.sqlite'),
+            os.path.join(BASE_DIR, 'user_data/swing.sqlite'),
+            os.path.join(BASE_DIR, 'user_data/daily.sqlite'),
+        ]
         
-        if trades.empty: return f"Trade {trade_id} not found."
-        trade = trades.iloc[0]
+        trade = None
+        for db in databases:
+            if not os.path.exists(db): continue
+            try:
+                conn = sqlite3.connect(db)
+                query = f"SELECT * FROM trades WHERE trade_id={trade_id}"
+                trades_df = pd.read_sql_query(query, conn)
+                conn.close()
+                if not trades_df.empty:
+                    trade = trades_df.iloc[0]
+                    db_to_use = db
+                    break
+            except: continue
+            
+        if trade is None: return f"Trade {trade_id} not found."
         
         # 1. Get Market Context
         sentiment_at_open = "0.0"
@@ -55,8 +98,6 @@ def generate_post_mortem(trade_id):
             closest_close = hist.iloc[(hist['timestamp'] - close_dt).abs().argsort()[:1]]
             if not closest_close.empty: 
                 sentiment_at_close = f"{closest_close.iloc[0]['score']:.2f}"
-                # Get funding from metadata if stored or use closest hist
-                # For now we'll assume it's part of the sentiment logic
         except: pass
         
         # 2. Calendar Events
@@ -108,24 +149,42 @@ def generate_post_mortem(trade_id):
         return f"Error generating post-mortem: {e}"
 
 def generate_weekly_post_mortem():
-    """Analyze all losses from the past week."""
+    """Analyze all losses from the past week across all databases."""
     print("Generating weekly loss post-mortem summary...")
     
     try:
-        conn = sqlite3.connect(DB_PATH)
-        # Last 7 days, losses only
-        threshold = (datetime.now(timezone.utc) - pd.Timedelta(days=7)).strftime('%Y-%m-%d %H:%M:%S')
-        query = f"SELECT trade_id FROM trades WHERE is_open=0 AND profit_ratio < 0 AND close_date >= '{threshold}'"
-        losses = pd.read_sql_query(query, conn)
-        conn.close()
+        databases = [
+            os.path.join(BASE_DIR, 'user_data/tradesv3.dryrun.sqlite'),
+            os.path.join(BASE_DIR, 'user_data/tradesv3.sqlite'),
+            os.path.join(BASE_DIR, 'user_data/mean_reversion.sqlite'),
+            os.path.join(BASE_DIR, 'user_data/trend_follow.sqlite'),
+            os.path.join(BASE_DIR, 'user_data/scalp.sqlite'),
+            os.path.join(BASE_DIR, 'user_data/swing.sqlite'),
+            os.path.join(BASE_DIR, 'user_data/daily.sqlite'),
+        ]
         
-        if losses.empty:
+        all_losses = []
+        threshold = (datetime.now(timezone.utc) - pd.Timedelta(days=7)).strftime('%Y-%m-%d %H:%M:%S')
+
+        for db in databases:
+            if not os.path.exists(db): continue
+            try:
+                conn = sqlite3.connect(db)
+                query = f"SELECT trade_id FROM trades WHERE is_open=0 AND profit_ratio < 0 AND close_date >= '{threshold}'"
+                losses = pd.read_sql_query(query, conn)
+                conn.close()
+                if not losses.empty:
+                    all_losses.extend(losses['trade_id'].tolist())
+            except:
+                continue
+                
+        if not all_losses:
             return "No losing trades to analyze this week. Excellent performance."
-            
+                
         reports = []
-        for tid in losses['trade_id']:
+        for tid in all_losses:
             reports.append(generate_post_mortem(tid))
-            
+                
         summary_prompt = f"Summarize these weekly trading post-mortems into 3 key lessons:\n\n" + "\n".join(reports)
         
         qnt_bin = '/Users/aatifquamre/.local/share/fnm/node-versions/v25.9.0/installation/bin/qnt'

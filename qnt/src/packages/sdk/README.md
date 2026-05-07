@@ -1,6 +1,6 @@
 # @google/gemini-cli-sdk
 
-The Gemini CLI SDK provides a programmatic interface to interact with Gemini
+The QNT CLI SDK provides a programmatic interface to interact with Gemini
 models and tools.
 
 ## Installation

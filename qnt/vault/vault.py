@@ -5,6 +5,7 @@ import chromadb
 from chromadb.utils import embedding_functions
 from datetime import datetime, timezone
 from pathlib import Path
+import time
 
 # Machine-agnostic path setup
 HOME = Path.home()
@@ -72,6 +73,24 @@ def get_collection_stats():
         }
     except Exception as e:
         return {"error": str(e)}
+
+def add_trade_memory(trade_dict, analysis):
+    """Specific wrapper for trade post-mortems."""
+    lesson_id = f"postmortem_{trade_dict.get('trade_id', trade_dict.get('id', 'unk'))}_{int(time.time())}"
+    text = f"ANALYSIS OF TRADE {trade_dict.get('pair')}:\n{analysis}"
+    metadata = {
+        "pair": trade_dict.get('pair'),
+        "strategy": trade_dict.get('strategy'),
+        "type": "post_mortem",
+        "profit": trade_dict.get('profit_ratio')
+    }
+    return store_lesson(lesson_id, text, metadata)
+
+def add_entry(category, text, metadata):
+    """Generic entry addition for the Vault."""
+    entry_id = f"{category}_{int(time.time())}"
+    metadata['category'] = category
+    return store_lesson(entry_id, text, metadata)
 
 if __name__ == "__main__":
     # Quick test

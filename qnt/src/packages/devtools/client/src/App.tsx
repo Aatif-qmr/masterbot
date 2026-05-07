@@ -529,7 +529,7 @@ export default function App() {
               fontSize: '14px',
             }}
           >
-            Please start Gemini CLI to begin debugging
+            Please start QNT CLI to begin debugging
           </div>
         )}
       </div>

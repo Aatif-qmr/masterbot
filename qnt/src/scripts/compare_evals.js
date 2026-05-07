@@ -84,7 +84,7 @@ function main() {
         markdown += `### Failure ${i + 1}: ${r.name}\n\n`;
       }
 
-      markdown += '#### 1. Ask Gemini CLI to fix it (Recommended)\n';
+      markdown += '#### 1. Ask QNT CLI to fix it (Recommended)\n';
       markdown += 'Copy and paste this prompt to the agent:\n';
       markdown += '```text\n';
       markdown += `The eval "${r.name}" in ${r.file} is failing. Investigate and fix it using the behavioral-evals skill.\n`;

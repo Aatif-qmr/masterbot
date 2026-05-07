@@ -1,7 +1,7 @@
-# Gemini CLI Strict Development Rules
+# QNT CLI Strict Development Rules
 
 These rules apply strictly to all code modifications and additions within the
-Gemini CLI project.
+QNT CLI project.
 
 ## Testing Guidelines
 
@@ -46,7 +46,7 @@ Gemini CLI project.
   logic for custom string measurement or string truncation. Use Ink layout
   instead, leveraging `ResizeObserver` as needed.
 - **Keyboard Handling**: Keyboard handling MUST go through `useKeyPress.ts` from
-  the Gemini CLI package rather than the standard ink library. This library
+  the QNT CLI package rather than the standard ink library. This library
   supports reporting multiple keyboard events sequentially in the same React
   frame (critical for slow terminals). Handling this correctly often requires
   reducers to ensure multiple state updates are handled gracefully without
@@ -97,7 +97,7 @@ Gemini CLI project.
   `coreEvents`. If a service imports another just to notify it of a change, use
   an event instead.
 
-## General Gemini CLI Design Principles
+## General QNT CLI Design Principles
 
 - **Settings**: Use settings for user-configurable options rather than adding
   new command line arguments. Add new settings to
@@ -138,5 +138,5 @@ Gemini CLI project.
 
 - **Refactoring**: Actively clean up code duplication, technical debt, and
   boilerplate ("AI Slop") when working in the codebase.
-- **Prompts**: Be aware that changes can impact the prompts sent to Gemini CLI
+- **Prompts**: Be aware that changes can impact the prompts sent to QNT CLI
   and affect overall quality.

@@ -1,0 +1,5 @@
+#!/bin/bash
+# qnt-correlate
+# Analyzes trade correlations between strategies
+
+/Users/aatifquamre/masterbot/qnt/bin/qnt-python /Users/aatifquamre/masterbot/qnt/src/correlate.py "$@"

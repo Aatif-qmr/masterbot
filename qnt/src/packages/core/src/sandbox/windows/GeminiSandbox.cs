@@ -15,7 +15,7 @@ using System.Security.Principal;
 using System.Text;
 
 /**
- * A native C# helper for the Gemini CLI sandbox on Windows.
+ * A native C# helper for the QNT CLI sandbox on Windows.
  * This helper uses Restricted Tokens and Job Objects to isolate processes.
  * It also supports internal commands for safe file I/O within the sandbox.
  */

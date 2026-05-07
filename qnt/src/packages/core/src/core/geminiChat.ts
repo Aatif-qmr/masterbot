@@ -87,7 +87,7 @@ interface MidStreamRetryOptions {
 }
 
 const MID_STREAM_RETRY_OPTIONS: MidStreamRetryOptions = {
-  maxAttempts: 10, // Increased from 4 to better handle transient 429s
+  maxAttempts: 4, // 1 initial call + 3 retries mid-stream
   initialDelayMs: 1000,
   useExponentialBackoff: true,
 };

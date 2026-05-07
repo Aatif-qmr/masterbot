@@ -109,10 +109,10 @@ export const AppHeader = ({ version, showDetails = true }: AppHeaderProps) => {
 
   const renderMetadata = (isBelow = false) => (
     <Box marginLeft={isBelow ? 0 : 2} flexDirection="column">
-      {/* Line 1: Gemini CLI vVersion [Updating] */}
+      {/* Line 1: QNT CLI vVersion [Updating] */}
       <Box>
         <Text bold color={theme.text.primary}>
-          Gemini CLI
+          QNT CLI
         </Text>
         <Text color={theme.text.secondary}> v{version}</Text>
         {updateInfo?.isUpdating && (

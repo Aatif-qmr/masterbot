@@ -30,6 +30,11 @@ import { getCoreSystemPrompt } from './prompts.js';
 import { checkNextSpeaker } from '../utils/nextSpeakerChecker.js';
 import { reportError } from '../utils/errorReporting.js';
 import { GeminiChat } from './geminiChat.js';
+import {
+  retryWithBackoff,
+  type RetryAvailabilityContext,
+} from '../utils/retry.js';
+import type { ValidationRequiredError } from '../utils/googleQuotaErrors.js';
 import { getErrorMessage, isAbortError } from '../utils/errors.js';
 import { tokenLimit } from './tokenLimits.js';
 import type {
@@ -56,6 +61,7 @@ import {
 } from '../telemetry/types.js';
 import { uiTelemetryService } from '../telemetry/uiTelemetry.js';
 import type { IdeContext, File } from '../ide/types.js';
+import { handleFallback } from '../fallback/handler.js';
 import type { RoutingContext } from '../routing/routingStrategy.js';
 import { debugLogger } from '../utils/debugLogger.js';
 import type { ModelConfigKey } from '../services/modelConfigService.js';
@@ -63,8 +69,9 @@ import { ToolOutputMaskingService } from '../context/toolOutputMaskingService.js
 import { calculateRequestTokenCount } from '../utils/tokenCalculation.js';
 import {
   applyModelSelection,
+  createAvailabilityContextProvider,
 } from '../availability/policyHelpers.js';
-import { resolveModel } from '../config/models.js';
+import { getDisplayString, resolveModel } from '../config/models.js';
 import { partToString } from '../utils/partUtils.js';
 import { coreEvents, CoreEvent } from '../utils/events.js';
 
@@ -677,6 +684,9 @@ export class GeminiClient {
     // Re-initialize turn with fresh history
     turn = new Turn(this.getChat(), prompt_id);
 
+    const controller = new AbortController();
+    const linkedSignal = AbortSignal.any([signal, controller.signal]);
+
     const loopResult = await this.loopDetector.turnStarted(signal);
     if (loopResult.count > 1) {
       yield { type: GeminiEventType.LoopDetected };
@@ -737,7 +747,7 @@ export class GeminiClient {
     const resultStream = turn.run(
       modelConfigKey,
       request,
-      signal,
+      linkedSignal,
       displayContent,
     );
     let isError = false;
@@ -773,6 +783,7 @@ export class GeminiClient {
     }
 
     if (loopDetectedAbort) {
+      controller.abort();
       return turn;
     }
 
@@ -784,8 +795,10 @@ export class GeminiClient {
         boundedTurns,
         isInvalidStreamRetry,
         displayContent,
+        controller,
       );
     }
+
     if (isError) {
       return turn;
     }
@@ -1031,27 +1044,131 @@ export class GeminiClient {
     abortSignal: AbortSignal,
     role: LlmRole,
   ): Promise<GenerateContentResponse> {
-    const userMemory = this.config.getSystemInstructionMemory();
-    const systemInstruction = getCoreSystemPrompt(this.config, userMemory);
-
-    const { model: resolvedModel, generateContentConfig } =
+    const desiredModelConfig =
       this.config.modelConfigService.getResolvedConfig(modelConfigKey);
+    let {
+      model: currentAttemptModel,
+      generateContentConfig: currentAttemptGenerateContentConfig,
+    } = desiredModelConfig;
 
-    const requestConfig: GenerateContentConfig = {
-      ...generateContentConfig,
-      abortSignal,
-      systemInstruction,
-    };
+    try {
+      const userMemory = this.config.getSystemInstructionMemory();
+      const systemInstruction = getCoreSystemPrompt(this.config, userMemory);
+      const {
+        model,
+        config: newConfig,
+        maxAttempts: availabilityMaxAttempts,
+      } = applyModelSelection(this.config, modelConfigKey);
+      currentAttemptModel = model;
+      if (newConfig) {
+        currentAttemptGenerateContentConfig = newConfig;
+      }
 
-    return this.getContentGeneratorOrFail().generateContent(
-      {
-        model: resolvedModel,
-        config: requestConfig,
-        contents,
-      },
-      this.lastPromptId,
-      role,
-    );
+      // Define callback to refresh context based on currentAttemptModel which might be updated by fallback handler
+      const getAvailabilityContext: () => RetryAvailabilityContext | undefined =
+        createAvailabilityContextProvider(
+          this.config,
+          () => currentAttemptModel,
+        );
+
+      let initialActiveModel = this.config.getActiveModel();
+
+      const apiCall = () => {
+        // AvailabilityService
+        const active = this.config.getActiveModel();
+        if (active !== initialActiveModel) {
+          initialActiveModel = active;
+          // Re-resolve config if model changed
+          const { model: resolvedModel, generateContentConfig } =
+            this.config.modelConfigService.getResolvedConfig({
+              ...modelConfigKey,
+              model: active,
+            });
+          currentAttemptModel = resolvedModel;
+          currentAttemptGenerateContentConfig = generateContentConfig;
+        }
+
+        const requestConfig: GenerateContentConfig = {
+          ...currentAttemptGenerateContentConfig,
+          abortSignal,
+          systemInstruction,
+        };
+
+        return this.getContentGeneratorOrFail().generateContent(
+          {
+            model: currentAttemptModel,
+            config: requestConfig,
+            contents,
+          },
+          this.lastPromptId,
+          role,
+        );
+      };
+      const onPersistent429Callback = async (
+        authType?: string,
+        error?: unknown,
+      ) =>
+        // Pass the captured model to the centralized handler.
+        handleFallback(this.config, currentAttemptModel, authType, error);
+
+      const onValidationRequiredCallback = async (
+        validationError: ValidationRequiredError,
+      ) => {
+        // Suppress validation dialog for background calls (e.g. prompt-completion)
+        // to prevent the dialog from appearing on startup or during typing.
+        if (modelConfigKey.model === 'prompt-completion') {
+          throw validationError;
+        }
+
+        const handler = this.config.getValidationHandler();
+        if (typeof handler !== 'function') {
+          throw validationError;
+        }
+        return handler(
+          validationError.validationLink,
+          validationError.validationDescription,
+          validationError.learnMoreUrl,
+        );
+      };
+
+      const result = await retryWithBackoff(apiCall, {
+        onPersistent429: onPersistent429Callback,
+        onValidationRequired: onValidationRequiredCallback,
+        authType: this.config.getContentGeneratorConfig()?.authType,
+        maxAttempts: availabilityMaxAttempts,
+        retryFetchErrors: this.config.getRetryFetchErrors(),
+        getAvailabilityContext,
+        onRetry: (attempt, error, delayMs) => {
+          coreEvents.emitRetryAttempt({
+            attempt,
+            maxAttempts:
+              availabilityMaxAttempts ?? this.config.getMaxAttempts(),
+            delayMs,
+            error: error instanceof Error ? error.message : String(error),
+            model: getDisplayString(currentAttemptModel),
+          });
+        },
+      });
+
+      return result;
+    } catch (error: unknown) {
+      if (abortSignal.aborted) {
+        throw error;
+      }
+
+      await reportError(
+        error,
+        `Error generating content via API with model ${currentAttemptModel}.`,
+        {
+          requestContents: contents,
+          requestConfig: currentAttemptGenerateContentConfig,
+        },
+        'generateContent-api',
+      );
+      throw new Error(
+        `Failed to generate content with model ${currentAttemptModel}: ${getErrorMessage(error)}`,
+      );
+    }
   }
 
   async tryCompressChat(
@@ -1135,7 +1252,10 @@ export class GeminiClient {
     boundedTurns: number,
     isInvalidStreamRetry: boolean,
     displayContent?: PartListUnion,
+    controllerToAbort?: AbortController,
   ): AsyncGenerator<ServerGeminiStreamEvent, Turn> {
+    controllerToAbort?.abort();
+
     // Clear the detection flag so the recursive turn can proceed, but the count remains 1.
     this.loopDetector.clearDetection();
 

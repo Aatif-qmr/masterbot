@@ -1,6 +1,6 @@
-# Gemini CLI Core (`@google/gemini-cli-core`)
+# QNT CLI Core (`@google/gemini-cli-core`)
 
-Backend logic for Gemini CLI: API orchestration, prompt construction, tool
+Backend logic for QNT CLI: API orchestration, prompt construction, tool
 execution, and agent management.
 
 ## Architecture

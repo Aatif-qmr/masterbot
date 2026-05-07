@@ -5,13 +5,13 @@
 # Purpose:
 #   This script is used to replay a Gemini API request using a raw JSON payload.
 #   It is particularly useful for debugging the exact requests made by the
-#   Gemini CLI.
+#   QNT CLI.
 #
 # Prerequisites:
 #   1. Export your Gemini API key:
 #      export GEMINI_API_KEY="your_api_key_here"
 #
-#   2. Generate a request payload from the Gemini CLI:
+#   2. Generate a request payload from the QNT CLI:
 #      Inside the CLI, run the `/chat debug` command. This will save the most
 #      recent API request to a file named `gcli-request-<timestamp>.json`.
 #

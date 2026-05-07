@@ -1,7 +1,7 @@
 {
   "name": "@google/qnt-cli-a2a-server",
-  "version": "0.41.0-nightly.20260423.gaa05b4583",
-  "description": "Gemini CLI A2A Server",
+  "version": "1.0.0",
+  "description": "QNT CLI A2A Server",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/google-gemini/gemini-cli.git",

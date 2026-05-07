@@ -1,0 +1,5 @@
+#!/bin/bash
+# qnt-calendar-gate [status|pause|resume|auto]
+# Unified macro risk gate for MasterBot
+
+/Users/aatifquamre/masterbot/qnt/bin/qnt-python /Users/aatifquamre/masterbot/qnt/src/calendar_gate.py "$@"

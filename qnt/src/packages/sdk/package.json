@@ -1,7 +1,7 @@
 {
   "name": "@google/qnt-cli-sdk",
-  "version": "0.41.0-nightly.20260423.gaa05b4583",
-  "description": "Gemini CLI SDK",
+  "version": "1.0.0",
+  "description": "QNT CLI SDK",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",

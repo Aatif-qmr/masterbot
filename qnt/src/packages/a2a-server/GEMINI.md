@@ -1,6 +1,6 @@
-# Gemini CLI A2A Server (`@google/gemini-cli-a2a-server`)
+# QNT CLI A2A Server (`@google/gemini-cli-a2a-server`)
 
-Experimental Agent-to-Agent (A2A) server that exposes Gemini CLI capabilities
+Experimental Agent-to-Agent (A2A) server that exposes QNT CLI capabilities
 over HTTP for inter-agent communication.
 
 ## Architecture

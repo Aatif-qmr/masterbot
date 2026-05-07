@@ -1,0 +1,5 @@
+#!/bin/bash
+# qnt-hyperopt-sync
+# Synchronizes hyperopt results with strategy files
+
+/Users/aatifquamre/masterbot/qnt/bin/qnt-python /Users/aatifquamre/masterbot/qnt/src/hyperopt_sync.py "$@"

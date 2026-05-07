@@ -159,15 +159,28 @@ def killswitch():
     return "Killswitch executed on all instances."
 
 def stream_logs(lines=50, follow=False):
-    # Just show mean_reversion as primary for now
-    log_path = "/Users/aatifquamre/masterbot/logs/mean_reversion.stdout.log"
-    # ... (rest of stream_logs unchanged)
-    stdout, _, _ = run_on_m1(f"tail -n {lines} {log_path}")
-    if stdout:
-        for line in stdout.splitlines():
-            if "ERROR" in line: console.print(line, style="bold red")
-            elif "WARNING" in line: console.print(line, style="yellow")
-            else: console.print(line)
+    """Stream logs from all 5 bot instances."""
+    log_files = [
+        "mean_reversion.stderr.log",
+        "trend_follow.stderr.log",
+        "scalp.stderr.log",
+        "swing.stderr.log",
+        "daily.stderr.log"
+    ]
+    
+    for log_file in log_files:
+        log_path = f"/Users/aatifquamre/masterbot/logs/{log_file}"
+        bot_name = log_file.split('.')[0].replace('_', ' ').title()
+        
+        console.print(f"\n[bold blue]--- {bot_name} Logs ---[/bold blue]")
+        stdout, _, _ = run_on_m1(f"tail -n {lines // 5} {log_path}")
+        if stdout:
+            for line in stdout.splitlines():
+                if "ERROR" in line: console.print(line, style="bold red")
+                elif "WARNING" in line: console.print(line, style="yellow")
+                else: console.print(line)
+        else:
+            console.print(f"No logs found for {bot_name}", style="dim")
 
 if __name__ == "__main__":
     if len(sys.argv) > 1:

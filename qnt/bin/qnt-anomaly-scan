@@ -1,0 +1,5 @@
+#!/bin/bash
+# qnt-anomaly-scan
+# Deep technical market audit with AI explanation
+
+/Users/aatifquamre/masterbot/qnt/bin/qnt-python /Users/aatifquamre/masterbot/qnt/src/anomaly_scan.py "$@"

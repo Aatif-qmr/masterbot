@@ -1,4 +1,4 @@
-# `Gemini CLI SDK`
+# `QNT CLI SDK`
 
 > **Implementation Status:** Core agent loop, tool execution, and session
 > context are implemented. Advanced features like hooks, skills, subagents, and
@@ -111,7 +111,7 @@ const myHook = hook(
     // void return is a no-op
     if (!filePath.endsWith('.ts')) return;
 
-    // ctx.fs gives us a filesystem interface that obeys Gemini CLI permissions/sandbox
+    // ctx.fs gives us a filesystem interface that obeys QNT CLI permissions/sandbox
     const reformatted = await reformat(await ctx.fs.read(filePath));
     await ctx.fs.write(filePath, reformatted);
 
@@ -207,7 +207,7 @@ const agent = new GeminiCliAgent({
 
 > **Status:** Not Implemented.
 
-Potentially the most important feature of the Gemini CLI SDK is support for
+Potentially the most important feature of the QNT CLI SDK is support for
 extensions, which modularly encapsulate all of the primitives listed above:
 
 ```ts
@@ -305,7 +305,7 @@ export interface AgentShellOptions {
 
 export interface AgentShellProcess {
   // figure out how to have a streaming shell process here that supports stdin too
-  // investigate how Gemini CLI already does this
+  // investigate how QNT CLI already does this
 }
 ```
 

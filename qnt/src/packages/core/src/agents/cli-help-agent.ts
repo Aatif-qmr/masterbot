@@ -9,6 +9,8 @@ import { z } from 'zod';
 import { GetInternalDocsTool } from '../tools/get-internal-docs.js';
 import type { AgentLoopContext } from '../config/agent-loop-context.js';
 
+import { GEMINI_MODEL_ALIAS_FLASH } from '../config/models.js';
+
 const CliHelpReportSchema = z.object({
   answer: z
     .string()
@@ -51,7 +53,7 @@ export const CliHelpAgent = (
   processOutput: (output) => JSON.stringify(output, null, 2),
 
   modelConfig: {
-    model: 'inherit',
+    model: GEMINI_MODEL_ALIAS_FLASH,
     generateContentConfig: {
       temperature: 0.1,
       topP: 0.95,

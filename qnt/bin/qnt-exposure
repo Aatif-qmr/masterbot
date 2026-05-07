@@ -1,13 +1,5 @@
 #!/bin/bash
-set -a
-source /Users/aatifquamre/masterbot/.env
-set +a
-/Users/aatifquamre/masterbot/qnt/bin/qnt-python -c "
-import sys
-sys.path.insert(0, '/Users/aatifquamre/masterbot/qnt/shield')
-sys.path.insert(0, '/Users/aatifquamre/masterbot/qnt/memory')
-sys.path.insert(0, '/Users/aatifquamre/masterbot/qnt/bridge')
-sys.path.insert(0, '/Users/aatifquamre/masterbot/qnt/oracle')
-from shield import get_exposure
-print(get_exposure())
-"
+# qnt-exposure
+# Unified risk and exposure aggregator
+
+/Users/aatifquamre/masterbot/qnt/bin/qnt-python /Users/aatifquamre/masterbot/qnt/src/exposure_aggregator.py "$@"

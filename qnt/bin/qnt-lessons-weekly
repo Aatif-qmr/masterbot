@@ -1,0 +1,3 @@
+#!/bin/bash
+# Alias for qnt-post-mortem weekly
+/Users/aatifquamre/masterbot/qnt/bin/qnt-post-mortem weekly

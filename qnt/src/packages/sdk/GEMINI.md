@@ -1,6 +1,6 @@
-# Gemini CLI SDK (`@google/gemini-cli-sdk`)
+# QNT CLI SDK (`@google/gemini-cli-sdk`)
 
-Programmatic SDK for embedding Gemini CLI agent capabilities into other
+Programmatic SDK for embedding QNT CLI agent capabilities into other
 applications.
 
 ## Architecture

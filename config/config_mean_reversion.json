@@ -24,7 +24,7 @@
         }
     ],
     "telegram": {
-        "enabled": false,
+        "enabled": true,
         "token": "8785066352:AAHJr2HL7uFk5cXN-okGRE1Yend_4UXbXB8",
         "chat_id": "1025751557",
         "allow_commands": true,
@@ -63,7 +63,7 @@
         "use_order_book": true,
         "order_book_top": 1,
         "check_depth_of_market": {
-            "enabled": false,
+            "enabled": true,
             "bids_to_ask_delta": 1
         }
     },

@@ -1,0 +1,3 @@
+#!/bin/bash
+# Alias for qnt-post-mortem <id>
+/Users/aatifquamre/masterbot/qnt/bin/qnt-post-mortem "$@"

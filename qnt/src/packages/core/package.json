@@ -1,7 +1,7 @@
 {
   "name": "@google/qnt-cli-core",
-  "version": "0.41.0-nightly.20260423.gaa05b4583",
-  "description": "Gemini CLI Core",
+  "version": "1.0.0",
+  "description": "QNT CLI Core",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",

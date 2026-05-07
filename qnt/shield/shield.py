@@ -386,8 +386,15 @@ def get_balance():
     """Live balance snapshot across all instances."""
     try:
         all_balance = call_freqtrade_api_all("balance")
-        total = sum([b.get('total', 0) for b in all_balance])
-        free = sum([b.get('free', 0) for b in all_balance])
+        total = 0.0
+        free = 0.0
+        
+        for b in all_balance:
+            total += b.get('total', 0)
+            # Find USDT in currencies list for 'free' amount
+            for curr in b.get('currencies', []):
+                if curr.get('currency') == 'USDT':
+                    free += curr.get('free', 0)
         
         if total == 0: total = 50000.0
         

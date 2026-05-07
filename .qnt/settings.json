@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "sqlite": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-server-sqlite",
+        "--db",
+        "/Users/aatifquamre/masterbot/user_data/tradesv3.sqlite"
+      ]
+    }
+  }
+}
