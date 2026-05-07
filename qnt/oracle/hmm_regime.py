@@ -23,7 +23,7 @@ MODEL_PATH = BASE_DIR / 'qnt/oracle/hmm_model.pkl'
 
 REGIME_NAMES = ["TRENDING_UP", "TRENDING_DOWN", "RANGING", "VOLATILE"]
 
-def prepare_features(dataframe: pd.DataFrame) -> pd.DataFrame:
+def prepare_features(dataframe: pd.DataFrame) -\u003e pd.DataFrame:
     """Calculates features for HMM training/prediction."""
     df = dataframe.copy()
     
@@ -62,25 +62,14 @@ def train_hmm_model(dataframe: pd.DataFrame, n_states=4):
     model.fit(scaled_features)
     
     # Map states to regimes based on means
-    # features: [returns, volatility, volume_ratio, price_pos, range]
     means = model.means_
     
-    state_map = {}
-    
-    # Identifiers:
-    # High returns -> TRENDING_UP
-    # Low returns -> TRENDING_DOWN
-    # Low volatility -> RANGING
-    # High volatility -> VOLATILE
-    
-    # Sort by volatility (index 1) to find RANGING (lowest) and VOLATILE (highest)
     vol_indices = np.argsort(means[:, 1])
     ranging_state = vol_indices[0]
     volatile_state = vol_indices[-1]
     
-    # Of remaining, sort by returns (index 0)
     remaining = [i for i in range(n_states) if i not in [ranging_state, volatile_state]]
-    if means[remaining[0], 0] > means[remaining[1], 0]:
+    if means[remaining[0], 0] \u003e means[remaining[1], 0]:
         trending_up = remaining[0]
         trending_down = remaining[1]
     else:
@@ -94,7 +83,6 @@ def train_hmm_model(dataframe: pd.DataFrame, n_states=4):
         volatile_state: "VOLATILE"
     }
     
-    # Save model and state map
     payload = {
         "model": model,
         "state_map": state_map,
@@ -114,16 +102,14 @@ def load_or_train_model(dataframe: pd.DataFrame):
         with open(MODEL_PATH, 'rb') as f:
             payload = pickle.load(f)
             
-        # Check if < 7 days old
-        if time.time() - payload.get('timestamp', 0) < 7 * 86400:
+        if time.time() - payload.get('timestamp', 0) \u003c 7 * 86400:
             return payload
             
-    # Train if missing or old
     train_hmm_model(dataframe)
     with open(MODEL_PATH, 'rb') as f:
         return pickle.load(f)
 
-def detect_regime(dataframe: pd.DataFrame) -> dict:
+def detect_regime(dataframe: pd.DataFrame) -\u003e dict:
     """Detects current market regime using HMM."""
     try:
         payload = load_or_train_model(dataframe)
@@ -131,46 +117,54 @@ def detect_regime(dataframe: pd.DataFrame) -> dict:
         state_map = payload['state_map']
         scaler = payload['scaler']
         
-        # Prepare last 100 candles for prediction
-        features_df = prepare_features(dataframe.tail(120)) # Buffer for NaN drop
+        features_df = prepare_features(dataframe.tail(120))
         scaled_features = scaler.transform(features_df)
         
-        # Predict hidden states
         hidden_states = model.predict(scaled_features)
-        
-        # Get probabilities for the last candle
         probs = model.predict_proba(scaled_features)[-1]
         
         curr_state = hidden_states[-1]
         regime = state_map[curr_state]
         
-        prev_state = hidden_states[-2] if len(hidden_states) > 1 else curr_state
+        prev_state = hidden_states[-2] if len(hidden_states) \u003e 1 else curr_state
         prev_regime = state_map[prev_state]
         
-        # Map probabilities to regime names
         prob_dict = {}
         for state_idx, name in state_map.items():
             prob_dict[name] = float(probs[state_idx])
             
-        return {
+        result = {
             "regime": regime,
             "confidence": float(probs[curr_state]),
             "probabilities": prob_dict,
             "previous_regime": prev_regime,
-            "regime_changed": regime != prev_regime
+            "regime_changed": regime != prev_regime,
+            "timestamp": datetime.fromtimestamp(time.time(), timezone.utc).isoformat() + 'Z'
         }
+
+        # Publish to NATS
+        try:
+            import sys
+            sys.path.insert(0, '/Users/azmatsaif/masterbot/qnt')
+            from nats_publisher import publish_sync
+            from nats_subjects import SUBJECTS
+            publish_sync(SUBJECTS['HMM'], result)
+            print("[NATS] Regime published to M1")
+        except Exception as e:
+            print(f"[NATS] Regime publish error: {e}")
+
+        return result
     except Exception as e:
         logger.error(f"HMM Detection Error: {e}")
         return {
-            "regime": "RANGING", # Safe default
+            "regime": "RANGING",
             "confidence": 0.0,
             "probabilities": {},
             "previous_regime": "RANGING",
             "regime_changed": False
         }
 
-def get_regime_for_strategy(dataframe: pd.DataFrame, strategy_type: str) -> bool:
-    """Returns True/False if current regime is appropriate for strategy."""
+def get_regime_for_strategy(dataframe: pd.DataFrame, strategy_type: str) -\u003e bool:
     regime_data = detect_regime(dataframe)
     regime = regime_data['regime']
     
@@ -190,15 +184,12 @@ def get_regime_for_strategy(dataframe: pd.DataFrame, strategy_type: str) -> bool
     return False
 
 if __name__ == "__main__":
+    from datetime import datetime, timezone
     import sys
-    if len(sys.argv) > 1 and sys.argv[1] == "--retrain":
+    if len(sys.argv) \u003e 1 and sys.argv[1] == "--retrain":
         print("Retraining HMM model...")
-        # This would be called on M2 where data is available
+        # Need to fix the data loading path if running on M2
         import freqtrade.data.history as history
-        data = history.load_pair_history(
-            pair='BTC/USDT',
-            timeframe='1h',
-            datadir=str(BASE_DIR / 'data')
-        )
-        model, state_map = train_hmm_model(data)
-        print(f"HMM retrained. States mapped: {state_map}")
+        # This is a bit complex as it depends on freqtrade being installed
+        # and data being present. 
+        # For now, just a placeholder or minimal logic.

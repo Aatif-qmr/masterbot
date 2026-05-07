@@ -85,5 +85,16 @@ def main():
     
     print(f"Macro state updated: DXY {dxy_change:+.2f}%, Funding {funding_rate:.6f}")
 
+    # Publish to NATS
+    try:
+        import sys
+        sys.path.insert(0, str(BASE_DIR / 'qnt'))
+        from nats_publisher import publish_sync
+        from nats_subjects import SUBJECTS
+        publish_sync(SUBJECTS['MACRO'], macro_state)
+        print("[NATS] Macro published to M1")
+    except Exception as e:
+        print(f"[NATS] Macro publish error: {e}")
+
 if __name__ == "__main__":
     main()

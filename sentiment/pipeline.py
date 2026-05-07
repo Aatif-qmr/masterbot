@@ -3,22 +3,52 @@ import json
 import time
 import requests
 from datetime import datetime, timezone
+import feedparser
+import warnings
+warnings.filterwarnings('ignore') # ignore transformer warnings
 
 # --- CONFIGURATION ---
 BASE_DIR = "/Users/azmatsaif/masterbot"
 OUTPUT_PATH = os.path.join(BASE_DIR, "sentiment/scores/current_score.json")
 HISTORY_PATH = os.path.join(BASE_DIR, "sentiment/scores/history.csv")
 
-# Weights as per documentation
+# Updated Weights adding News & FinBERT NLP
 WEIGHTS = {
-    "reddit": 0.36,
-    "coingecko": 0.27,
+    "reddit": 0.26,
+    "news": 0.15,
+    "coingecko": 0.22,
     "feargreed": 0.22,
     "funding": 0.15
 }
 
+finbert_nlp = None
+
+def load_finbert():
+    global finbert_nlp
+    if finbert_nlp is None:
+        try:
+            from transformers import pipeline
+            finbert_nlp = pipeline("sentiment-analysis", model="ProsusAI/finbert")
+        except Exception as e:
+            print(f"Error loading FinBERT: {e}")
+
+def score_with_finbert(titles):
+    if not titles: return 0.0
+    load_finbert()
+    if not finbert_nlp: return 0.0
+    try:
+        results = finbert_nlp(titles)
+        score = 0.0
+        for r in results:
+            if r['label'] == 'positive': score += 1.0
+            elif r['label'] == 'negative': score -= 1.0
+        return score / len(titles)
+    except Exception as e:
+        print(f"Error scoring with FinBERT: {e}")
+        return 0.0
+
 def get_fear_greed():
-    """Fetch Fear & Greed Index (0-100)"""
+    """Fetch Fear \u0026 Greed Index (0-100)"""
     try:
         url = "https://api.alternative.me/fng/"
         res = requests.get(url, timeout=10)
@@ -27,7 +57,7 @@ def get_fear_greed():
         # Normalize to -1 to 1
         return (val - 50) / 50.0
     except Exception as e:
-        print(f"Error fetching Fear & Greed: {e}")
+        print(f"Error fetching Fear \u0026 Greed: {e}")
         return 0.0
 
 def get_binance_funding():
@@ -40,7 +70,7 @@ def get_binance_funding():
         rates = [float(item['lastFundingRate']) for item in data[:20]]
         avg_rate = sum(rates) / len(rates)
         # Funding is usually small (e.g. 0.0001). 
-        # Normalize: 0.0001 (neutral) -> 0. 0.0003 -> 1. -0.0001 -> -1.
+        # Normalize: 0.0001 (neutral) -\u003e 0. 0.0003 -\u003e 1. -0.0001 -\u003e -1.
         normalized = (avg_rate - 0.0001) / 0.0002
         return max(-1.0, min(1.0, normalized))
     except Exception as e:
@@ -50,39 +80,39 @@ def get_binance_funding():
 def get_coingecko_sentiment():
     """Heuristic from Coingecko Trending"""
     try:
-        # We'll look at the number of 'positive' vs 'negative' coins in top trending if possible,
-        # but the trending API is limited. We'll use a simpler proxy: 24h volume change of BTC/ETH.
-        url = "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum&vs_currencies=usd&include_24hr_change=true"
+        url = "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum\u0026vs_currencies=usd\u0026include_24hr_change=true"
         res = requests.get(url, timeout=10)
         data = res.json()
         btc_change = data['bitcoin']['usd_24h_change']
         eth_change = data['ethereum']['usd_24h_change']
         avg_change = (btc_change + eth_change) / 2.0
-        # Normalize: 5% change -> 1.0, -5% -> -1.0
+        # Normalize: 5% change -\u003e 1.0, -5% -\u003e -1.0
         return max(-1.0, min(1.0, avg_change / 5.0))
     except Exception as e:
         print(f"Error fetching Coingecko: {e}")
         return 0.0
 
 def get_reddit_sentiment():
-    """Simple sentiment from r/CryptoCurrency hot titles"""
+    """FinBERT sentiment from r/CryptoCurrency hot titles"""
     try:
         url = "https://www.reddit.com/r/CryptoCurrency/hot.json"
         headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'}
         res = requests.get(url, headers=headers, timeout=10)
         data = res.json()
-        titles = [post['data']['title'].lower() for post in data['data']['children']]
-        
-        bullish_words = ['bull', 'moon', 'up', 'pump', 'buy', 'long', 'ath', 'profit', 'gain']
-        bearish_words = ['bear', 'crash', 'down', 'dump', 'sell', 'short', 'dip', 'loss', 'rekt']
-        
-        bull_count = sum(1 for t in titles if any(w in t for w in bullish_words))
-        bear_count = sum(1 for t in titles if any(w in t for w in bearish_words))
-        
-        if bull_count + bear_count == 0: return 0.0
-        return (bull_count - bear_count) / float(bull_count + bear_count)
+        titles = [post['data']['title'] for post in data['data']['children']][:15]
+        return score_with_finbert(titles)
     except Exception as e:
         print(f"Error fetching Reddit: {e}")
+        return 0.0
+
+def get_news_sentiment():
+    """FinBERT sentiment from Cointelegraph RSS"""
+    try:
+        feed = feedparser.parse("https://cointelegraph.com/rss")
+        titles = [entry.title for entry in feed.entries[:15]]
+        return score_with_finbert(titles)
+    except Exception as e:
+        print(f"Error fetching News RSS: {e}")
         return 0.0
 
 def run_pipeline():
@@ -90,12 +120,15 @@ def run_pipeline():
     
     scores = {
         "reddit": get_reddit_sentiment(),
+        "news": get_news_sentiment(),
         "coingecko": get_coingecko_sentiment(),
         "feargreed": get_fear_greed(),
         "funding": get_binance_funding()
     }
     
-    final_score = sum(scores[s] * WEIGHTS[s] for s in scores)
+    # Ensure total weights approximate 1.0 based on available data
+    total_active_weight = sum(WEIGHTS[s] for s in scores)
+    final_score = sum(scores[s] * (WEIGHTS[s] / total_active_weight) for s in scores) if total_active_weight > 0 else 0.0
     
     result = {
         "score": round(final_score, 4),
@@ -114,10 +147,29 @@ def run_pipeline():
     # Append to history
     with open(HISTORY_PATH, 'a') as f:
         if os.path.getsize(HISTORY_PATH) == 0:
-            f.write("timestamp,score,reddit,coingecko,feargreed,funding\n")
-        f.write(f"{result['timestamp']},{result['score']},{scores['reddit']},{scores['coingecko']},{scores['feargreed']},{scores['funding']}\n")
+            f.write("timestamp,score,reddit,news,coingecko,feargreed,funding\n")
+        f.write(f"{result['timestamp']},{result['score']},{scores['reddit']},{scores.get('news', 0)},{scores['coingecko']},{scores['feargreed']},{scores['funding']}\n")
         
     print(f"Pipeline complete. Final Score: {result['score']}")
+
+    # Publish to NATS for real-time M1 delivery
+    try:
+        import sys
+        sys.path.insert(0, '/Users/azmatsaif/masterbot/qnt')
+        from nats_publisher import publish_sync
+        from nats_subjects import SUBJECTS
+
+        published = publish_sync(
+            SUBJECTS['SENTIMENT'],
+            result  # the full result dict
+        )
+        if published:
+            print("[NATS] Sentiment published to M1")
+        else:
+            print("[NATS] Publish failed, SCP fallback active")
+    except Exception as e:
+        print(f"[NATS] Publish error: {e}")
+        print("[NATS] SCP fallback will handle sync")
 
 if __name__ == "__main__":
     run_pipeline()
