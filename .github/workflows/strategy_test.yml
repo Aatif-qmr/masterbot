@@ -1,0 +1,101 @@
+name: Strategy Backtest Validation
+
+on:
+  push:
+    paths:
+      - 'strategies/active/*.py'
+      - 'strategies/candidates/*.py'
+  pull_request:
+    paths:
+      - 'strategies/active/*.py'
+
+jobs:
+  backtest:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      
+      - name: Install dependencies
+        run: |
+          pip install freqtrade pandas numpy
+          pip install pandas-ta xgboost
+      
+      - name: Find changed strategies
+        id: changed
+        run: |
+          CHANGED=$(git diff --name-only HEAD~1 HEAD \
+            | grep 'strategies/active/.*\.py' \
+            | head -3)
+          echo "strategies=$CHANGED" >> $GITHUB_OUTPUT
+          echo "Changed strategies: $CHANGED"
+      
+      - name: Download minimal test data
+        run: |
+          freqtrade download-data \
+            --pairs BTC/USDT \
+            --timeframes 1h \
+            --days 30 \
+            --datadir /tmp/testdata \
+            --exchange binance \
+            2>/dev/null || true
+      
+      - name: Run backtest validation
+        run: |
+          python3 << 'PYEOF'
+          import subprocess, json, sys
+          
+          strategies = """${{ steps.changed.outputs.strategies }}""".strip()
+          if not strategies:
+              print("No strategy files changed")
+              sys.exit(0)
+          
+          failed = []
+          for strat_path in strategies.split('\n'):
+              if not strat_path:
+                  continue
+              strat_name = strat_path.split('/')[-1].replace('.py','')
+              print(f"Testing: {strat_name}")
+              
+              # Run minimal backtest
+              result = subprocess.run([
+                  'freqtrade', 'backtesting',
+                  '--strategy', strat_name,
+                  '--strategy-path', 'strategies/active/',
+                  '--timerange', '20260101-20260430',
+                  '--timeframe', '1h',
+                  '--datadir', '/tmp/testdata',
+                  '--export', 'none',
+              ], capture_output=True, text=True,
+                 timeout=120)
+              
+              if result.returncode != 0:
+                  print(f"FAIL: {strat_name} backtest error")
+                  print(result.stderr[-500:])
+                  failed.append(strat_name)
+              else:
+                  print(f"PASS: {strat_name} loaded OK")
+          
+          if failed:
+              print(f"\nFailed strategies: {failed}")
+              sys.exit(1)
+          print("\nAll strategy tests passed")
+          PYEOF
+      
+      - name: Comment on PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v6
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '✅ Strategy backtest validation passed'
+            })

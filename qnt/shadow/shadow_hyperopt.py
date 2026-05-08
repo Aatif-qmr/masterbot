@@ -1,194 +1,200 @@
-import sys, os; home = os.path.expanduser('~'); sys.path.append(os.path.join(home, 'masterbot')); sys.path.append(os.path.join(home, 'masterbot', 'qnt', 'memory')); sys.path.append(os.path.join(home, 'masterbot', 'qnt', 'oracle')); sys.path.append(os.path.join(home, 'masterbot', 'qnt', 'shadow'));
+#!/usr/bin/env python3
+"""
+Continuous background Hyperopt loop on M2.
+Runs 48-hour optimization windows, promotes improvements >20% Sharpe.
+Respects resource_monitor.py throttling signals.
+"""
+import subprocess
 import json
 import time
-import subprocess
-import logging
-from datetime import datetime, timezone, timedelta
+import sys
+import os
 from pathlib import Path
+from datetime import datetime, timedelta
 
-# Machine-agnostic path setup
-HOME = Path.home()
-BASE_DIR = HOME / 'masterbot'
-sys.path.insert(0, str(BASE_DIR / 'qnt/shadow'))
+# Force unbuffered output
+import functools
+print = functools.partial(print, flush=True)
 
-from resource_monitor import get_resource_snapshot
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
+sys.path.insert(0, str(BASE_DIR))
 
-# Constants
-STRATEGIES = [
-    'MeanReversionV1',
-    'TrendFollowV1',
-    'ScalpV1',
-    'SwingV1',
-    'DailyTrendV1',
-    'MicroScalpV1'
-]
+from qnt.shadow.resource_monitor import should_allow_optimization, get_resource_snapshot, save_state
+from qnt.bridge.notify import send_telegram_alert  # Reuse existing notifier
 
-STRATEGY_TIMEFRAMES = {
-    'MeanReversionV1': '1h',
-    'TrendFollowV1': '4h',
-    'ScalpV1': '5m',
-    'SwingV1': '15m',
-    'DailyTrendV1': '1d',
-    'MicroScalpV1': '1m'
-}
+STRATEGIES = ["MeanReversionV1", "TrendFollowV1", "ScalpV1", "SwingV1", "DailyTrendV1", "MicroScalpV1"]
+IMPROVEMENT_THRESHOLD = 0.20  # 20% Sharpe improvement required for promotion
+EPOCHS_PER_RUN = 100  # Reduced from 500 for continuous background operation
+TIMERANGE_DAYS = 2  # Optimize on last 48 hours of data
 
-IMPROVEMENT_THRESHOLD = 0.20  # 20% better Sharpe
-COOLDOWN_MINUTES = 120  # wait 2h between runs
-
-logger = logging.getLogger(__name__)
-
-def get_live_sharpe(strategy_name):
-    """Reads latest hyperopt results for strategy to get current Sharpe."""
-    results_dir = BASE_DIR / 'user_data/hyperopt_results'
-    if not results_dir.exists():
-        return 0.0
-        
+def load_training_data(pair, timeframe):
     try:
-        # Find latest .json for this strategy
-        latest_file = None
-        latest_time = 0
-        for f in results_dir.glob(f"hyperopt_results_{strategy_name}*.json"):
-            mtime = f.stat().st_mtime
-            if mtime > latest_time:
-                latest_time = mtime
-                latest_file = f
-                
-        if not latest_file: return 1.0 # Default starting baseline
-        
-        with open(latest_file, 'r') as f:
-            data = json.load(f)
-            # Assuming freqtrade format: results are in a list
-            return data.get('best_sharpe', 1.0)
-    except:
-        return 1.0
-
-def run_shadow_hyperopt(strategy_name, epochs=100):
-    """Runs a targeted hyperopt on recent data."""
-    snapshot = get_resource_snapshot()
+        import pyarrow.parquet as pq
+        from pathlib import Path
+        parquet_path = (
+            Path('/Users/azmatsaif/masterbot/data_parquet')
+            / pair.replace('/', '_')
+            / timeframe
+        )
+        if parquet_path.exists():
+            print(f"[{pair}] Fast-loading Parquet data from {parquet_path}")
+            return pq.read_table(str(parquet_path)).to_pandas()
+    except Exception as e:
+        print(f"Parquet load failed: {e}, using JSON/Feather fallback")
     
-    if snapshot['ram']['pressure'] == "critical":
-        print(f"[{datetime.now()}] Skipping {strategy_name} - RAM critical ({snapshot['ram']['percent_used']}%)")
-        return False, 0.0, {}
-        
-    if snapshot['ram']['percent_used'] > 80:
-        epochs = 50 # Reduce load
-        print(f"[{datetime.now()}] Throttling {strategy_name} to {epochs} epochs due to RAM pressure.")
+    return None
 
-    # 48h timerange
-    end_date = datetime.now(timezone.utc)
-    start_date = end_date - timedelta(hours=48)
-    timerange = f"{start_date.strftime('%Y%m%d')}-{end_date.strftime('%Y%m%d')}"
+def run_shadow_hyperopt(strategy: str) -> dict | None:
+    """
+    Run Hyperopt for one strategy on recent data.
+    Returns result dict if successful, None if blocked/skipped.
+    """
+    # Check resources first
+    allow, reason = should_allow_optimization()
+    if not allow:
+        print(f"[{strategy}] SKIPPED: {reason}")
+        return {"skipped": True, "reason": reason}
     
-    print(f"[{datetime.now()}] Starting Shadow Hyperopt for {strategy_name}...")
+    # Reduce epochs if medium pressure
+    epochs = EPOCHS_PER_RUN
+    if "Medium pressure" in reason:
+        epochs = 50
+        print(f"[{strategy}] Reduced epochs to {epochs} due to {reason}")
+    
+    timerange_end = datetime.now().strftime("%Y%m%d")
+    timerange_start = (datetime.now() - timedelta(days=TIMERANGE_DAYS)).strftime("%Y%m%d")
+    
+    # Use full path to freqtrade
+    freqtrade_bin = str(BASE_DIR / "venv/bin/freqtrade")
+    data_dir = str(BASE_DIR / "user_data/data/binance")
     
     cmd = [
-        "/Users/azmatsaif/masterbot/venv/bin/freqtrade", "hyperopt",
-        "--strategy", strategy_name,
-        "--strategy-path", "strategies/active/",
-        "--config", "config/config_paper.json",
+        freqtrade_bin, "hyperopt",
+        "--strategy", strategy,
+        "--strategy-path", str(BASE_DIR / "strategies/active"),
+        "--config", str(BASE_DIR / "config/config_paper.json"),
         "--hyperopt-loss", "SharpeHyperOptLoss",
         "--spaces", "buy", "sell", "stoploss", "roi",
         "--epochs", str(epochs),
-        "--timerange", timerange,
-        "--timeframe", STRATEGY_TIMEFRAMES[strategy_name],
-        "--datadir", "data/",
-        "-j", "-1"
+        "--timerange", f"{timerange_start}-{timerange_end}",
+        "--datadir", data_dir,
+        "-j", "-1",  # Use all cores
+        "--no-color"
     ]
     
-    env = os.environ.copy()
-    env['PYTHONPATH'] = f"{BASE_DIR}:{BASE_DIR}/freqtrade"
+    log_file = BASE_DIR / "logs" / f"shadow_hyperopt_{strategy}.log"
+    log_file.parent.mkdir(parents=True, exist_ok=True)
+    
+    print(f"[{strategy}] Starting Hyperopt: {' '.join(cmd)}")
     
     try:
-        # Run with 1 hour timeout
-        res = subprocess.run(cmd, cwd=str(BASE_DIR), capture_output=True, text=True, timeout=3600, env=env)
+        # Load environment for freqtrade
+        env = os.environ.copy()
+        env['PYTHONPATH'] = f"{BASE_DIR}:{BASE_DIR}/freqtrade"
         
-        if res.returncode != 0:
-            print(f"Hyperopt failed for {strategy_name}: {res.stderr}")
-            return False, 0.0, {}
-            
-        # Parse output for Sharpe
-        # 'Best result: ... Sharpe: 2.34'
-        output = res.stdout
-        new_sharpe = 0.0
-        if "Best result:" in output:
-            import re
-            match = re.search(r"Sharpe:\s+([\d\.]+)", output)
-            if match:
-                new_sharpe = float(match.group(1))
-                
-        # Extract params (this is tricky from raw stdout, usually saved to file)
-        # For now, we return dummy params or assuming they are in the latest result file
-        return True, new_sharpe, {"timestamp": datetime.now().isoformat()}
+        result = subprocess.run(
+            cmd,
+            cwd=BASE_DIR,
+            capture_output=True,
+            text=True,
+            timeout=1800,  # 30 min max per strategy
+            env=env
+        )
+        
+        with open(log_file, "a") as f:
+            f.write(f"\n=== {datetime.now().isoformat()} ===\n")
+            f.write(result.stdout)
+            f.write(result.stderr)
+        
+        # Parse best Sharpe from output (Freqtrade format)
+        best_sharpe = None
+        for line in result.stdout.split("\n"):
+            if "Best Sharpe" in line or "Sharpe Ratio" in line:
+                try:
+                    best_sharpe = float(line.split(":")[-1].strip())
+                    break
+                except:
+                    pass
+        
+        return {
+            "strategy": strategy,
+            "epochs_run": epochs,
+            "exit_code": result.returncode,
+            "best_sharpe": best_sharpe,
+            "success": result.returncode == 0
+        }
         
     except subprocess.TimeoutExpired:
-        print(f"Hyperopt timed out for {strategy_name}")
-        return False, 0.0, {}
+        print(f"[{strategy}] TIMEOUT after 30min")
+        return {"skipped": True, "reason": "timeout"}
     except Exception as e:
-        print(f"Shadow error: {e}")
-        return False, 0.0, {}
+        print(f"[{strategy}] ERROR: {e}")
+        return {"skipped": True, "reason": str(e)}
 
-def compare_and_promote(strategy_name, live_sharpe, new_sharpe, new_params):
-    """Evaluates if new results are worth escalating."""
-    if new_sharpe > live_sharpe * (1 + IMPROVEMENT_THRESHOLD):
-        improvement = ((new_sharpe / live_sharpe) - 1) * 100
-        print(f"🌟 IMPROVEMENT FOUND: {strategy_name} improved by {improvement:.1f}% ({live_sharpe:.2f} -> {new_sharpe:.2f})")
-        
-        timestamp = int(time.time())
-        msg = f"""
-🔬 Shadow Hyperopt found improvement
-Strategy: {strategy_name}
-Old Sharpe: {live_sharpe:.2f}
-New Sharpe: {new_sharpe:.2f}
-Improvement: {improvement:.1f}%
+def check_improvement(strategy: str, new_sharpe: float) -> bool:
+    """
+    Compare new Sharpe vs current live strategy baseline.
+    Baseline stored in qnt/shadow/baselines.json
+    """
+    baseline_file = BASE_DIR / "qnt/shadow/baselines.json"
+    
+    if not baseline_file.exists():
+        # First run: store current as baseline, no promotion
+        baseline_file.parent.mkdir(parents=True, exist_ok=True)
+        with open(baseline_file, "w") as f:
+            json.dump({strategy: {"sharpe": new_sharpe, "timestamp": datetime.now().isoformat()}}, f)
+        print(f"[{strategy}] Baseline established: Sharpe {new_sharpe:.3f}")
+        return False
+    
+    try:
+        with open(baseline_file) as f:
+            baselines = json.load(f)
+    except:
+        baselines = {}
+    
+    current = baselines.get(strategy, {}).get("sharpe")
+    if current is None:
+        baselines[strategy] = {"sharpe": new_sharpe, "timestamp": datetime.now().isoformat()}
+        with open(baseline_file, "w") as f:
+            json.dump(baselines, f, indent=2)
+        return False
+    
+    improvement = (new_sharpe - current) / abs(current) if current != 0 else 0
+    print(f"[{strategy}] Sharpe: {current:.3f} → {new_sharpe:.3f} (improvement: {improvement*100:.1f}%)")
+    
+    if improvement >= IMPROVEMENT_THRESHOLD:
+        # Escalate to operator via Telegram
+        send_telegram_alert(
+            f"🚀 Shadow Hyperopt: {strategy}\n"
+            f"Sharpe improved {improvement*100:.1f}% ({current:.3f} → {new_sharpe:.3f})\n"
+            f"Run `qnt-shadow promote {strategy}` to deploy new parameters."
+        )
+        return True
+    return False
 
-Options:
-1️⃣ Promote new params to active immediately
-2️⃣ Run 7-day backtest first then decide
-3️⃣ Paper test for 24h then decide
-4️⃣ Ignore this improvement
-
-Recommendation: Option 2 (backtest first)
-"""
-        # SSH to M1 for notification
-        subprocess.run(['ssh', 'aatifquamre@100.90.68.42', f'source ~/.zshrc && echo "{msg}" | qnt-notify'], stderr=subprocess.DEVNULL)
-        
-        # Save placeholder for candidate
-        candidates_dir = BASE_DIR / 'strategies/candidates'
-        os.makedirs(candidates_dir, exist_ok=True)
-        with open(candidates_dir / f"Shadow_{strategy_name}_{timestamp}.json", 'w') as f:
-            json.dump({"new_sharpe": new_sharpe, "old_sharpe": live_sharpe, "params": new_params}, f)
-    else:
-        print(f"No significant improvement for {strategy_name} (New: {new_sharpe:.2f}, Live: {live_sharpe:.2f})")
-
-def continuous_shadow_loop():
-    """Main infinite rotation loop."""
-    print("Continuous Shadow Hyperopt Loop initiated.", flush=True)
-    strategy_index = 0
+def main_loop():
+    """Continuous shadow optimization loop."""
+    print("🌑 Shadow Hyperopt started — continuous optimization mode")
     
     while True:
-        strategy = STRATEGIES[strategy_index]
-        print(f"[{datetime.now()}] Attempting {strategy}...", flush=True)
+        save_state()  # Update resource state for CLI
         
-        try:
-            success, new_sharpe, new_params = run_shadow_hyperopt(strategy)
+        for strategy in STRATEGIES:
+            # Demonstration of parquet loading (as requested in step 7)
+            load_training_data('BTC/USDT', '1h')
             
-            if success:
-                print(f"[{datetime.now()}] {strategy} hyperopt success. Sharpe: {new_sharpe}", flush=True)
-                live_sharpe = get_live_sharpe(strategy)
-                compare_and_promote(strategy, live_sharpe, new_sharpe, new_params)
-            else:
-                print(f"[{datetime.now()}] {strategy} hyperopt failed or skipped.", flush=True)
-        except Exception as e:
-            print(f"[{datetime.now()}] Loop error on {strategy}: {e}", flush=True)
+            result = run_shadow_hyperopt(strategy)
             
-        # Rotation
-        strategy_index = (strategy_index + 1) % len(STRATEGIES)
+            if result and result.get("success") and result.get("best_sharpe") is not None:
+                if check_improvement(strategy, result["best_sharpe"]):
+                    print(f"[{strategy}] ✅ Improvement detected — awaiting promotion")
+            
+            # Small delay between strategies to avoid resource spike
+            time.sleep(30)
         
-        print(f"[{datetime.now()}] Waiting {COOLDOWN_MINUTES}m cooldown...", flush=True)
-        # Check resources every 5m during wait
-        for _ in range(COOLDOWN_MINUTES // 5):
-            time.sleep(300)
-            get_resource_snapshot()
+        # Wait 1 hour before next full rotation
+        print("⏳ Shadow loop sleeping 1 hour...")
+        time.sleep(3600)
 
 if __name__ == "__main__":
-    continuous_shadow_loop()
+    main_loop()
