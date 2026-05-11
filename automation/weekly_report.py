@@ -4,7 +4,16 @@ import sqlite3
 import requests
 import pandas as pd
 import subprocess
+import shutil
 from datetime import datetime, timedelta, timezone
+
+def get_qnt_path():
+    path = shutil.which('qnt')
+    if path and os.path.exists(path):
+        return path
+    for p in ['/Users/aatifquamre/masterbot/qnt/bin/qnt', '/Users/aatifquamre/.nvm/versions/node/v20.20.2/bin/qnt']:
+        if os.path.exists(p): return p
+    return 'qnt'
 from pathlib import Path
 from dotenv import load_dotenv
 
@@ -142,7 +151,7 @@ def get_risk_events():
 
 def get_qnt_intelligence(current, sentiment):
     prompt = f"Act as MasterBot brain. Analyze: {current['total_profit_usdt']} USDT profit, {current['win_rate_pct']}% win rate. Sentiment: {sentiment.get('avg_sentiment_score', 'N/A')}. Give exactly 2 sentences of tactical advice."
-    qnt_path = '/usr/local/bin/qnt'
+    qnt_path = get_qnt_path()
     try:
         result = subprocess.run(
             [qnt_path, '-m', 'flash', '-p', prompt, '--output-format', 'text'],
@@ -157,7 +166,7 @@ def get_qnt_intelligence(current, sentiment):
     return "Intelligence node busy. Continuing with standard protocols."
 
 def get_qnt_weekly_brief() -> str:
-    qnt_path = '/usr/local/bin/qnt'
+    qnt_path = get_qnt_path()
     try:
         result = subprocess.run(
             [qnt_path, '-m', 'flash', '-p',
@@ -198,7 +207,7 @@ def format_telegram_report(current, previous, sentiment, risk, intel, week_start
     m2_report = get_m2_resource_report()
     skeptic_summary = get_skeptic_summary()
 
-    perf_str = f"Profit: {current['total_profit_usdt']} USDT ({current['total_profit_pct']}%)"
+    perf_str = f"Net P&L: {current['total_profit_usdt']} USDT ({current['total_profit_pct']}% of ${current.get('cluster_balance', 50000):,.0f} portfolio)"
     comp_trades = f"{current['total_trades']} vs {previous['total_trades']}"
     
     wr_arrow = "📈" if current['win_rate_pct'] >= previous['win_rate_pct'] else "📉"
