@@ -96,3 +96,4 @@ wcwidth==0.6.0
 websocket-client==1.9.0
 widgetsnbextension==4.0.15
 xgboost==3.2.0
+tenacity==8.2.3

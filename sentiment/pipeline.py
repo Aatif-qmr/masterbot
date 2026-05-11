@@ -5,10 +5,11 @@ import requests
 from datetime import datetime, timezone
 import feedparser
 import warnings
+from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type
 warnings.filterwarnings('ignore') # ignore transformer warnings
 
 # --- CONFIGURATION ---
-BASE_DIR = "/Users/azmatsaif/masterbot"
+BASE_DIR = os.environ.get("MASTERBOT_DIR", "/Users/azmatsaif/masterbot")
 OUTPUT_PATH = os.path.join(BASE_DIR, "sentiment/scores/current_score.json")
 HISTORY_PATH = os.path.join(BASE_DIR, "sentiment/scores/history.csv")
 
@@ -31,10 +32,17 @@ def load_finbert():
             finbert_nlp = pipeline("sentiment-analysis", model="ProsusAI/finbert")
         except Exception as e:
             print(f"Error loading FinBERT: {e}")
+            # Fallback: use simple keyword-based sentiment
+            finbert_nlp = "fallback_keyword_mode"
 
 def score_with_finbert(titles):
     if not titles: return 0.0
     load_finbert()
+    
+    # Fallback mode: keyword-based sentiment
+    if finbert_nlp == "fallback_keyword_mode":
+        return _keyword_sentiment(titles)
+    
     if not finbert_nlp: return 0.0
     try:
         results = finbert_nlp(titles)
@@ -45,8 +53,27 @@ def score_with_finbert(titles):
         return score / len(titles)
     except Exception as e:
         print(f"Error scoring with FinBERT: {e}")
-        return 0.0
+        # Activate fallback
+        finbert_nlp = "fallback_keyword_mode"
+        return _keyword_sentiment(titles)
 
+def _keyword_sentiment(titles):
+    """Fallback keyword-based sentiment when FinBERT fails"""
+    positive_words = ['bull', 'surge', 'rally', 'gain', 'rise', 'up', 'green', 'profit', 'moon', 'breakout']
+    negative_words = ['bear', 'crash', 'drop', 'fall', 'down', 'red', 'loss', 'dump', 'bleed', 'fud']
+    
+    score = 0.0
+    for title in titles:
+        title_lower = title.lower()
+        for word in positive_words:
+            if word in title_lower: score += 0.1
+        for word in negative_words:
+            if word in title_lower: score -= 0.1
+    
+    return max(-1.0, min(1.0, score / max(len(titles), 1)))
+
+@retry(stop=stop_after_attempt(3), wait=wait_exponential(multiplier=1, min=2, max=10),
+       retry=retry_if_exception_type((requests.exceptions.RequestException, requests.exceptions.Timeout)))
 def get_fear_greed():
     """Fetch Fear \u0026 Greed Index (0-100)"""
     try:
@@ -60,6 +87,8 @@ def get_fear_greed():
         print(f"Error fetching Fear \u0026 Greed: {e}")
         return 0.0
 
+@retry(stop=stop_after_attempt(3), wait=wait_exponential(multiplier=1, min=2, max=10),
+       retry=retry_if_exception_type((requests.exceptions.RequestException, requests.exceptions.Timeout)))
 def get_binance_funding():
     """Fetch average funding rate from Binance Futures"""
     try:
@@ -77,6 +106,8 @@ def get_binance_funding():
         print(f"Error fetching Binance Funding: {e}")
         return 0.0
 
+@retry(stop=stop_after_attempt(3), wait=wait_exponential(multiplier=1, min=2, max=10),
+       retry=retry_if_exception_type((requests.exceptions.RequestException, requests.exceptions.Timeout)))
 def get_coingecko_sentiment():
     """Heuristic from Coingecko Trending"""
     try:
@@ -92,6 +123,8 @@ def get_coingecko_sentiment():
         print(f"Error fetching Coingecko: {e}")
         return 0.0
 
+@retry(stop=stop_after_attempt(3), wait=wait_exponential(multiplier=1, min=2, max=10),
+       retry=retry_if_exception_type((requests.exceptions.RequestException, requests.exceptions.Timeout)))
 def get_reddit_sentiment():
     """FinBERT sentiment from r/CryptoCurrency hot titles"""
     try:
@@ -105,6 +138,8 @@ def get_reddit_sentiment():
         print(f"Error fetching Reddit: {e}")
         return 0.0
 
+@retry(stop=stop_after_attempt(3), wait=wait_exponential(multiplier=1, min=2, max=10),
+       retry=retry_if_exception_type((requests.exceptions.RequestException, requests.exceptions.Timeout)))
 def get_news_sentiment():
     """FinBERT sentiment from Cointelegraph RSS"""
     try:

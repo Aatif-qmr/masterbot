@@ -1,1 +1,41 @@
-Nothing should be ignored based on the provided file changes, as they only include source/config files (.md, .yml) and no build artifacts, dependencies, or temp files.
+```
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Dependencies
+requirements.txt.bak
+
+# Logs
+*.log
+
+# Coverage
+.coverage
+coverage/
+htmlcov/
+.coverage.*
+.nox/
+
+# Testing
+.pytest_cache/
+.hypothesis/
+.tox/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment variables
+.env
+.env.local
+.env.*
+!.env.example
+```
