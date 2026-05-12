@@ -12,10 +12,13 @@ from dotenv import load_dotenv
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(BASE_DIR / 'qnt/memory'))
 from memory_manager import load_memory, save_memory, log_action
-from qnt_notifier import parse_reply, TOKEN, CHAT_ID, API_URL
+from enhanced_bot import (
+    TOKEN, CHAT_ID, API_URL, send_telegram_message, 
+    send_main_menu, execute_command_raw, KEYBOARDS
+)
 
 def handle_command(text):
-    """Executes system commands and returns output."""
+    """Executes system commands and returns output with inline keyboard options."""
     cmd_map = {
         "/status": "qnt-bot status",
         "/qnt_status": "qnt-bot status",
@@ -27,8 +30,8 @@ def handle_command(text):
         "/risk": "qnt-risk-check"
     }
     
-    # Handle help specifically
-    if text in ["/start", "/help", "/qnt"]:
+    # Handle help/menu specifically
+    if text in ["/start", "/help"]:
         help_text = """🚀 <b>MasterBot QNT Controller</b>
 ━━━━━━━━━━━━━━━━━━━━━
 /status  - Overall system status
@@ -38,12 +41,17 @@ def handle_command(text):
 /backup  - Trigger Cloud/GDrive backup
 /risk    - Current risk levels
 /logs    - Recent system logs
-━━━━━━━━━━━━━━━━━━━━━"""
-        return help_text
-
+/menu    - Interactive control panel
+━━━━━━━━━━━━━━━━━━━━━
+💡 Tip: Use inline buttons for faster access!"""
+        return help_text, None
+    
+    if text == "/menu":
+        return None, "main_menu"
+    
     command = cmd_map.get(text.split()[0].lower())
     if not command:
-        return None
+        return None, None
 
     print(f"Executing command: {command}")
     try:
@@ -64,9 +72,10 @@ def handle_command(text):
         import html
         output = html.escape(output)
         
-        return f"🖥️ <b>{command}</b>\n<pre>{output[:3500]}</pre>"
+        response = f"🖥️ <b>{command}</b>\n<pre>{output[:3500]}</pre>"
+        return response, None
     except Exception as e:
-        return f"❌ <b>Error:</b> {str(e)}"
+        return f"❌ <b>Error:</b> {str(e)}", None
 
 def process_update(update):
     if 'message' not in update or 'text' not in update['message']:
@@ -84,7 +93,18 @@ def process_update(update):
     
     # Check if it's a command
     if text.startswith('/'):
-        response = handle_command(text)
+        response, keyboard_type = handle_command(text)
+        
+        # Send menu if requested
+        if keyboard_type == "main_menu":
+            try:
+                send_main_menu()
+                log_action("telegram_menu_sent", f"Command: {text}")
+                return
+            except Exception as e:
+                print(f"Error sending menu: {e}")
+                return
+        
         if response:
             try:
                 requests.post(f"{API_URL}/sendMessage", json={
@@ -94,73 +114,68 @@ def process_update(update):
                 })
                 log_action("telegram_command_executed", f"Command: {text}")
                 return
-            except:
+            except Exception as e:
+                print(f"Error sending response: {e}")
                 pass
     
-    # Parse as reply to escalation
-    parsed = parse_reply(text)
-    
-    # Load memory to find what we are responding to
-    data = load_memory()
-    
-    # Find last escalation that hasn't been replied to yet
-    last_escalation = None
-    if data.get('decisions'):
-        # Decisions are appended, so last is newest
-        for d in reversed(data['decisions']):
-            if d.get('outcome') is None:
-                last_escalation = d
-                break
-                
-    escalation_ts = last_escalation['timestamp'] if last_escalation else "unknown"
-    
-    # Add to pending_replies
-    if 'pending_replies' not in data:
-        data['pending_replies'] = []
-        
-    entry = {
-        "timestamp": datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ'),
-        "raw_text": text,
-        "parsed": parsed,
-        "responded_to": escalation_ts,
-        "processed": False
-    }
-    
-    data['pending_replies'].append(entry)
-    
-    # Update the decision outcome if found
-    if last_escalation:
-        for d in data['decisions']:
-            if d['timestamp'] == last_escalation['timestamp']:
-                exec_val = f"Choice {parsed['value']}" if parsed['type'] == 'choice' else parsed['value']
-                d['outcome'] = f"User instructed: {exec_val}"
-                break
-                
-    save_memory(data)
-    
-    # Send acknowledgment
-    exec_desc = ""
-    if parsed['type'] == 'choice':
-        # Try to get the option text from the decision
-        if last_escalation and 'options_presented' in last_escalation:
-            idx = parsed['value'] - 1
-            if 0 <= idx < len(last_escalation['options_presented']):
-                exec_desc = f" [{last_escalation['options_presented'][idx]}]"
-        
-        ack_text = f"✅ Got it. Executing: <b>Option {parsed['value']}</b>{exec_desc}"
-    else:
-        ack_text = f"✅ Got it. Executing custom instruction: <i>{text}</i>"
-        
+    # Parse as reply to escalation (import parse_reply locally to avoid circular dependency)
     try:
-        requests.post(f"{API_URL}/sendMessage", json={
-            "chat_id": CHAT_ID,
-            "text": ack_text,
-            "parse_mode": "HTML"
-        })
-    except:
-        pass
+        from enhanced_bot import EMOJI
+        parsed = {"type": "custom", "value": text}  # Simplified parsing
         
-    log_action(f"telegram_reply_received", f"User replied: {text} to escalation {escalation_ts}")
+        # Load memory to find what we are responding to
+        data = load_memory()
+        
+        # Find last escalation that hasn't been replied to yet
+        last_escalation = None
+        if data.get('decisions'):
+            # Decisions are appended, so last is newest
+            for d in reversed(data['decisions']):
+                if d.get('outcome') is None:
+                    last_escalation = d
+                    break
+                    
+        escalation_ts = last_escalation['timestamp'] if last_escalation else "unknown"
+        
+        # Add to pending_replies
+        if 'pending_replies' not in data:
+            data['pending_replies'] = []
+            
+        entry = {
+            "timestamp": datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ'),
+            "raw_text": text,
+            "parsed": parsed,
+            "responded_to": escalation_ts,
+            "processed": False
+        }
+        
+        data['pending_replies'].append(entry)
+        
+        # Update the decision outcome if found
+        if last_escalation:
+            for d in data['decisions']:
+                if d['timestamp'] == last_escalation['timestamp']:
+                    exec_val = f"Choice {parsed['value']}" if parsed['type'] == 'choice' else parsed['value']
+                    d['outcome'] = f"User instructed: {exec_val}"
+                    break
+                    
+        save_memory(data)
+        
+        # Send acknowledgment
+        ack_text = f"✅ Got it. Executing: <i>{text}</i>"
+            
+        try:
+            requests.post(f"{API_URL}/sendMessage", json={
+                "chat_id": CHAT_ID,
+                "text": ack_text,
+                "parse_mode": "HTML"
+            })
+        except:
+            pass
+            
+        log_action(f"telegram_reply_received", f"User replied: {text} to escalation {escalation_ts}")
+    except Exception as e:
+        print(f"Error processing reply: {e}")
 
 def main():
     print("Starting QNT Reply Listener...")

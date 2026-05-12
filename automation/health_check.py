@@ -8,10 +8,13 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from dotenv import load_dotenv
 
+# Load env from user's local path
 load_dotenv('/Users/aatifquamre/masterbot/.env')
 
 TELEGRAM_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
 TELEGRAM_CHAT_ID = os.getenv('TELEGRAM_CHAT_ID')
+QNT_TELEGRAM_TOKEN = os.getenv('QNT_TELEGRAM_TOKEN')
+QNT_TELEGRAM_CHAT_ID = os.getenv('QNT_TELEGRAM_CHAT_ID')
 FT_USERNAME = os.getenv('FREQTRADE_UI_USERNAME')
 FT_PASSWORD = os.getenv('FREQTRADE_UI_PASSWORD')
 M2_IP = os.getenv('M2_TAILSCALE_IP')
@@ -19,6 +22,62 @@ M2_IP = os.getenv('M2_TAILSCALE_IP')
 BASE_DIR = Path('/Users/aatifquamre/masterbot')
 LOG = BASE_DIR / 'logs' / 'health_check.log'
 DB_PATH = BASE_DIR / 'user_data' / 'tradesv3.dryrun.sqlite'
+
+def send_telegram_health_report(results: list, timestamp: str):
+    """Send health check results to both Telegram bots."""
+    passed = sum(1 for r in results if r['status'] == 'PASS')
+    failed = [r for r in results if r['status'] == 'FAIL']
+    warned = [r for r in results if r['status'] == 'WARN']
+    
+    # Build message
+    emoji = "✅" if len(failed) == 0 else "⚠️" if len(failed) == 0 or all(not f.get('critical', False) for f in failed) else "🚨"
+    
+    text = f"{emoji} <b>Health Check Report</b>\n"
+    text += f"━━━━━━━━━━━━━━━━━━━━━━\n"
+    text += f"<b>Summary:</b> {passed}/{len(results)} checks passed\n"
+    
+    if failed:
+        text += f"\n🔴 <b>Critical Failures:</b>\n"
+        for f in failed:
+            if f.get('critical', False):
+                text += f"• {f['name']}: {f['message']}\n"
+    
+    if warned:
+        text += f"\n⚠️ <b>Warnings:</b>\n"
+        for w in warned:
+            text += f"• {w['name']}: {w['message']}\n"
+    
+    text += f"\n<i>⏰ {timestamp}</i>"
+    
+    # Send to Trading Bot (TELEGRAM_BOT_TOKEN)
+    if TELEGRAM_TOKEN and TELEGRAM_CHAT_ID:
+        try:
+            requests.post(
+                f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage",
+                json={
+                    "chat_id": TELEGRAM_CHAT_ID,
+                    "text": text,
+                    "parse_mode": "HTML"
+                },
+                timeout=10
+            )
+        except Exception as e:
+            print(f"Failed to send to trading bot: {e}")
+    
+    # Send to QNT Bot (QNT_TELEGRAM_TOKEN)
+    if QNT_TELEGRAM_TOKEN and QNT_TELEGRAM_CHAT_ID:
+        try:
+            requests.post(
+                f"https://api.telegram.org/bot{QNT_TELEGRAM_TOKEN}/sendMessage",
+                json={
+                    "chat_id": QNT_TELEGRAM_CHAT_ID,
+                    "text": text,
+                    "parse_mode": "HTML"
+                },
+                timeout=10
+            )
+        except Exception as e:
+            print(f"Failed to send to QNT bot: {e}")
 
 def check_freqtrade_processes():
     cmd = [str(BASE_DIR / 'venv/bin/supervisorctl'), '-c', str(BASE_DIR / 'config/supervisord.conf'), 'status']
@@ -306,8 +365,12 @@ def run_all():
 
     critical_fails = [r for r in results if r['status'] == 'FAIL' and r['critical']]
     
+    # Log to file
     with open(LOG, 'a') as f:
         f.write(json.dumps({"timestamp": timestamp, "results": results}) + '\n')
+
+    # Send report to both Telegram bots
+    send_telegram_health_report(results, timestamp)
 
     passed = sum(1 for r in results if r['status'] == 'PASS')
     print(f"[{timestamp}] Health: {passed}/{len(results)} PASS | Critical: {len(critical_fails)}")
