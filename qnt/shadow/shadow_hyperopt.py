@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """
-Continuous background Hyperopt loop on M2.
+Continuous background Hyperopt loop on M2 (all RAM variants).
 Runs 48-hour optimization windows, promotes improvements >20% Sharpe.
 Respects resource_monitor.py throttling signals.
+Scales epochs and parallelism automatically based on installed RAM.
 """
 import subprocess
 import json
@@ -10,6 +11,7 @@ import time
 import sys
 import os
 from pathlib import Path
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timedelta
 
 # Force unbuffered output
@@ -19,13 +21,45 @@ print = functools.partial(print, flush=True)
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(BASE_DIR))
 
-from qnt.shadow.resource_monitor import should_allow_optimization, get_resource_snapshot, save_state
+from qnt.shadow.resource_monitor import should_allow_optimization, get_resource_snapshot, save_state, get_ram_tier
 from qnt.bridge.notify import send_telegram_alert  # Reuse existing notifier
 
 STRATEGIES = ["MeanReversionV1", "TrendFollowV1", "ScalpV1", "SwingV1", "DailyTrendV1", "MicroScalpV1"]
 IMPROVEMENT_THRESHOLD = 0.20  # 20% Sharpe improvement required for promotion
-EPOCHS_PER_RUN = 100  # Reduced from 500 for continuous background operation
 TIMERANGE_DAYS = 2  # Optimize on last 48 hours of data
+
+# ---------------------------------------------------------------------------
+# RAM-tier hyperopt configuration
+# ---------------------------------------------------------------------------
+_HYPEROPT_CONFIG = {
+    8:  {
+        "epochs":             75,    # conservative — leaves macOS headroom
+        "parallel_workers":   1,     # sequential only
+        "cpu_flag":           "-1",  # use all cores but 1 strategy at a time
+        "extended_pairs":     False,
+    },
+    16: {
+        "epochs":             200,   # 2.6× more quality per run vs 8GB
+        "parallel_workers":   2,     # run 2 strategies simultaneously
+        "cpu_flag":           "-1",
+        "extended_pairs":     True,  # scan BTC + ETH + BNB
+    },
+    32: {
+        "epochs":             500,
+        "parallel_workers":   3,
+        "cpu_flag":           "-1",
+        "extended_pairs":     True,
+    },
+}
+
+# Additional pairs unlocked on 16GB+ nodes
+EXTENDED_PAIRS = ["BTC/USDT", "ETH/USDT", "BNB/USDT"]
+
+
+def get_hyperopt_config() -> dict:
+    """Return epoch/parallelism config for the current machine's RAM tier."""
+    tier = get_ram_tier()
+    return _HYPEROPT_CONFIG.get(tier, _HYPEROPT_CONFIG[8])
 
 def load_training_data(pair, timeframe):
     try:

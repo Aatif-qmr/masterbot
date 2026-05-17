@@ -12,16 +12,40 @@ BASE_DIR = HOME / 'masterbot'
 MONITOR_FILE = BASE_DIR / 'qnt/shadow/resource_state.json'
 LOG_FILE = BASE_DIR / 'logs/resource_alerts.log'
 
+# RAM-tier pressure thresholds — tighter on 8GB, relaxed on 16GB
+_PRESSURE_THRESHOLDS = {
+    8:  {"warning": 60, "critical": 75},
+    16: {"warning": 70, "critical": 85},
+    32: {"warning": 75, "critical": 88},
+}
+
+
+def get_ram_tier() -> int:
+    """Return installed RAM tier in GB (8, 16, or 32)."""
+    raw = psutil.virtual_memory().total / (1024 ** 3)
+    if raw < 12:
+        return 8
+    if raw < 24:
+        return 16
+    return 32
+
+
+def _pressure_levels() -> dict:
+    return _PRESSURE_THRESHOLDS.get(get_ram_tier(), _PRESSURE_THRESHOLDS[8])
+
+
 def get_resource_snapshot():
     """Captures a snapshot of current system resources."""
     ram = psutil.virtual_memory()
     swap = psutil.swap_memory()
-    
-    # RAM pressure logic
+    ram_tier = get_ram_tier()
+
+    # RAM pressure logic — thresholds depend on physical RAM installed
     percent_used = ram.percent
-    if percent_used < 70:
+    levels = _pressure_levels()
+    if percent_used < levels["warning"]:
         pressure = "normal"
-    elif percent_used < 85:
+    elif percent_used < levels["critical"]:
         pressure = "warning"
     else:
         pressure = "critical"
@@ -73,7 +97,9 @@ def get_resource_snapshot():
             "used_gb": round(ram.used / (1024**3), 2),
             "available_gb": round(ram.available / (1024**3), 2),
             "percent_used": percent_used,
-            "pressure": pressure
+            "pressure": pressure,
+            "tier_gb": ram_tier,
+            "thresholds": levels,
         },
         "cpu": {
             "percent_used": cpu_percent,
@@ -164,17 +190,21 @@ def get_daily_report():
         avg_ram = sum(ram_vals) / len(ram_vals)
         avg_cpu = sum(cpu_vals) / len(cpu_vals)
         
-        # Option A vs B recommendation
-        # A: Continuous, B: Scheduled/Throttled
-        recommendation = "Option A (Sustainable)"
-        if peak_ram > 90 or throttling_events > 5:
+        # Option A vs B recommendation — uses tier-aware critical threshold
+        tier = get_ram_tier()
+        levels = _pressure_levels()
+        critical_pct = levels["critical"]
+
+        recommendation = "Option A (Sustainable Continuous)"
+        if peak_ram > critical_pct or throttling_events > 5:
             recommendation = "Option B (Switch to Scheduled Optimization)"
-            
+
         report = f"""
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-M2 RESOURCE DAILY REPORT
+M2 RESOURCE DAILY REPORT  [{tier}GB node]
 Generated: {datetime.now(timezone.utc).isoformat()}
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+RAM TIER:    {tier}GB  (warn>{levels['warning']}% / crit>{critical_pct}%)
 AVG RAM USAGE: {avg_ram:.1f}%
 PEAK RAM USAGE: {peak_ram:.1f}% at {peak_time}
 AVG CPU LOAD: {avg_cpu:.1f}%
