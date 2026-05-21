@@ -49,7 +49,8 @@
         "jwt_secret_key": "super_secret_jwt_key",
         "CORS_origins": [
             "http://100.74.110.36:8080",
-            "http://shahids-macbook-air:8080"
+            "http://shahids-macbook-air:8080",
+            "http://100.90.68.42:5000"
         ],
         "username": "Aatif-qmr",
         "password": "2001"
@@ -94,9 +95,20 @@
         "expiration_hours": 24,
         "write_metrics_to_disk": true,
         "feature_parameters": {
-            "include_timeframes": ["1m", "5m", "15m", "1h"],
-            "include_corr_pairlist": ["BTC/USDT", "ETH/USDT"],
-            "indicator_periods_candles": [10, 20],
+            "include_timeframes": [
+                "1m",
+                "5m",
+                "15m",
+                "1h"
+            ],
+            "include_corr_pairlist": [
+                "BTC/USDT",
+                "ETH/USDT"
+            ],
+            "indicator_periods_candles": [
+                10,
+                20
+            ],
             "label_period_candles": 15,
             "include_shifted_candles": 0,
             "DI_threshold": 0.9,
