@@ -23,8 +23,7 @@ import os
 import numpy as np
 from pathlib import Path
 
-HOME = Path.home()
-BASE_DIR = HOME / "masterbot"
+BASE_DIR = Path(__file__).resolve().parent.parent
 ONNX_MODEL_DIR = BASE_DIR / "sentiment" / "models"
 
 # Lazy-loaded globals
@@ -97,38 +96,48 @@ def score_with_onnx(titles: list[str], max_length: int = 128) -> float:
         return _keyword_sentiment(titles)
 
     try:
+        import json
+        config_path = ONNX_MODEL_DIR / "config.json"
+        label_map = {0: "neutral"}
+        if config_path.exists():
+            try:
+                with open(config_path) as f:
+                    config = json.load(f)
+                    id2label = config.get("id2label", {})
+                    label_map = {int(k): v.lower() for k, v in id2label.items()}
+            except Exception:
+                pass
+
+        # Batch tokenization (zero-copy padding on NumPy arrays)
+        inputs = tokenizer(
+            titles,
+            return_tensors="np",
+            padding=True,
+            max_length=max_length,
+            truncation=True,
+        )
+
+        ort_inputs = {
+            "input_ids": inputs["input_ids"].astype(np.int64),
+            "attention_mask": inputs["attention_mask"].astype(np.int64),
+        }
+
+        # Run batched inference (single FFI call to ONNX Runtime)
+        batch_logits = session.run(None, ort_inputs)[0]  # shape: (batch_size, num_classes)
+
         score = 0.0
-        for title in titles:
-            inputs = tokenizer(
-                title,
-                return_tensors="np",
-                padding="max_length",
-                max_length=max_length,
-                truncation=True,
-            )
-
-            ort_inputs = {
-                "input_ids": inputs["input_ids"].astype(np.int64),
-                "attention_mask": inputs["attention_mask"].astype(np.int64),
-            }
-
-            logits = session.run(None, ort_inputs)[0]  # shape: (1, num_classes)
-
+        for logits in batch_logits:
             # Softmax
-            logits = logits[0]
             exp_logits = np.exp(logits - np.max(logits))
             probs = exp_logits / exp_logits.sum()
-
             pred_idx = int(np.argmax(probs))
 
-            # Map prediction to score
-            # CryptoBERT labels: Bearish=0, Neutral=1, Bullish=2
-            # Some models use: negative=0, neutral=1, positive=2
-            if pred_idx == 2:  # Bullish/Positive
+            # Dynamic model classification parsing
+            label = label_map.get(pred_idx, "neutral")
+            if "bull" in label or "pos" in label:
                 score += 1.0
-            elif pred_idx == 0:  # Bearish/Negative
+            elif "bear" in label or "neg" in label:
                 score -= 1.0
-            # Neutral contributes 0
 
         return score / len(titles)
 

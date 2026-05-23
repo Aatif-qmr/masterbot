@@ -1,0 +1,737 @@
+[
+  {
+    "timestamp": "2026-05-23T08:41:24.414796+00:00",
+    "ram": {
+      "total_gb": 8.0,
+      "used_gb": 3.03,
+      "available_gb": 1.65,
+      "percent_used": 79.4,
+      "pressure": "warning"
+    },
+    "cpu": {
+      "percent_used": 12.0,
+      "core_count": 8,
+      "throttling_detected": false
+    },
+    "swap": {
+      "used_gb": 1.2,
+      "percent_used": 60.1
+    },
+    "top_processes": [
+      {
+        "name": "agy",
+        "ram_mb": 307.09375,
+        "cpu_percent": 0.0
+      },
+      {
+        "name": "node",
+        "ram_mb": 118.8125,
+        "cpu_percent": 0.0
+      },
+      {
+        "name": "Python",
+        "ram_mb": 114.1875,
+        "cpu_percent": 0.0
+      },
+      {
+        "name": "Python",
+        "ram_mb": 95.671875,
+        "cpu_percent": 0.0
+      },
+      {
+        "name": "Python",
+        "ram_mb": 92.03125,
+        "cpu_percent": 0.0
+      }
+    ],
+    "hyperopt_running": false,
+    "freqai_running": false,
+    "sentiment_running": false
+  },
+  {
+    "timestamp": "2026-05-23T09:02:21.555956+00:00",
+    "ram": {
+      "total_gb": 8.0,
+      "used_gb": 3.69,
+      "available_gb": 1.71,
+      "percent_used": 78.6,
+      "pressure": "warning"
+    },
+    "cpu": {
+      "percent_used": 22.8,
+      "core_count": 8,
+      "throttling_detected": false
+    },
+    "swap": {
+      "used_gb": 2.52,
+      "percent_used": 83.9
+    },
+    "top_processes": [
+      {
+        "name": "agy",
+        "ram_mb": 302.140625,
+        "cpu_percent": 0.0
+      },
+      {
+        "name": "com.apple.WebKit.WebContent",
+        "ram_mb": 232.453125,
+        "cpu_percent": 0.0
+      },
+      {
+        "name": "mediaanalysisd",
+        "ram_mb": 175.21875,
+        "cpu_percent": 0.0
+      },
+      {
+        "name": "Brave Browser Helper (Renderer)",
+        "ram_mb": 154.9375,
+        "cpu_percent": 0.0
+      },
+      {
+        "name": "node",
+        "ram_mb": 148.875,
+        "cpu_percent": 0.0
+      }
+    ],
+    "hyperopt_running": false,
+    "freqai_running": false,
+    "sentiment_running": false
+  },
+  {
+    "timestamp": "2026-05-23T09:02:58.023867+00:00",
+    "ram": {
+      "total_gb": 8.0,
+      "used_gb": 3.85,
+      "available_gb": 2.13,
+      "percent_used": 73.4,
+      "pressure": "warning"
+    },
+    "cpu": {
+      "percent_used": 30.7,
+      "core_count": 8,
+      "throttling_detected": false
+    },
+    "swap": {
+      "used_gb": 2.52,
+      "percent_used": 83.9
+    },
+    "top_processes": [
+      {
+        "name": "com.apple.WebKit.WebContent",
+        "ram_mb": 380.078125,
+        "cpu_percent": 0.0
+      },
+      {
+        "name": "Stremio",
+        "ram_mb": 339.8125,
+        "cpu_percent": 0.0
+      },
+      {
+        "name": "agy",
+        "ram_mb": 326.03125,
+        "cpu_percent": 0.0
+      },
+      {
+        "name": "node",
+        "ram_mb": 233.0,
+        "cpu_percent": 0.0
+      },
+      {
+        "name": "grafana",
+        "ram_mb": 140.625,
+        "cpu_percent": 0.0
+      }
+    ],
+    "hyperopt_running": false,
+    "freqai_running": false,
+    "sentiment_running": false
+  },
+  {
+    "timestamp": "2026-05-23T09:03:49.625978+00:00",
+    "ram": {
+      "total_gb": 8.0,
+      "used_gb": 3.62,
+      "available_gb": 2.0,
+      "percent_used": 75.0,
+      "pressure": "warning"
+    },
+    "cpu": {
+      "percent_used": 23.5,
+      "core_count": 8,
+      "throttling_detected": false
+    },
+    "swap": {
+      "used_gb": 2.51,
+      "percent_used": 83.6
+    },
+    "top_processes": [
+      {
+        "name": "agy",
+        "ram_mb": 310.0625,
+        "cpu_percent": 0.0
+      },
+      {
+        "name": "com.apple.WebKit.WebContent",
+        "ram_mb": 303.703125,
+        "cpu_percent": 0.0
+      },
+      {
+        "name": "node",
+        "ram_mb": 184.390625,
+        "cpu_percent": 0.0
+      },
+      {
+        "name": "Stremio",
+        "ram_mb": 138.578125,
+        "cpu_percent": 0.0
+      },
+      {
+        "name": "Python",
+        "ram_mb": 92.015625,
+        "cpu_percent": 0.0
+      }
+    ],
+    "hyperopt_running": false,
+    "freqai_running": false,
+    "sentiment_running": false
+  },
+  {
+    "timestamp": "2026-05-23T10:12:18.061229+00:00",
+    "ram": {
+      "total_gb": 8.0,
+      "used_gb": 3.12,
+      "available_gb": 1.79,
+      "percent_used": 77.6,
+      "pressure": "warning"
+    },
+    "cpu": {
+      "percent_used": 8.1,
+      "core_count": 8,
+      "throttling_detected": false
+    },
+    "swap": {
+      "used_gb": 2.25,
+      "percent_used": 74.9
+    },
+    "top_processes": [
+      {
+        "name": "agy",
+        "ram_mb": 351.859375,
+        "cpu_percent": 15.7
+      },
+      {
+        "name": "Python",
+        "ram_mb": 146.921875,
+        "cpu_percent": 3.4
+      },
+      {
+        "name": "Python",
+        "ram_mb": 130.25,
+        "cpu_percent": 1.9
+      },
+      {
+        "name": "Python",
+        "ram_mb": 128.0625,
+        "cpu_percent": 2.2
+      },
+      {
+        "name": "Python",
+        "ram_mb": 118.5,
+        "cpu_percent": 2.0
+      }
+    ],
+    "hyperopt_running": false,
+    "freqai_running": false,
+    "sentiment_running": false
+  },
+  {
+    "timestamp": "2026-05-23T10:20:49.702487+00:00",
+    "ram": {
+      "total_gb": 8.0,
+      "used_gb": 4.06,
+      "available_gb": 2.86,
+      "percent_used": 64.2,
+      "pressure": "normal"
+    },
+    "cpu": {
+      "percent_used": 12.4,
+      "core_count": 8,
+      "throttling_detected": false
+    },
+    "swap": {
+      "used_gb": 3.21,
+      "percent_used": 80.2
+    },
+    "top_processes": [
+      {
+        "name": "agy",
+        "ram_mb": 332.265625,
+        "cpu_percent": 0.0
+      },
+      {
+        "name": "Python",
+        "ram_mb": 159.703125,
+        "cpu_percent": 0.0
+      },
+      {
+        "name": "Python",
+        "ram_mb": 148.75,
+        "cpu_percent": 0.0
+      },
+      {
+        "name": "Python",
+        "ram_mb": 132.890625,
+        "cpu_percent": 0.0
+      },
+      {
+        "name": "Python",
+        "ram_mb": 122.40625,
+        "cpu_percent": 0.0
+      }
+    ],
+    "hyperopt_running": false,
+    "freqai_running": false,
+    "sentiment_running": false
+  },
+  {
+    "timestamp": "2026-05-23T10:41:16.041625+00:00",
+    "ram": {
+      "total_gb": 8.0,
+      "used_gb": 4.05,
+      "available_gb": 2.6,
+      "percent_used": 67.4,
+      "pressure": "normal"
+    },
+    "cpu": {
+      "percent_used": 10.2,
+      "core_count": 8,
+      "throttling_detected": false
+    },
+    "swap": {
+      "used_gb": 3.37,
+      "percent_used": 67.5
+    },
+    "top_processes": [
+      {
+        "name": "2.1.150",
+        "ram_mb": 376.265625,
+        "cpu_percent": 0.0
+      },
+      {
+        "name": "agy",
+        "ram_mb": 356.328125,
+        "cpu_percent": 0.0
+      },
+      {
+        "name": "Brave Browser Helper (Renderer)",
+        "ram_mb": 284.15625,
+        "cpu_percent": 0.0
+      },
+      {
+        "name": "Python",
+        "ram_mb": 167.4375,
+        "cpu_percent": 0.0
+      },
+      {
+        "name": "Python",
+        "ram_mb": 165.484375,
+        "cpu_percent": 0.0
+      }
+    ],
+    "hyperopt_running": false,
+    "freqai_running": false,
+    "sentiment_running": false
+  },
+  {
+    "timestamp": "2026-05-23T11:49:25.587846+00:00",
+    "ram": {
+      "total_gb": 8.0,
+      "used_gb": 3.37,
+      "available_gb": 1.99,
+      "percent_used": 75.1,
+      "pressure": "warning"
+    },
+    "cpu": {
+      "percent_used": 8.7,
+      "core_count": 8,
+      "throttling_detected": false
+    },
+    "swap": {
+      "used_gb": 2.19,
+      "percent_used": 73.0
+    },
+    "top_processes": [
+      {
+        "name": "agy",
+        "ram_mb": 292.140625,
+        "cpu_percent": 14.3
+      },
+      {
+        "name": "Brave Browser Helper (Renderer)",
+        "ram_mb": 187.359375,
+        "cpu_percent": 1.0
+      },
+      {
+        "name": "Python",
+        "ram_mb": 163.8125,
+        "cpu_percent": 3.4
+      },
+      {
+        "name": "Python",
+        "ram_mb": 148.34375,
+        "cpu_percent": 2.0
+      },
+      {
+        "name": "grafana",
+        "ram_mb": 148.1875,
+        "cpu_percent": 0.7
+      }
+    ],
+    "hyperopt_running": false,
+    "freqai_running": false,
+    "sentiment_running": false
+  },
+  {
+    "timestamp": "2026-05-23T12:57:01.786174+00:00",
+    "ram": {
+      "total_gb": 8.0,
+      "used_gb": 3.67,
+      "available_gb": 2.27,
+      "percent_used": 71.6,
+      "pressure": "warning"
+    },
+    "cpu": {
+      "percent_used": 14.0,
+      "core_count": 8,
+      "throttling_detected": false
+    },
+    "swap": {
+      "used_gb": 2.57,
+      "percent_used": 64.1
+    },
+    "top_processes": [
+      {
+        "name": "agy",
+        "ram_mb": 302.140625,
+        "cpu_percent": 15.5
+      },
+      {
+        "name": "Brave Browser Helper (Renderer)",
+        "ram_mb": 186.890625,
+        "cpu_percent": 0.9
+      },
+      {
+        "name": "Python",
+        "ram_mb": 186.296875,
+        "cpu_percent": 2.2
+      },
+      {
+        "name": "Python",
+        "ram_mb": 181.703125,
+        "cpu_percent": 3.6
+      },
+      {
+        "name": "Python",
+        "ram_mb": 166.0,
+        "cpu_percent": 1.9
+      }
+    ],
+    "hyperopt_running": false,
+    "freqai_running": false,
+    "sentiment_running": false
+  },
+  {
+    "timestamp": "2026-05-23T14:04:39.985504+00:00",
+    "ram": {
+      "total_gb": 8.0,
+      "used_gb": 3.19,
+      "available_gb": 2.11,
+      "percent_used": 73.6,
+      "pressure": "warning"
+    },
+    "cpu": {
+      "percent_used": 7.1,
+      "core_count": 8,
+      "throttling_detected": false
+    },
+    "swap": {
+      "used_gb": 2.17,
+      "percent_used": 72.3
+    },
+    "top_processes": [
+      {
+        "name": "agy",
+        "ram_mb": 297.078125,
+        "cpu_percent": 15.5
+      },
+      {
+        "name": "Brave Browser Helper (Renderer)",
+        "ram_mb": 213.390625,
+        "cpu_percent": 1.1
+      },
+      {
+        "name": "Python",
+        "ram_mb": 173.578125,
+        "cpu_percent": 3.6
+      },
+      {
+        "name": "grafana",
+        "ram_mb": 150.125,
+        "cpu_percent": 0.8
+      },
+      {
+        "name": "Python",
+        "ram_mb": 148.25,
+        "cpu_percent": 2.3
+      }
+    ],
+    "hyperopt_running": false,
+    "freqai_running": false,
+    "sentiment_running": false
+  },
+  {
+    "timestamp": "2026-05-23T15:12:17.125718+00:00",
+    "ram": {
+      "total_gb": 8.0,
+      "used_gb": 3.66,
+      "available_gb": 2.24,
+      "percent_used": 72.0,
+      "pressure": "warning"
+    },
+    "cpu": {
+      "percent_used": 8.2,
+      "core_count": 8,
+      "throttling_detected": false
+    },
+    "swap": {
+      "used_gb": 3.4,
+      "percent_used": 67.9
+    },
+    "top_processes": [
+      {
+        "name": "2.1.150",
+        "ram_mb": 342.171875,
+        "cpu_percent": 0.0
+      },
+      {
+        "name": "agy",
+        "ram_mb": 298.015625,
+        "cpu_percent": 15.5
+      },
+      {
+        "name": "Python",
+        "ram_mb": 214.9375,
+        "cpu_percent": 3.6
+      },
+      {
+        "name": "Brave Browser Helper (Renderer)",
+        "ram_mb": 208.25,
+        "cpu_percent": 0.8
+      },
+      {
+        "name": "Python",
+        "ram_mb": 188.140625,
+        "cpu_percent": 2.2
+      }
+    ],
+    "hyperopt_running": false,
+    "freqai_running": false,
+    "sentiment_running": false
+  },
+  {
+    "timestamp": "2026-05-23T16:19:53.454397+00:00",
+    "ram": {
+      "total_gb": 8.0,
+      "used_gb": 3.32,
+      "available_gb": 2.23,
+      "percent_used": 72.2,
+      "pressure": "warning"
+    },
+    "cpu": {
+      "percent_used": 10.4,
+      "core_count": 8,
+      "throttling_detected": false
+    },
+    "swap": {
+      "used_gb": 2.81,
+      "percent_used": 70.1
+    },
+    "top_processes": [
+      {
+        "name": "2.1.150",
+        "ram_mb": 286.421875,
+        "cpu_percent": 0.0
+      },
+      {
+        "name": "agy",
+        "ram_mb": 286.078125,
+        "cpu_percent": 15.6
+      },
+      {
+        "name": "Python",
+        "ram_mb": 236.40625,
+        "cpu_percent": 1.4
+      },
+      {
+        "name": "Python",
+        "ram_mb": 224.28125,
+        "cpu_percent": 1.4
+      },
+      {
+        "name": "Brave Browser Helper (Renderer)",
+        "ram_mb": 185.71875,
+        "cpu_percent": 0.8
+      }
+    ],
+    "hyperopt_running": false,
+    "freqai_running": false,
+    "sentiment_running": false
+  },
+  {
+    "timestamp": "2026-05-23T17:27:33.778061+00:00",
+    "ram": {
+      "total_gb": 8.0,
+      "used_gb": 3.09,
+      "available_gb": 1.73,
+      "percent_used": 78.3,
+      "pressure": "warning"
+    },
+    "cpu": {
+      "percent_used": 12.0,
+      "core_count": 8,
+      "throttling_detected": false
+    },
+    "swap": {
+      "used_gb": 2.31,
+      "percent_used": 57.7
+    },
+    "top_processes": [
+      {
+        "name": "2.1.150",
+        "ram_mb": 307.625,
+        "cpu_percent": 0.0
+      },
+      {
+        "name": "agy",
+        "ram_mb": 278.046875,
+        "cpu_percent": 15.0
+      },
+      {
+        "name": "node",
+        "ram_mb": 249.1875,
+        "cpu_percent": 0.0
+      },
+      {
+        "name": "Python",
+        "ram_mb": 177.359375,
+        "cpu_percent": 5.0
+      },
+      {
+        "name": "grafana",
+        "ram_mb": 147.171875,
+        "cpu_percent": 0.8
+      }
+    ],
+    "hyperopt_running": false,
+    "freqai_running": false,
+    "sentiment_running": false
+  },
+  {
+    "timestamp": "2026-05-23T18:35:57.426936+00:00",
+    "ram": {
+      "total_gb": 8.0,
+      "used_gb": 3.26,
+      "available_gb": 1.08,
+      "percent_used": 86.5,
+      "pressure": "critical"
+    },
+    "cpu": {
+      "percent_used": 22.2,
+      "core_count": 8,
+      "throttling_detected": false
+    },
+    "swap": {
+      "used_gb": 6.17,
+      "percent_used": 88.1
+    },
+    "top_processes": [
+      {
+        "name": "agy",
+        "ram_mb": 247.78125,
+        "cpu_percent": 19.8
+      },
+      {
+        "name": "node",
+        "ram_mb": 208.453125,
+        "cpu_percent": 0.0
+      },
+      {
+        "name": "node",
+        "ram_mb": 112.921875,
+        "cpu_percent": 0.0
+      },
+      {
+        "name": "node",
+        "ram_mb": 91.25,
+        "cpu_percent": 0.0
+      },
+      {
+        "name": "Python",
+        "ram_mb": 89.421875,
+        "cpu_percent": 4.1
+      }
+    ],
+    "hyperopt_running": false,
+    "freqai_running": false,
+    "sentiment_running": true
+  },
+  {
+    "timestamp": "2026-05-23T19:42:32.223029+00:00",
+    "ram": {
+      "total_gb": 8.0,
+      "used_gb": 2.93,
+      "available_gb": 1.76,
+      "percent_used": 78.0,
+      "pressure": "warning"
+    },
+    "cpu": {
+      "percent_used": 9.4,
+      "core_count": 8,
+      "throttling_detected": false
+    },
+    "swap": {
+      "used_gb": 2.39,
+      "percent_used": 59.7
+    },
+    "top_processes": [
+      {
+        "name": "agy",
+        "ram_mb": 317.203125,
+        "cpu_percent": 13.4
+      },
+      {
+        "name": "node",
+        "ram_mb": 241.84375,
+        "cpu_percent": 0.0
+      },
+      {
+        "name": "Python",
+        "ram_mb": 169.171875,
+        "cpu_percent": 4.0
+      },
+      {
+        "name": "Python",
+        "ram_mb": 137.90625,
+        "cpu_percent": 1.9
+      },
+      {
+        "name": "Python",
+        "ram_mb": 121.765625,
+        "cpu_percent": 1.8
+      }
+    ],
+    "hyperopt_running": false,
+    "freqai_running": false,
+    "sentiment_running": false
+  }
+]

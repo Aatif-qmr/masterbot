@@ -7,6 +7,32 @@ from risk.risk_manager import (
 
 class TestRiskManager(unittest.TestCase):
 
+    def setUp(self):
+        import os
+        from unittest.mock import patch
+        
+        # Clean up temporary alert cooldown files to ensure test isolation
+        for f in ['/tmp/qnt_risk_alert_ts', '/tmp/risk_alert_cooldown']:
+            if os.path.exists(f):
+                try:
+                    os.remove(f)
+                except Exception:
+                    pass
+                    
+        # Mock the Freqtrade cluster API call to return 50.0 (the balance used in tests)
+        self.patcher = patch('risk.risk_manager._get_cluster_balance')
+        self.mock_balance = self.patcher.start()
+        self.mock_balance.return_value = 50.0
+        
+        # Mock the sentiment check to avoid filesystem state dependencies
+        self.sentiment_patcher = patch('risk.risk_manager.check_sentiment')
+        self.mock_sentiment = self.sentiment_patcher.start()
+        self.mock_sentiment.return_value = True
+
+    def tearDown(self):
+        self.patcher.stop()
+        self.sentiment_patcher.stop()
+
     def test_daily_drawdown_blocks_at_limit(self):
         # current=48.50, start=50.00 -> 3% loss -> False
         self.assertFalse(check_daily_drawdown(48.50, 50.00))

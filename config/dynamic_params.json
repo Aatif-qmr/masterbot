@@ -1,12 +1,12 @@
 {
   "_meta_ScalpV1": {
     "cooldowns": {
-      "buy_rsi": 1
+      "buy_rsi": 0
     },
-    "cycle": 26
+    "cycle": 52
   },
   "ScalpV1": {
-    "buy_rsi": 25,
+    "buy_rsi": 20,
     "sell_rsi": 55
   },
   "MeanReversionV1": {

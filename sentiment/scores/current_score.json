@@ -1,6 +1,6 @@
 {
-  "score": -0.3285,
-  "timestamp": "2026-05-23T07:33:35.277127+00:00",
+  "score": -0.2373,
+  "timestamp": "2026-05-23T20:30:19.660327+00:00",
   "sources_used": [
     "reddit",
     "news",
@@ -11,9 +11,9 @@
   "component_scores": {
     "reddit": 0.0,
     "news": 0.0,
-    "coingecko": -0.6443665628501792,
+    "coingecko": 0.042998119994469224,
     "feargreed": -0.44,
-    "funding": -0.59934
+    "funding": -1.0
   },
   "weights": {
     "reddit": 0.26,
@@ -21,5 +21,7 @@
     "coingecko": 0.22,
     "feargreed": 0.22,
     "funding": 0.15
-  }
+  },
+  "source": "M2",
+  "published_at": "2026-05-23T20:30:19.990166Z"
 }

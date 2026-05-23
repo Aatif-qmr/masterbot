@@ -19,6 +19,9 @@ QNT_TELEGRAM_CHAT_ID = os.getenv('QNT_TELEGRAM_CHAT_ID')
 FT_USERNAME = os.getenv('FREQTRADE_UI_USERNAME')
 FT_PASSWORD = os.getenv('FREQTRADE_UI_PASSWORD')
 M2_IP = os.getenv('M2_TAILSCALE_IP')
+M2_USER = os.getenv('M2_SSH_USER')
+if not M2_IP or not M2_USER:
+    raise ValueError("Missing critical configuration: M2_TAILSCALE_IP and M2_SSH_USER must be set in .env")
 
 LOG = BASE_DIR / 'logs' / 'health_check.log'
 DB_PATH = BASE_DIR / 'user_data' / 'tradesv3_micro.sqlite'
@@ -139,7 +142,7 @@ def check_freqtrade_processes():
 def check_freqtrade_apis():
     user = os.getenv('FREQTRADE_UI_USERNAME')
     pwd = os.getenv('FREQTRADE_UI_PASSWORD')
-    ports = [8080, 8081, 8082, 8083, 8084, 8085]
+    ports = [8081, 8082, 8083, 8084, 8085, 8087, 8088]
     results = {}
     all_ok = True
     
@@ -301,10 +304,12 @@ def check_nats_connection() -> dict:
 
 def check_m2_shadow_health() -> dict:
     """Verify M2 shadow process and resources are healthy."""
+    m2_ip = M2_IP
+    m2_user = M2_USER
     try:
         result = subprocess.run([
-            "ssh", "azmatsaif@100.74.110.36",
-            "/Users/azmatsaif/masterbot/venv/bin/python", "/Users/azmatsaif/masterbot/qnt/shadow/resource_monitor.py"
+            "ssh", f"{m2_user}@{m2_ip}",
+            f"/Users/{m2_user}/masterbot/venv/bin/python", f"/Users/{m2_user}/masterbot/qnt/shadow/resource_monitor.py"
         ], capture_output=True, text=True, timeout=30)
         
         if result.returncode != 0:

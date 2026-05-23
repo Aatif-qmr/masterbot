@@ -1,7 +1,7 @@
 # qnt/oracle/test_hmm_regime.py
 import unittest
 import numpy as np
-import pandas as pd
+import polars as pl
 import sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
@@ -9,7 +9,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 def _make_dataframe(n=150):
     np.random.seed(42)
     close = 50000 + np.cumsum(np.random.randn(n) * 100)
-    return pd.DataFrame({
+    return pl.DataFrame({
         "open": close * 0.999,
         "high": close * 1.001,
         "low": close * 0.998,

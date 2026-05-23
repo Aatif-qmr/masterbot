@@ -2,7 +2,7 @@ import os
 import sys
 import json
 import sqlite3
-import pandas as pd
+import polars as pl
 from datetime import datetime, timezone, timedelta
 
 # Add paths
@@ -60,10 +60,10 @@ def check_fear_greed_extreme():
 def check_sentiment_velocity():
     """Detect rapid changes in sentiment (flash moves)."""
     try:
-        df = pd.read_csv(SENTIMENT_CSV)
+        df = pl.read_csv(SENTIMENT_CSV)
         if len(df) > 4: # 2 hours
-            current = df.iloc[-1]['score']
-            old = df.iloc[-4]['score']
+            current = df.tail(1)["score"][0]
+            old = df.tail(4)["score"][0]
             change = abs(current - old)
             
             if change > 0.5:
@@ -76,12 +76,15 @@ def check_performance_divergence():
     try:
         conn = sqlite3.connect(DB_PATH)
         query = "SELECT close_date, profit_ratio FROM trades WHERE is_open=0 ORDER BY close_date DESC LIMIT 20"
-        df = pd.read_sql_query(query, conn)
+        cursor = conn.cursor()
+        rows = cursor.execute(query).fetchall()
         conn.close()
+        
+        df = pl.DataFrame(rows, schema=["close_date", "profit_ratio"])
         
         if len(df) < 10: return {"divergence": False}
         
-        win_rate = (df['profit_ratio'] > 0).sum() / len(df)
+        win_rate = (df.get_column('profit_ratio') > 0).sum() / len(df)
         
         with open(SENTIMENT_JSON, 'r') as f:
             sentiment = json.load(f).get('score', 0)

@@ -90,6 +90,31 @@ def get_resource_snapshot():
         "sentiment_running": sentiment_running
     }
 
+def save_state():
+    snapshot = get_resource_snapshot()
+    history = []
+    if MONITOR_FILE.exists():
+        try:
+            with open(MONITOR_FILE, 'r') as f:
+                history = json.load(f)
+        except Exception:
+            pass
+    history.append(snapshot)
+    history = history[-100:]  # Keep last 100 for save_state calls
+    os.makedirs(MONITOR_FILE.parent, exist_ok=True)
+    with open(MONITOR_FILE, 'w') as f:
+        json.dump(history, f, indent=2)
+
+def should_allow_optimization():
+    snapshot = get_resource_snapshot()
+    if snapshot['ram']['pressure'] == 'critical':
+        return False, "Critical RAM pressure"
+    if snapshot['cpu']['percent_used'] > 95:
+        return False, "Critical CPU pressure"
+    if snapshot['ram']['pressure'] == 'warning':
+        return True, "Medium pressure"
+    return True, "Normal pressure"
+
 def monitor_continuously(interval=30):
     """Main monitoring loop."""
     print(f"Resource Monitor started. Interval: {interval}s")

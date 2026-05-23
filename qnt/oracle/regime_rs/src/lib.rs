@@ -66,85 +66,82 @@ fn sigmoid(x: f32) -> f32 {
     1.0 / (1.0 + (-x).exp())
 }
 
-// Single LSTM step: returns next hidden state
+// Single LSTM step: updates h and c in-place without any allocations
 fn lstm_step(
-    x: &[f32],  // input_size
-    h: &[f32],  // hidden_size
-    c: &[f32],  // hidden_size (cell state)
+    x: f32, // input_size = 1
+    h: &mut [f32; HIDDEN_SIZE],
+    c: &mut [f32; HIDDEN_SIZE],
     w: &LstmWeights,
-) -> (Vec<f32>, Vec<f32>) {
-    let h_size = HIDDEN_SIZE;
-
+) {
     // gates = W_ih @ x + b_ih + W_hh @ h + b_hh  shape: 4*H
-    let mut gates = vec![0f32; 4 * h_size];
+    let mut gates = [0.0f32; 4 * HIDDEN_SIZE];
 
-    // W_ih @ x  (weight_ih: [4H, I])
-    for g in 0..4 * h_size {
-        for i in 0..INPUT_SIZE {
-            gates[g] += w.weight_ih[g * INPUT_SIZE + i] * x[i];
+    for g in 0..4 * HIDDEN_SIZE {
+        let mut sum = w.weight_ih[g] * x + w.bias_ih[g] + w.bias_hh[g];
+        let offset = g * HIDDEN_SIZE;
+        for j in 0..HIDDEN_SIZE {
+            sum += w.weight_hh[offset + j] * h[j];
         }
-        gates[g] += w.bias_ih[g];
+        gates[g] = sum;
     }
 
-    // W_hh @ h  (weight_hh: [4H, H])
-    for g in 0..4 * h_size {
-        for j in 0..h_size {
-            gates[g] += w.weight_hh[g * h_size + j] * h[j];
-        }
-        gates[g] += w.bias_hh[g];
+    // Split into i, f, g, o gates (PyTorch order) and update c and h in-place
+    for j in 0..HIDDEN_SIZE {
+        let i_gate = sigmoid(gates[j]);
+        let f_gate = sigmoid(gates[HIDDEN_SIZE + j]);
+        let g_gate = gates[2 * HIDDEN_SIZE + j].tanh();
+        let o_gate = sigmoid(gates[3 * HIDDEN_SIZE + j]);
+
+        c[j] = f_gate * c[j] + i_gate * g_gate;
+        h[j] = o_gate * c[j].tanh();
     }
-
-    // Split into i, f, g, o gates (PyTorch order)
-    let i_gate: Vec<f32> = gates[..h_size].iter().map(|&v| sigmoid(v)).collect();
-    let f_gate: Vec<f32> = gates[h_size..2*h_size].iter().map(|&v| sigmoid(v)).collect();
-    let g_gate: Vec<f32> = gates[2*h_size..3*h_size].iter().map(|&v| v.tanh()).collect();
-    let o_gate: Vec<f32> = gates[3*h_size..4*h_size].iter().map(|&v| sigmoid(v)).collect();
-
-    // New cell: c_new = f * c + i * g
-    let c_new: Vec<f32> = (0..h_size)
-        .map(|j| f_gate[j] * c[j] + i_gate[j] * g_gate[j])
-        .collect();
-
-    // New hidden: h_new = o * tanh(c_new)
-    let h_new: Vec<f32> = (0..h_size)
-        .map(|j| o_gate[j] * c_new[j].tanh())
-        .collect();
-
-    (h_new, c_new)
 }
 
 // Run 1-layer LSTM over sequence, return final hidden state
-fn lstm_forward(returns: &[f32], w: &LstmWeights) -> Vec<f32> {
-    let mut h = vec![0f32; HIDDEN_SIZE];
-    let mut c = vec![0f32; HIDDEN_SIZE];
+fn lstm_forward(returns: &[f32], w: &LstmWeights) -> [f32; HIDDEN_SIZE] {
+    let mut h = [0.0f32; HIDDEN_SIZE];
+    let mut c = [0.0f32; HIDDEN_SIZE];
 
     for &r in returns {
-        let x = [r];
-        let (h_new, c_new) = lstm_step(&x, &h, &c, w);
-        h = h_new;
-        c = c_new;
+        lstm_step(r, &mut h, &mut c, w);
     }
     h
 }
 
 // FC layer: logits = W_fc @ h + b_fc
-fn fc_forward(h: &[f32], w: &LstmWeights) -> Vec<f32> {
-    (0..NUM_CLASSES)
-        .map(|k| {
-            let mut s = w.fc_bias[k];
-            for j in 0..HIDDEN_SIZE {
-                s += w.fc_weight[k * HIDDEN_SIZE + j] * h[j];
-            }
-            s
-        })
-        .collect()
+fn fc_forward(h: &[f32; HIDDEN_SIZE], w: &LstmWeights) -> [f32; NUM_CLASSES] {
+    let mut logits = [0.0f32; NUM_CLASSES];
+    for k in 0..NUM_CLASSES {
+        let mut s = w.fc_bias[k];
+        let offset = k * HIDDEN_SIZE;
+        for j in 0..HIDDEN_SIZE {
+            s += w.fc_weight[offset + j] * h[j];
+        }
+        logits[k] = s;
+    }
+    logits
 }
 
-fn softmax(logits: &[f32]) -> Vec<f32> {
-    let max = logits.iter().cloned().fold(f32::NEG_INFINITY, f32::max);
-    let exps: Vec<f32> = logits.iter().map(|&v| (v - max).exp()).collect();
-    let sum: f32 = exps.iter().sum();
-    exps.iter().map(|&v| v / sum).collect()
+fn softmax(logits: &[f32; NUM_CLASSES]) -> [f32; NUM_CLASSES] {
+    let mut max = logits[0];
+    for &val in logits.iter().skip(1) {
+        if val > max {
+            max = val;
+        }
+    }
+
+    let mut exps = [0.0f32; NUM_CLASSES];
+    let mut sum = 0.0f32;
+    for i in 0..NUM_CLASSES {
+        exps[i] = (logits[i] - max).exp();
+        sum += exps[i];
+    }
+
+    let mut probs = [0.0f32; NUM_CLASSES];
+    for i in 0..NUM_CLASSES {
+        probs[i] = exps[i] / sum;
+    }
+    probs
 }
 
 /// Run LSTM inference from a binary weights file.
@@ -162,12 +159,14 @@ fn lstm_infer(weights_path: &str, returns: Vec<f32>) -> PyResult<(String, String
     let logits = fc_forward(&h, &w);
     let probs = softmax(&logits);
 
-    let next_idx = probs
-        .iter()
-        .enumerate()
-        .max_by(|a, b| a.1.partial_cmp(b.1).unwrap())
-        .map(|(i, _)| i)
-        .unwrap_or(1);
+    let mut next_idx = 0;
+    let mut max_prob = probs[0];
+    for i in 1..NUM_CLASSES {
+        if probs[i] > max_prob {
+            max_prob = probs[i];
+            next_idx = i;
+        }
+    }
 
     let confidence = (probs[next_idx] * 1000.0).round() / 1000.0;
     let next_regime = REGIME_LABELS[next_idx].to_string();

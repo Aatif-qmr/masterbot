@@ -29,7 +29,7 @@
         }
     ],
     "telegram": {
-        "enabled": true,
+        "enabled": false,
         "token": "8785066352:AAHJr2HL7uFk5cXN-okGRE1Yend_4UXbXB8",
         "chat_id": "1025751557",
         "allow_commands": true,
@@ -46,10 +46,10 @@
     "api_server": {
         "enabled": true,
         "listen_ip_address": "0.0.0.0",
-        "listen_port": 8080,
+        "listen_port": 8088,
         "verbosity": "error",
         "enable_openapi": false,
-        "jwt_secret_key": "super_secret_jwt_key",
+        "jwt_secret_key": "e7899daccc6c5066a3cb20b58e1bca6e9c082930c9319df9fe1aacdb2a7e7c24",
         "CORS_origins": [
             "http://100.74.110.36:8080",
             "http://shahids-macbook-air:8080"

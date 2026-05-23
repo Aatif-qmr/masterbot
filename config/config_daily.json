@@ -49,7 +49,7 @@
         "listen_port": 8084,
         "verbosity": "error",
         "enable_openapi": false,
-        "jwt_secret_key": "super_secret_jwt_key",
+        "jwt_secret_key": "6e4823bd8b61abe1dc879e0e5d887fc9c17950b18523dcb6672eb02f9afaab73",
         "CORS_origins": [
             "http://100.74.110.36:8080",
             "http://shahids-macbook-air:8080"

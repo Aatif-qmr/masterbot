@@ -11,7 +11,7 @@ import sqlite3
 import time
 from pathlib import Path
 
-BASE_DIR = Path.home() / 'masterbot'
+BASE_DIR = Path(__file__).resolve().parent.parent
 
 DB_MAP = {
     'ScalpV1':         BASE_DIR / 'user_data/scalp.sqlite',
@@ -32,9 +32,15 @@ CACHE_TTL    = 1800   # re-query DB every 30 minutes
 _cache: dict[str, tuple[float, float]] = {}  # strategy → (multiplier, expires_at)
 
 
+try:
+    from risk_checks import compute_stake_multiplier as _compute_stake_multiplier
+except ImportError:
+    def _compute_stake_multiplier(win_rate: float, floor: float, ceiling: float) -> float:
+        raw = 1.0 + (win_rate - 0.50) * 2.0
+        return max(floor, min(ceiling, raw))
+
 def _compute_multiplier(win_rate: float) -> float:
-    raw = 1.0 + (win_rate - 0.50) * 2.0
-    return round(max(FLOOR, min(CEILING, raw)), 2)
+    return round(_compute_stake_multiplier(win_rate, FLOOR, CEILING), 2)
 
 
 def get_stake_multiplier(strategy: str) -> float:
@@ -53,6 +59,7 @@ def get_stake_multiplier(strategy: str) -> float:
 
     try:
         con = sqlite3.connect(str(db_path))
+        con.execute("PRAGMA journal_mode=WAL;")
         rows = con.execute(
             "SELECT close_profit FROM trades "
             "WHERE is_open=0 AND close_profit IS NOT NULL "

@@ -1,8 +1,8 @@
 {
   "version": "1.0",
   "created": "2026-05-22T11:30:04Z",
-  "last_updated": "2026-05-23T07:31:57Z",
-  "last_sync_m2": "2026-05-23T06:10:03.135255Z",
+  "last_updated": "2026-05-23T20:30:16Z",
+  "last_sync_m2": "2026-05-23T20:30:02.614956Z",
   "action_log": [
     {
       "timestamp": "2026-05-22T11:30:48Z",
@@ -1243,12 +1243,628 @@
       "result": "0 warnings",
       "escalated": false,
       "notified": false
+    },
+    {
+      "timestamp": "2026-05-23T08:00:47Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-23T08:30:04Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-23T08:30:09Z",
+      "device": "M1",
+      "action": "oracle_calendar_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-23T08:30:09Z",
+      "device": "M1",
+      "action": "oracle_anomaly_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-23T08:30:49Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-23T09:02:13Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-23T09:30:05Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-23T09:30:09Z",
+      "device": "M1",
+      "action": "oracle_calendar_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-23T09:30:09Z",
+      "device": "M1",
+      "action": "oracle_anomaly_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-23T09:30:44Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-23T10:00:38Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-23T10:30:04Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-23T10:30:07Z",
+      "device": "M1",
+      "action": "risk_audit_fail",
+      "result": "2 fails, 0 warns",
+      "escalated": true,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-23T10:30:10Z",
+      "device": "M1",
+      "action": "oracle_calendar_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-23T10:30:10Z",
+      "device": "M1",
+      "action": "oracle_anomaly_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-23T10:30:11Z",
+      "device": "M1",
+      "action": "get_balance",
+      "result": "Balance viewed: 49888.23 USDT",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-23T10:30:45Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-23T10:31:20Z",
+      "device": "M1",
+      "action": "get_balance",
+      "result": "Balance viewed: 49888.23 USDT",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-23T10:32:21Z",
+      "device": "M1",
+      "action": "get_balance",
+      "result": "Balance viewed: 49888.23 USDT",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-23T10:33:20Z",
+      "device": "M1",
+      "action": "get_balance",
+      "result": "Balance viewed: 49888.23 USDT",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-23T10:34:15Z",
+      "device": "M1",
+      "action": "get_balance",
+      "result": "Balance viewed: 49888.23 USDT",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-23T11:00:36Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-23T11:30:05Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-23T11:30:08Z",
+      "device": "M1",
+      "action": "oracle_calendar_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-23T11:30:08Z",
+      "device": "M1",
+      "action": "oracle_anomaly_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-23T11:30:42Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-23T12:00:35Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-23T12:30:04Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-23T12:30:10Z",
+      "device": "M1",
+      "action": "oracle_calendar_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-23T12:30:10Z",
+      "device": "M1",
+      "action": "oracle_anomaly_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-23T12:30:43Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-23T13:00:38Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-23T13:30:04Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-23T13:30:08Z",
+      "device": "M1",
+      "action": "oracle_calendar_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-23T13:30:08Z",
+      "device": "M1",
+      "action": "oracle_anomaly_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-23T13:30:42Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-23T14:00:44Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-23T14:30:10Z",
+      "device": "M1",
+      "action": "oracle_anomaly_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-23T14:30:21Z",
+      "device": "M1",
+      "action": "get_balance",
+      "result": "Balance viewed: 49888.23 USDT",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-23T14:30:51Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-23T14:32:01Z",
+      "device": "M1",
+      "action": "get_balance",
+      "result": "Balance viewed: 49888.23 USDT",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-23T14:33:29Z",
+      "device": "M1",
+      "action": "get_balance",
+      "result": "Balance viewed: 49888.23 USDT",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-23T14:35:03Z",
+      "device": "M1",
+      "action": "get_balance",
+      "result": "Balance viewed: 49888.23 USDT",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-23T15:00:43Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-23T15:30:04Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-23T15:30:08Z",
+      "device": "M1",
+      "action": "oracle_calendar_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-23T15:30:08Z",
+      "device": "M1",
+      "action": "oracle_anomaly_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-23T15:30:44Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-23T16:00:44Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-23T16:30:05Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-23T16:30:11Z",
+      "device": "M1",
+      "action": "oracle_calendar_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-23T16:30:12Z",
+      "device": "M1",
+      "action": "oracle_anomaly_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-23T16:30:46Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-23T17:00:39Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-23T17:30:03Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-23T17:30:07Z",
+      "device": "M1",
+      "action": "oracle_calendar_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-23T17:30:07Z",
+      "device": "M1",
+      "action": "oracle_anomaly_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-23T17:31:04Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-23T18:00:39Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-23T18:30:06Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-23T18:30:12Z",
+      "device": "M1",
+      "action": "get_balance",
+      "result": "Balance viewed: 49893.19 USDT",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-23T18:30:15Z",
+      "device": "M1",
+      "action": "oracle_calendar_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-23T18:30:15Z",
+      "device": "M1",
+      "action": "oracle_anomaly_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-23T18:30:43Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-23T18:31:33Z",
+      "device": "M1",
+      "action": "get_balance",
+      "result": "Balance viewed: 49892.80 USDT",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-23T18:32:27Z",
+      "device": "M1",
+      "action": "get_balance",
+      "result": "Balance viewed: 49892.80 USDT",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-23T18:33:31Z",
+      "device": "M1",
+      "action": "get_balance",
+      "result": "Balance viewed: 49892.80 USDT",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-23T18:35:07Z",
+      "device": "M1",
+      "action": "get_balance",
+      "result": "Balance viewed: 49892.80 USDT",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-23T19:00:19Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-23T19:30:04Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-23T19:30:12Z",
+      "device": "M1",
+      "action": "oracle_calendar_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-23T19:30:12Z",
+      "device": "M1",
+      "action": "oracle_anomaly_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-23T19:30:23Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-23T20:00:18Z",
+      "device": "M1",
+      "action": "oracle_sentiment_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-23T20:30:05Z",
+      "device": "M1",
+      "action": "risk_audit_pass",
+      "result": "0 warnings",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-23T20:30:16Z",
+      "device": "M1",
+      "action": "oracle_calendar_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-05-23T20:30:16Z",
+      "device": "M1",
+      "action": "oracle_anomaly_check",
+      "result": "completed",
+      "escalated": false,
+      "notified": false
     }
   ],
   "device_state": {
     "M1": {
-      "last_seen": "2026-05-23T07:31:57Z",
-      "last_action": "risk_audit_pass",
+      "last_seen": "2026-05-23T20:30:16Z",
+      "last_action": "oracle_anomaly_check",
       "hostname": "Aatifs-MacBook-Air.local"
     },
     "M2": {
@@ -1260,11 +1876,13 @@
   "decisions": [],
   "site_maps": {},
   "calendar_cache": {
-    "last_fetched": "2026-05-23T07:31:57.912057Z",
+    "last_fetched": "2026-05-23T14:42:38.190154Z",
     "events": []
   },
   "strategy_history": [],
   "escalation_log": [],
-  "autonomous_actions_today": 155,
-  "autonomous_actions_total": 155
+  "autonomous_actions_today": 232,
+  "autonomous_actions_total": 232,
+  "shield_last_escalation_time": "2026-05-23T08:30:05.597498+00:00Z",
+  "shield_last_alert_time": "2026-05-23T10:30:07.636855+00:00Z"
 }

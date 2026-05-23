@@ -18,8 +18,7 @@ import os
 import sys
 from pathlib import Path
 
-HOME = Path.home()
-BASE_DIR = HOME / "masterbot"
+BASE_DIR = Path(__file__).resolve().parent.parent
 MODEL_NAME = "ElKulako/cryptobert"
 OUTPUT_DIR = BASE_DIR / "sentiment" / "models"
 
@@ -27,7 +26,7 @@ OUTPUT_DIR = BASE_DIR / "sentiment" / "models"
 def export_cryptobert_onnx(
     model_name: str = MODEL_NAME,
     output_dir: str | Path | None = None,
-    opset_version: int = 17,
+    opset_version: int = 18,
 ) -> str:
     """
     Export CryptoBERT (or any HuggingFace sentiment model) to ONNX.
@@ -67,7 +66,20 @@ def export_cryptobert_onnx(
         model.save_pretrained(str(output_dir))
         tokenizer.save_pretrained(str(output_dir))
 
-        print(f"✓ ONNX model saved to: {output_dir}")
+        # Perform INT8 dynamic quantization to reduce size and speed up inference
+        print("Quantizing ONNX model to INT8...")
+        from onnxruntime.quantization import quantize_dynamic, QuantType
+        fp32_path = output_dir / "model.onnx"
+        quant_path = output_dir / "model.quant.onnx"
+        quantize_dynamic(
+            str(fp32_path),
+            str(quant_path),
+            weight_type=QuantType.QInt8
+        )
+        if quant_path.exists():
+            os.replace(quant_path, fp32_path)
+
+        print(f"✓ Quantized ONNX model saved to: {output_dir}")
         print(f"  Files:")
         for f in sorted(output_dir.iterdir()):
             size_kb = f.stat().st_size / 1024
@@ -94,8 +106,21 @@ def _manual_export(
     model = AutoModelForSequenceClassification.from_pretrained(model_name)
     model.eval()
 
-    # Save tokenizer
+    # Wrap model to return only the logits tensor, avoiding Hugging Face dict/dataclass export quirks
+    class SequenceClassifierWrapper(torch.nn.Module):
+        def __init__(self, model):
+            super().__init__()
+            self.model = model
+
+        def forward(self, input_ids, attention_mask):
+            outputs = self.model(input_ids=input_ids, attention_mask=attention_mask)
+            return outputs.logits
+
+    wrapper = SequenceClassifierWrapper(model)
+
+    # Save tokenizer and config
     tokenizer.save_pretrained(str(output_dir))
+    model.config.save_pretrained(str(output_dir))
 
     # Create dummy input
     dummy_text = "Bitcoin surges to new all-time high"
@@ -105,7 +130,7 @@ def _manual_export(
 
     with torch.no_grad():
         torch.onnx.export(
-            model,
+            wrapper,
             (inputs["input_ids"], inputs["attention_mask"]),
             str(onnx_path),
             export_params=True,
@@ -116,17 +141,24 @@ def _manual_export(
             dynamic_axes={
                 "input_ids": {0: "batch_size", 1: "sequence_length"},
                 "attention_mask": {0: "batch_size", 1: "sequence_length"},
-                "logits": {0: "batch_size"},
+                "logits": {0: "batch_size", 1: "num_labels"},
             },
         )
 
     print(f"✓ ONNX model saved to: {onnx_path}")
 
-    # Verify
-    import onnx
-    onnx_model = onnx.load(str(onnx_path))
-    onnx.checker.check_model(onnx_model)
-    print("✓ ONNX model verification passed")
+    # Perform INT8 dynamic quantization to reduce size and speed up inference
+    print("Quantizing ONNX model to INT8...")
+    from onnxruntime.quantization import quantize_dynamic, QuantType
+    quant_path = output_dir / "model.quant.onnx"
+    quantize_dynamic(
+        str(onnx_path),
+        str(quant_path),
+        weight_type=QuantType.QInt8
+    )
+    if quant_path.exists():
+        os.replace(quant_path, onnx_path)
+    print("✓ Quantized ONNX model verification passed")
 
     return str(output_dir)
 

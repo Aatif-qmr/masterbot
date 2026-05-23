@@ -46,7 +46,7 @@
         "listen_port": 8085,
         "verbosity": "error",
         "enable_openapi": false,
-        "jwt_secret_key": "super_secret_jwt_key",
+        "jwt_secret_key": "8a090f16e7484ef59a28afffac86d8b3ab0702e908e342acd3a09b991e57ae67",
         "CORS_origins": [
             "http://100.74.110.36:8080",
             "http://shahids-macbook-air:8080"
@@ -85,7 +85,7 @@
         "stoploss_on_exchange_interval": 60
     },
     "freqai": {
-        "enabled": true,
+        "enabled": false,
         "freqaimodel": "LightGBMRegressor",
         "purge_old_models": 2,
         "train_period_days": 60,

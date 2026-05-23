@@ -3,11 +3,13 @@ import os
 import requests
 from datetime import datetime, timezone, timedelta
 from dotenv import load_dotenv
+from pathlib import Path
 
-load_dotenv('/Users/aatifquamre/masterbot/.env')
+BASE_DIR = Path.home() / 'masterbot'
+load_dotenv(BASE_DIR / '.env')
 
-STATE_FILE = '/Users/aatifquamre/masterbot/risk/balance_state.json'
-API_URL = f'http://{os.getenv('M1_TAILSCALE_IP', '127.0.0.1')}:8080/api/v1/balance'
+STATE_FILE = BASE_DIR / 'risk' / 'balance_state.json'
+API_URL = f'http://{os.getenv("M1_TAILSCALE_IP", "127.0.0.1")}:8080/api/v1/balance'
 USERNAME = os.getenv('API_USERNAME')
 PASSWORD = os.getenv('API_PASSWORD')
 
@@ -42,26 +44,35 @@ def update_balance_state(current_balance: float):
         json.dump(state, f, indent=4)
     return state
 
+from concurrent.futures import ThreadPoolExecutor, as_completed
+
+def _fetch_balance(port, ip, user, pwd):
+    url = f'http://{ip}:{port}/api/v1/balance'
+    try:
+        res = requests.get(url, auth=(user, pwd), timeout=1.5)
+        if res.status_code == 200:
+            return float(res.json().get('total', 0))
+    except Exception as e:
+        print(f"API Error on port {port}: {e}")
+    return None
+
 def get_balance_from_freqtrade_api():
     """
-    Fetches COMBINED USDT balance from all 5 Freqtrade instances.
+    Fetches COMBINED USDT balance from all 6 Freqtrade instances concurrently.
     Returns sum of all running instance balances.
     """
     total = 0.0
     found = 0
     ports = [8080, 8081, 8082, 8083, 8084, 8085]
+    ip = os.getenv('M1_TAILSCALE_IP', '127.0.0.1')
 
-    for port in ports:
-        url = f'http://{os.getenv('M1_TAILSCALE_IP', '127.0.0.1')}:{port}/api/v1/balance'
-        try:
-            res = requests.get(url, auth=(USERNAME, PASSWORD), timeout=5)
-            if res.status_code == 200:
-                data = res.json()
-                # Use top-level 'total' for account summary
-                total += float(data.get('total', 0))
+    with ThreadPoolExecutor(max_workers=len(ports)) as executor:
+        futures = {executor.submit(_fetch_balance, port, ip, USERNAME, PASSWORD): port for port in ports}
+        for future in as_completed(futures):
+            res = future.result()
+            if res is not None:
+                total += res
                 found += 1
-        except Exception as e:
-            print(f"API Error on port {port}: {e}")
     
     return total if found > 0 else None
 

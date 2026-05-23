@@ -5,7 +5,6 @@ import requests
 import subprocess
 import pandas as pd
 from datetime import datetime, timedelta, timezone
-from mistralai.client import Mistral
 from tenacity import retry, stop_after_attempt, wait_exponential
 
 from pathlib import Path
@@ -29,8 +28,6 @@ DEST_EMAIL = 'aatifqmr@gmail.com'
 # API Keys from env
 load_dotenv(BASE_DIR / '.env')
 
-MISTRAL_API_KEY = "buk3FCIeMTkBXiweHG6xuRmcQ0VeeczB"
-# MISTRAL_API_KEY = os.getenv('MISTRAL_API_KEY')
 TELEGRAM_TOKEN = os.getenv('QNT_TELEGRAM_TOKEN')
 TELEGRAM_CHAT_ID = os.getenv('QNT_TELEGRAM_CHAT_ID')
 
@@ -84,7 +81,7 @@ def gather_data():
     if os.path.exists(SENTIMENT_PATH):
         try:
             df = pd.read_csv(SENTIMENT_PATH)
-            df['timestamp'] = pd.to_datetime(df['timestamp'])
+            df['timestamp'] = pd.to_datetime(df['timestamp'], utc=True).dt.tz_localize(None)
             last_week = df[df['timestamp'] >= (datetime.now() - timedelta(days=7))]
             if not last_week.empty:
                 avg = last_week['score'].mean()
@@ -103,33 +100,83 @@ def gather_data():
         "timestamp": datetime.now().isoformat()
     }
 
-@retry(stop=stop_after_attempt(3), wait=wait_exponential(multiplier=1, min=2, max=10))
-def analyze_with_mistral(data):
-    """Uses Mistral Free Tier API to analyze the data."""
-    if not MISTRAL_API_KEY:
-        return "Intelligence module deactivated (No API Key)."
+def generate_quant_report(data: dict) -> str:
+    """Generates a detailed rule-based Senior Quant report from gathered data."""
+    summary = data.get("summary", {})
+    by_strategy = summary.get("by_strategy", {})
+    
+    # 1. Identify most profitable strategy
+    best_strategy = "None"
+    best_profit = -999999.0
+    for strat, stats in by_strategy.items():
+        profit = stats.get("profit", 0.0)
+        if profit > best_profit:
+            best_profit = profit
+            best_strategy = strat
+            
+    best_strategy_str = f"**{best_strategy}** (Profit: `{best_profit:.2f}` USDT)" if best_strategy != "None" else "No active profitable strategies recorded."
+    
+    # 2. Risk suggestion based on sentiment
+    sentiment_str = data.get("market_sentiment", "N/A")
+    sentiment_score = 0.0
+    if sentiment_str != "N/A":
+        try:
+            sentiment_score = float(sentiment_str.split()[0])
+        except Exception:
+            pass
+            
+    risk_action = "MAINTAIN NEUTRAL/BALANCED RISK STATE"
+    risk_rationale = "Global sentiment is in a neutral range. Execute baseline position sizes and monitor key strategy boundaries."
+    
+    if sentiment_score > 0.3:
+        risk_action = "DELEGATE DYNAMIC STAKE EXPANSION (INCREASE RISK)"
+        risk_rationale = f"Global sentiment is highly bullish ({sentiment_score:.3f}). Expand trending/daily cross allocations and allow trend-following strategies full leverage parameters."
+    elif sentiment_score < -0.3:
+        risk_action = "DELEGATE DYNAMIC STAKE CONTRACTION (DECREASE RISK / ENFORCE HEDGE)"
+        risk_rationale = f"Global sentiment is highly bearish ({sentiment_score:.3f}). Contraction phase active. Reduce maximum position slots to 1, enforce tight stoplosses, and prioritize BearScalp allocations."
 
-    client = Mistral(api_key=MISTRAL_API_KEY, server_url="https://codestral.mistral.ai")
-    
-    prompt = f"""
-    Act as the MasterBot Intelligence Layer. Analyze the following trading performance and sentiment data.
-    
-    Data:
-    {json.dumps(data, indent=2)}
-    
-    Tasks:
-    1. Identify the most profitable strategy.
-    2. Suggest whether to increase or decrease risk based on sentiment.
-    3. Provide a 'MasterBot Directives' section with 3 concise bullet points.
-    
-    Format: Markdown. Tone: Senior Quant.
-    """
-    
-    chat_response = client.chat.complete(
-        model="codestral-latest",
-        messages=[{"role": "user", "content": prompt}]
-    )
-    return chat_response.choices[0].message.content
+    # 3. Formulate MasterBot Directives (3 concise bullet points)
+    directives = []
+    # Directive 1 based on best strategy
+    if best_strategy != "None":
+        directives.append(f"Capitalize on **{best_strategy}** outperformance; consider routing 10% more allocation to this slot during the next rebalancing cycle.")
+    else:
+        directives.append("Prioritize dry-run capital preservation across all slots until a strategy demonstrates positive expectancy.")
+        
+    # Directive 2 based on sentiment
+    if sentiment_score > 0.3:
+        directives.append(f"Execute full size entries on TrendFollowV1 and DailyTrendV1. Ranging strategies should run with a 0.5x Kelly multiplier.")
+    elif sentiment_score < -0.3:
+        directives.append(f"Trigger safe-mode circuit breakers on MeanReversionV1 and SwingV1. Ensure BearScalpV1 is fully online to capture downside velocity.")
+    else:
+        directives.append("Enforce baseline capital allocations. Maintain standard stoploss settings and run ScalpV1/SwingV1 at standard risk parameters.")
+        
+    # Directive 3 general quant recommendation
+    open_trades_count = summary.get("open_trades_count", 0)
+    if open_trades_count >= 10:
+        directives.append(f"Enforce strict correlation checks. With {open_trades_count} active slots, do not allow further asset overlap to prevent tail-risk clustering.")
+    else:
+        directives.append(f"Monitor cluster health and ensure Tailscale link connectivity to M1/M2 remains stable for automated SCP model updates.")
+
+    report = f"""### Senior Quant Executive Assessment
+
+#### 1. Detailed Performance Assessment
+- **Total Trades executed**: `{summary.get("total_trades", 0)}`
+- **Total Net Profit**: `{summary.get("total_profit", "0.00 USDT")}`
+- **Active Open Trades**: `{open_trades_count}`
+- **Most Profitable Strategy**: {best_strategy_str}
+
+#### 2. Risk Allocation Decision
+- **Action**: **{risk_action}**
+- **Rationale**: {risk_rationale}
+- **Market Sentiment context**: `{sentiment_str}`
+
+#### 3. MasterBot Directives
+- {directives[0]}
+- {directives[1]}
+- {directives[2]}
+"""
+    return report
 
 def notify(analysis, data):
     """Generates the Google Doc and sends Telegram notification."""
@@ -155,8 +202,8 @@ def notify(analysis, data):
 if __name__ == "__main__":
     print("MasterBot Intelligent Reporter starting...")
     data = gather_data()
-    print("Data gathered. Requesting intelligence from Mistral...")
-    analysis = analyze_with_mistral(data)
+    print("Data gathered. Synthesizing quantitative intelligence...")
+    analysis = generate_quant_report(data)
     print("Analysis complete. Dispatching notifications...")
     notify(analysis, data)
     print("Done.")

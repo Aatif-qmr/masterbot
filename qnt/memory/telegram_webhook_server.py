@@ -16,6 +16,9 @@ from datetime import datetime, timezone
 from pathlib import Path
 from dotenv import load_dotenv
 import sys
+import time
+import threading
+import requests
 
 # Add memory dir to path
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -42,24 +45,64 @@ class TelegramWebhookHandler(BaseHTTPRequestHandler):
         if self.path == '/webhook':
             content_length = int(self.headers.get('Content-Length', 0))
             post_data = self.rfile.read(content_length)
-            
+
+            if not post_data.strip():
+                self.send_response(200)
+                self.end_headers()
+                return
+
             try:
                 update = json.loads(post_data.decode('utf-8'))
                 logger.info(f"Received update: {json.dumps(update, indent=2)[:500]}")
-                
+
                 # Process the update
                 self.process_update(update)
-                
+
                 # Respond with 200 OK
                 self.send_response(200)
                 self.send_header('Content-type', 'application/json')
                 self.end_headers()
                 self.wfile.write(b'{"status":"ok"}')
-                
+
             except Exception as e:
                 logger.error(f"Error processing update: {e}")
-                self.send_response(500)
+                try:
+                    self.send_response(500)
+                    self.end_headers()
+                except Exception:
+                    pass
+        elif self.path == '/ft_alert':
+            content_length = int(self.headers.get('Content-Length', 0))
+            post_data = self.rfile.read(content_length)
+            try:
+                body = post_data.decode('utf-8').strip()
+                if not body:
+                    self.send_response(200)
+                    self.end_headers()
+                    return
+                payload = json.loads(body)
+                # Freqtrade Webhook JSON: we can just forward the pre-formatted text if configured
+                msg = payload.get('message', str(payload))
+                if 'message' in payload:
+                    send_telegram_message(msg, chat_id=str(CHAT_ID))
+                self.send_response(200)
+                self.send_header('Content-type', 'application/json')
                 self.end_headers()
+                self.wfile.write(b'{"status":"ok"}')
+            except json.JSONDecodeError as e:
+                logger.warning(f"ft_alert received invalid JSON (ignoring): {e}")
+                try:
+                    self.send_response(400)
+                    self.end_headers()
+                except Exception:
+                    pass
+            except Exception as e:
+                logger.error(f"Error processing ft_alert: {e}")
+                try:
+                    self.send_response(500)
+                    self.end_headers()
+                except Exception:
+                    pass
         else:
             self.send_response(404)
             self.end_headers()
@@ -210,10 +253,44 @@ class TelegramWebhookHandler(BaseHTTPRequestHandler):
         except Exception as e:
             logger.error(f"Failed to log action: {e}")
     
-    def log_message(self, message: str):
+    def log_message(self, format: str, *args):
         """Override to use our logger."""
-        logger.info(message)
+        logger.info(format % args)
 
+
+def run_polling():
+    """Run long-polling to get Telegram updates (no public URL required)."""
+    logger.info("Starting Telegram Polling loop...")
+    offset = 0
+    
+    # Must delete webhook first to allow polling
+    try:
+        requests.post(f"{API_URL}/deleteWebhook", timeout=10)
+        logger.info("Webhook deleted, safe to poll.")
+    except Exception as e:
+        logger.error(f"Failed to delete webhook before polling: {e}")
+
+    while True:
+        try:
+            res = requests.get(f"{API_URL}/getUpdates", params={"offset": offset, "timeout": 30}, timeout=40)
+            if res.status_code == 200:
+                data = res.json()
+                for update in data.get("result", []):
+                    offset = update["update_id"] + 1
+                    handler = TelegramWebhookHandler(None, None, None)
+                    handler.process_update(update)
+            time.sleep(1)
+        except Exception as e:
+            logger.error(f"Polling error: {e}")
+            time.sleep(5)
+
+# Patch BaseHTTPRequestHandler init so we can instantiate it standalone for polling
+def patched_init(self, request, client_address, server):
+    if request is None:
+        return
+    super(TelegramWebhookHandler, self).__init__(request, client_address, server)
+
+TelegramWebhookHandler.__init__ = patched_init
 
 def run_server(port: int = 8443, cert_file: str = None, key_file: str = None):
     """Run the webhook server."""
@@ -247,8 +324,10 @@ if __name__ == "__main__":
     
     parser = argparse.ArgumentParser(description="Telegram Webhook Server")
     parser.add_argument("--port", type=int, default=8443, help="Server port")
-    parser.add_argument("--webhook-url", type=str, required=True, 
+    parser.add_argument("--webhook-url", type=str, 
                         help="Public URL for webhook (e.g., https://your-domain.com:8443/webhook)")
+    parser.add_argument("--polling", action="store_true",
+                        help="Use long-polling instead of webhooks for inbound commands")
     parser.add_argument("--cert", type=str, help="SSL certificate file path")
     parser.add_argument("--key", type=str, help="SSL private key file path")
     parser.add_argument("--setup-only", action="store_true", 
@@ -256,28 +335,32 @@ if __name__ == "__main__":
     
     args = parser.parse_args()
     
-    # Setup webhook
-    webhook_url = args.webhook_url
-    if not webhook_url.endswith('/webhook'):
-        webhook_url = webhook_url.rstrip('/') + '/webhook'
-    
-    logger.info(f"Setting up webhook: {webhook_url}")
-    
-    res = requests.post(f"{API_URL}/setWebhook", json={
-        "url": webhook_url,
-        "allowed_updates": ["message", "callback_query"]
-    }, timeout=10)
-    
-    if res.status_code == 200:
-        logger.info("✅ Webhook configured successfully!")
+    if args.polling:
+        logger.info("Running in POLLING mode. Starting polling thread.")
+        # Start polling in background
+        threading.Thread(target=run_polling, daemon=True).start()
+    elif args.webhook_url:
+        # Setup webhook
+        webhook_url = args.webhook_url
+        if not webhook_url.endswith('/webhook'):
+            webhook_url = webhook_url.rstrip('/') + '/webhook'
         
-        # Verify webhook
-        verify_res = requests.get(f"{API_URL}/getWebhookInfo", timeout=10)
-        if verify_res.status_code == 200:
-            logger.info(f"Webhook info: {json.dumps(verify_res.json(), indent=2)}")
+        logger.info(f"Setting up webhook: {webhook_url}")
+        res = requests.post(f"{API_URL}/setWebhook", json={
+            "url": webhook_url,
+            "allowed_updates": ["message", "callback_query"]
+        }, timeout=10)
+        
+        if res.status_code == 200:
+            logger.info("✅ Webhook configured successfully!")
+            verify_res = requests.get(f"{API_URL}/getWebhookInfo", timeout=10)
+            if verify_res.status_code == 200:
+                logger.info(f"Webhook info: {json.dumps(verify_res.json(), indent=2)}")
+        else:
+            logger.error(f"❌ Webhook setup failed: {res.text}")
+            sys.exit(1)
     else:
-        logger.error(f"❌ Webhook setup failed: {res.text}")
-        sys.exit(1)
+        logger.warning("No --webhook-url or --polling specified! Inbound commands will not work.")
     
     if not args.setup_only:
         run_server(args.port, args.cert, args.key)

@@ -1,7 +1,7 @@
 import os
 import sys
 import json
-import pandas as pd
+import polars as pl
 from datetime import datetime, timezone, timedelta
 
 # Add paths
@@ -60,9 +60,9 @@ def explain_sentiment():
     # Trend detection
     trend_str = "STABLE"
     try:
-        df = pd.read_csv(SENTIMENT_CSV)
+        df = pl.read_csv(SENTIMENT_CSV)
         if len(df) > 12: # ~6 hours of 30min data
-            old_score = df.iloc[-12]['score']
+            old_score = df.tail(12)["score"][0]
             diff = score - old_score
             if diff > 0.2: trend_str = "IMPROVING"
             elif diff < -0.2: trend_str = "DECLINING"
@@ -102,9 +102,9 @@ def detect_sentiment_shift():
     score = current.get('score', 0)
     
     try:
-        df = pd.read_csv(SENTIMENT_CSV)
+        df = pl.read_csv(SENTIMENT_CSV)
         if len(df) > 12:
-            old_score = df.iloc[-12]['score']
+            old_score = df.tail(12)["score"][0]
             magnitude = abs(score - old_score)
             
             if magnitude >= 0.3:

@@ -2,8 +2,10 @@ import asyncio
 import json
 import os
 import nats
+from pathlib import Path
 from dotenv import load_dotenv
-load_dotenv('/Users/azmatsaif/masterbot/.env')
+BASE_DIR = Path(__file__).resolve().parent.parent
+load_dotenv(BASE_DIR / '.env')
 
 NATS_URL = os.getenv('NATS_URL', 'nats://localhost:4222')
 

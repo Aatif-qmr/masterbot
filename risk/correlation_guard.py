@@ -8,7 +8,9 @@ import time
 from collections import Counter
 from pathlib import Path
 
-BASE_DIR = Path.home() / 'masterbot'
+from concurrent.futures import ThreadPoolExecutor, as_completed
+
+BASE_DIR = Path(__file__).resolve().parent.parent
 
 DB_PATHS = [
     BASE_DIR / 'user_data/scalp.sqlite',
@@ -24,24 +26,32 @@ CACHE_TTL = 60                 # re-scan all DBs every 60 seconds
 _cache: dict = {'data': None, 'expires': 0.0}
 
 
+def _query_db(db_path: Path) -> list[str]:
+    if not db_path.exists():
+        return []
+    try:
+        # Open in read-only mode to prevent lock contention
+        con = sqlite3.connect(f"file:{db_path}?mode=ro", uri=True)
+        con.execute("PRAGMA journal_mode=WAL;")
+        rows = con.execute(
+            "SELECT base_currency FROM trades "
+            "WHERE is_open=1 AND (is_short=0 OR is_short IS NULL)"
+        ).fetchall()
+        con.close()
+        return [base for (base,) in rows if base]
+    except Exception:
+        return []
+
+
 def _scan_open_longs() -> Counter:
     """Return {base_currency: count_of_open_long_trades} across all strategy DBs."""
     counts: Counter = Counter()
-    for db_path in DB_PATHS:
-        if not db_path.exists():
-            continue
-        try:
-            con = sqlite3.connect(str(db_path))
-            rows = con.execute(
-                "SELECT base_currency FROM trades "
-                "WHERE is_open=1 AND (is_short=0 OR is_short IS NULL)"
-            ).fetchall()
-            con.close()
-            for (base,) in rows:
-                if base:
-                    counts[base] += 1
-        except Exception:
-            pass
+    with ThreadPoolExecutor(max_workers=len(DB_PATHS)) as executor:
+        futures = {executor.submit(_query_db, db_path): db_path for db_path in DB_PATHS}
+        for future in as_completed(futures):
+            results = future.result()
+            for base in results:
+                counts[base] += 1
     return counts
 
 

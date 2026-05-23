@@ -19,7 +19,6 @@ sys.path.insert(0, str(BASE_DIR / 'qnt/oracle'))
 
 # Load environment variables
 load_dotenv(BASE_DIR / '.env')
-MISTRAL_API_KEY = os.getenv('MISTRAL_API_KEY')
 
 from qnt.vault.vault import store_lesson
 from qnt.oracle.hmm_regime import detect_regime_full
@@ -96,60 +95,95 @@ def get_market_context_at_open(trade: dict) -> dict:
     return context
 
 def generate_ai_analysis(trade: dict, context: dict) -> str:
-    """Generates detailed AI analysis using Mistral Codestral API."""
+    """Generates detailed Senior Quant analysis of a trade and its market context."""
     try:
         duration_minutes = (
             datetime.fromisoformat(trade["close_date"].replace("Z", "+00:00")) -
             datetime.fromisoformat(trade["open_date"].replace("Z", "+00:00"))
         ).total_seconds() / 60 if trade["close_date"] else 0
-    except Exception as e:
+    except Exception:
         duration_minutes = 0
 
     outcome = "WIN" if trade["profit_ratio"] > 0 else "LOSS"
+    profit_pct = trade['profit_ratio'] * 100
     
-    prompt = f"""
-    Act as a Senior Quant at a high-frequency algorithmic trading firm. Analyze the following trade and its market context.
+    # Deterministic quantitative analysis based on rules
+    assessment = ""
+    hypothesis = ""
+    recommendations = []
     
-    TRADE DETAILS:
-    - Pair: {trade['pair']}
-    - Strategy: {trade['strategy']}
-    - Outcome: {outcome} ({trade['profit_ratio']*100:.2f}% profit ratio)
-    - Entry Rate: {trade['open_rate']} (Date: {trade['open_date']})
-    - Exit Rate: {trade['close_rate']} (Date: {trade['close_date']})
-    - Stake Amount: {trade['stake_amount']}
-    - Duration: {duration_minutes:.1f} minutes
-    
-    MARKET CONTEXT AT ENTRY:
-    - Global Sentiment Score: {context['sentiment_score']}
-    - Market Regime: {context['regime']} (Confidence: {context['regime_confidence']})
-    
-    Provide a detailed Senior Quant breakdown with three distinct sections:
-    1. Detailed Performance Assessment: Analyze the entry/exit execution relative to the sentiment and market regime.
-    2. Hypothesis: Formulate a clear hypothesis on why the trade succeeded or failed (e.g., regime mismatch, trend persistence, exit triggers, news lag, indicator delay).
-    3. Actionable Recommendations: Specific suggestions for parameter refinement, regime filters, or execution modifications to improve reliability.
-    
-    Be quantitative, objective, and highly technical. Return only markdown text.
-    """
-    
-    if not MISTRAL_API_KEY:
-        # Fallback to simple default analysis if API Key is missing
-        return f"### Post-mortem Analysis (No API Key)\n\n" \
-               f"Trade {trade['pair']} on strategy {trade['strategy']} ended with a {outcome} ({trade['profit_ratio']*100:.2f}%).\n\n" \
-               f"**Hypothesis**: Default regime mismatch under {context['regime']} regime (Sentiment: {context['sentiment_score']})."
-               
-    try:
-        from mistralai.client import Mistral
-        client = Mistral(api_key=MISTRAL_API_KEY, server_url="https://codestral.mistral.ai")
-        chat_response = client.chat.complete(
-            model="codestral-latest",
-            messages=[{"role": "user", "content": prompt}]
-        )
-        return chat_response.choices[0].message.content
-    except Exception as e:
-        print(f"Mistral API error: {e}")
-        return f"### Post-mortem Analysis (API Error: {e})\n\n" \
-               f"Trade {trade['pair']} on strategy {trade['strategy']} ended with a {outcome} ({trade['profit_ratio']*100:.2f}%).\n\n" \
-               f"**Market context**: Sentiment={context['sentiment_score']}, Regime={context['regime']}."
+    # 1. Performance Assessment logic
+    if outcome == "WIN":
+        assessment += f"Trade executed successfully on **{trade['pair']}** via **{trade['strategy']}**, returning **+{profit_pct:.2f}%** profit. "
+        try:
+            score = float(context['sentiment_score'])
+        except Exception:
+            score = 0.0
+        if score > 0.1 and context['regime'] == 'BULL':
+            assessment += "Entry aligned perfectly with macro tailwinds (Bullish regime & positive sentiment), enabling rapid profit target capture."
+        else:
+            assessment += f"Successful execution despite counter-trend environment (Regime: {context['regime']}, Sentiment: {context['sentiment_score']})."
+    else:
+        assessment += f"Trade on **{trade['pair']}** via **{trade['strategy']}** terminated at a loss of **{profit_pct:.2f}%**. "
+        try:
+            score = float(context['sentiment_score'])
+        except Exception:
+            score = 0.0
+        if score < -0.1 or context['regime'] == 'BEAR':
+            assessment += f"Entry suffered from severe macro headwinds. Executing longs in a BEAR regime / negative sentiment ({context['sentiment_score']}) exposes positions to systemic selling pressure."
+        else:
+            assessment += f"Loss occurred during neutral/favorable conditions (Regime: {context['regime']}). This points to local micro-structure anomalies, sudden orderbook depletion, or premature stoploss triggering."
+
+    # 2. Hypothesis logic
+    if outcome == "LOSS":
+        try:
+            score = float(context['sentiment_score'])
+        except Exception:
+            score = 0.0
+        if context['regime'] == 'BEAR' and trade['strategy'] not in ['BearScalpV1']:
+            hypothesis += "Regime Mismatch: Non-bear strategy executed a long trade during a confirmed HMM BEAR regime. High probability of trend-continuation stopout."
+        elif score < -0.2:
+            hypothesis += f"Sentiment Lag / Headwind: Entered long while global sentiment was highly negative ({context['sentiment_score']}). Negative news or market-wide panic invalidated the technical triggers."
+        elif duration_minutes < 15:
+            hypothesis += "Premature Stopout: Trade duration was very short (under 15 mins). Stoploss might be set too tight relative to the current ATR volatility band."
+        else:
+            hypothesis += "Execution Slippage or Momentum Exhaustion: The trade was open for a standard duration but failed to reach take-profit targets, reversing as momentum exhausted."
+    else:
+        hypothesis += f"Trend Alignment: Strong momentum persistence under {context['regime']} regime. Sentiment of {context['sentiment_score']} supported buy-side liquidity."
+
+    # 3. Recommendations
+    if outcome == "LOSS":
+        try:
+            score = float(context['sentiment_score'])
+        except Exception:
+            score = 0.0
+        recommendations.append("Apply a hard regime filter: restrict long entries if the current HMM regime is BEAR.")
+        if score < -0.1:
+            recommendations.append(f"Implement a minimum sentiment threshold of -0.05 for {trade['strategy']} entries.")
+        if duration_minutes < 15:
+            recommendations.append("Review ATR-based stoploss multiplier; consider expanding stops to avoid volatility noise.")
+        else:
+            recommendations.append("Implement a time-based exit or trailing stop to lock in partial profits during stalling momentum.")
+    else:
+        recommendations.append("Maintain current strategy entry/exit logic for this regime footprint.")
+        recommendations.append("Evaluate increasing capital allocation to this slot during rebalancing.")
+
+    # Format report as Markdown
+    report = f"""### Senior Quant Performance Assessment
+
+#### 1. Performance Assessment
+{assessment}
+- **Duration**: `{duration_minutes:.1f} minutes`
+- **Execution Rate**: `{trade['open_rate']} -> {trade['close_rate']}`
+
+#### 2. Hypothesis
+- **Primary Driver**: {hypothesis}
+
+#### 3. Actionable Recommendations
+- {recommendations[0]}
+- {recommendations[1] if len(recommendations) > 1 else 'Continue monitoring strategy performance.'}
+"""
+    return report
 
 STRATEGY_DBS = {
     'ScalpV1':       BASE_DIR / 'user_data/scalp.sqlite',

@@ -22,6 +22,7 @@ try:
         compute_position_pct as _compute_position_pct,
         check_rate_exceeded as _check_rate_exceeded,
         count_consecutive_losses as _count_consecutive_losses,
+        batch_compute_drawdowns as _batch_compute_drawdowns,
     )
     # Verify it's the Rust version (has `version()` function)
     from risk_checks import version as _rc_version
@@ -37,6 +38,8 @@ except ImportError:
             check_rate_exceeded as _check_rate_exceeded,
             count_consecutive_losses as _count_consecutive_losses,
         )
+        def _batch_compute_drawdowns(current_balances, start_balances):
+            return [_compute_drawdown_pct(c, s) for c, s in zip(current_balances, start_balances)]
         _BACKEND = 'cython'
     except ImportError:
         # Priority 3: Pure Python fallback (always works)
@@ -54,6 +57,8 @@ except ImportError:
                 else:
                     break
             return count
+        def _batch_compute_drawdowns(current_balances, start_balances):
+            return [_compute_drawdown_pct(c, s) for c, s in zip(current_balances, start_balances)]
         _BACKEND = 'python'
 
 # Backward compat alias
@@ -142,9 +147,24 @@ def _is_alert_allowed() -> bool:
     except Exception as e:
         return True  # If check fails, allow alert to be safe
 
+from concurrent.futures import ThreadPoolExecutor, as_completed
+
+def _fetch_balance(port, ip, user, pwd):
+    try:
+        r = requests.get(
+            f'http://{ip}:{port}/api/v1/balance',
+            auth=(user, pwd),
+            timeout=1.5
+        )
+        if r.status_code == 200:
+            return float(r.json().get('total', 0))
+    except Exception:
+        pass
+    return None
+
 def _get_cluster_balance() -> float:
     """
-    Queries ALL 6 bot instances on the cluster IP.
+    Queries ALL 6 bot instances on the cluster IP concurrently.
     Returns combined USDT total.
     """
     user = os.getenv('FREQTRADE_UI_USERNAME')
@@ -152,18 +172,15 @@ def _get_cluster_balance() -> float:
     ip = os.getenv("M1_TAILSCALE_IP", "127.0.0.1")
     total = 0.0
     found = 0
-    for port in [8080, 8081, 8082, 8083, 8084, 8085]:
-        try:
-            r = requests.get(
-                f'http://{ip}:{port}/api/v1/balance',
-                auth=(user, pwd),
-                timeout=3
-            )
-            if r.status_code == 200:
-                total += float(r.json().get('total', 0))
+    ports = [8080, 8081, 8082, 8083, 8084, 8085]
+
+    with ThreadPoolExecutor(max_workers=len(ports)) as executor:
+        futures = {executor.submit(_fetch_balance, port, ip, user, pwd): port for port in ports}
+        for future in as_completed(futures):
+            res = future.result()
+            if res is not None:
+                total += res
                 found += 1
-        except Exception as e:
-            continue
 
     # If any API fails, fall back to last seen in state file to prevent false drawdown alerts
     if found < 6:
@@ -171,7 +188,7 @@ def _get_cluster_balance() -> float:
             with open(BASE_DIR / 'risk/balance_state.json', 'r') as f:
                 state = json.load(f)
                 return state.get('last_seen_balance', 50000.0)
-        except Exception as e:
+        except Exception:
             return 50000.0
 
     return total
@@ -220,14 +237,14 @@ def check_macro_headwinds() -> bool:
         logging.error(f"Error in macro check: {e}")
         return True
 
-def check_daily_drawdown(current_balance: float, start_of_day_balance: float, limit_pct: float = 3.0) -> bool:
+def check_daily_drawdown(current_balance: float, start_of_day_balance: float, limit_pct: float = 3.0, precomputed_dd: float = None) -> bool:
     if start_of_day_balance == 0: return True
     
     # CRITICAL FIX: Ensure we use aggregated cluster balance
     if current_balance < (start_of_day_balance * 0.5):
         current_balance = _get_cluster_balance()
 
-    drawdown_pct = _compute_drawdown_pct(current_balance, start_of_day_balance)
+    drawdown_pct = precomputed_dd if precomputed_dd is not None else _compute_drawdown_pct(current_balance, start_of_day_balance)
 
     # SANITY CHECK: If drawdown > 50% something is wrong with reading, not actual loss
     if drawdown_pct > 50.0:
@@ -255,14 +272,14 @@ def check_daily_drawdown(current_balance: float, start_of_day_balance: float, li
         
     return True
 
-def check_weekly_drawdown(current_balance: float, start_of_week_balance: float, limit_pct: float = 7.0) -> bool:
+def check_weekly_drawdown(current_balance: float, start_of_week_balance: float, limit_pct: float = 7.0, precomputed_dd: float = None) -> bool:
     if start_of_week_balance == 0: return True
     
     # Ensure we use aggregated cluster balance
     if current_balance < (start_of_week_balance * 0.5):
         current_balance = _get_cluster_balance()
 
-    drawdown_pct = _compute_drawdown_pct(current_balance, start_of_week_balance)
+    drawdown_pct = precomputed_dd if precomputed_dd is not None else _compute_drawdown_pct(current_balance, start_of_week_balance)
 
     # SANITY CHECK: If drawdown > 50% something is wrong with reading
     if drawdown_pct > 50.0:
@@ -441,10 +458,17 @@ def run_all_checks(current_balance=None, start_of_day_balance=None, start_of_wee
     if current_balance < (start_of_day_balance * 0.5):
          current_balance = _get_cluster_balance()
 
+    # Vectorized FFI call to compute drawdowns
+    drawdowns = _batch_compute_drawdowns(
+        [current_balance, current_balance],
+        [start_of_day_balance, start_of_week_balance]
+    )
+    daily_dd, weekly_dd = drawdowns[0], drawdowns[1]
+
     checks = {
         "macro_headwinds": check_macro_headwinds(),
-        "daily_drawdown": check_daily_drawdown(current_balance, start_of_day_balance),
-        "weekly_drawdown": check_weekly_drawdown(current_balance, start_of_week_balance),
+        "daily_drawdown": check_daily_drawdown(current_balance, start_of_day_balance, precomputed_dd=daily_dd),
+        "weekly_drawdown": check_weekly_drawdown(current_balance, start_of_week_balance, precomputed_dd=weekly_dd),
         "position_size": check_position_size(trade_amount_usdt, current_balance),
         "order_rate": check_order_rate(trades_last_hour),
         "consecutive_losses": check_consecutive_losses(recent_trades),

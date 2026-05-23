@@ -1,20 +1,30 @@
 import json
 import joblib
 import numpy as np
-import pandas as pd
+import polars as pl
+try:
+    import pandas as pd
+except ImportError:
+    pd = None
 from pathlib import Path
 from datetime import datetime, timedelta
 import os
+from dotenv import load_dotenv
 
 # Machine-agnostic path setup
-HOME = Path.home()
-BASE_DIR = HOME / 'masterbot'
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
+load_dotenv(BASE_DIR / '.env')
 
 def load_hmm_model():
     """Load HMM model from M2 via SCP if not cached locally."""
     local_path = BASE_DIR / "qnt/oracle/hmm_model.pkl"
-    m2_path = "/Users/azmatsaif/masterbot/qnt/oracle/hmm_model.pkl"
-    m2_ip = "100.74.110.36"
+    
+    m2_ip = os.getenv("M2_TAILSCALE_IP")
+    m2_user = os.getenv("M2_SSH_USER")
+    if not m2_ip or not m2_user:
+        raise ValueError("Missing critical configuration: M2_TAILSCALE_IP and M2_SSH_USER must be set in .env")
+        
+    m2_path = os.getenv("M2_HMM_PATH", f"/Users/{m2_user}/masterbot/qnt/oracle/hmm_model.pkl")
     
     if not local_path.exists():
         import subprocess
@@ -22,7 +32,7 @@ def load_hmm_model():
             # Try to fetch from M2
             subprocess.run([
                 "scp", 
-                f"azmatsaif@{m2_ip}:{m2_path}",
+                f"{m2_user}@{m2_ip}:{m2_path}",
                 str(local_path)
             ], check=True, timeout=30)
         except Exception as e:
@@ -43,7 +53,7 @@ _regime_cache: dict = {}   # pair → (regime, expires_at)
 _REGIME_CACHE_TTL = 300    # 5 minutes per pair
 
 
-def detect_regime(dataframe: pd.DataFrame, pair: str = "BTC/USDT") -> str:
+def detect_regime(dataframe, pair: str = "BTC/USDT") -> str:
     """
     Returns: 'BULL', 'BEAR', or 'RANGING'
     Uses last 100 candles of the pair's own data. Cached per-pair for 5 min.
@@ -69,12 +79,21 @@ def detect_regime(dataframe: pd.DataFrame, pair: str = "BTC/USDT") -> str:
         return "RANGING"
 
     try:
-        # Use log returns as feature
-        # Ensure we have enough data
-        if len(dataframe) < 10:
+        # Transparent pandas bridge
+        if pd is not None and isinstance(dataframe, pd.DataFrame):
+            from qnt.polars_ohlcv import pandas_to_polars
+            df_pl = pandas_to_polars(dataframe)
+        else:
+            df_pl = dataframe
+
+        if len(df_pl) < 10:
             return "RANGING"
             
-        returns = np.log(dataframe["close"] / dataframe["close"].shift(1)).dropna().values[-100:].reshape(-1, 1)
+        # Fast vectorized polars log returns
+        returns = df_pl.select(
+            (pl.col("close") / pl.col("close").shift(1)).log().alias("ret")
+        ).drop_nulls().tail(100)["ret"].to_numpy().reshape(-1, 1)
+        
         if len(returns) < 10:
             return "RANGING"
         
@@ -121,7 +140,7 @@ def get_regime_for_strategy(strategy_name: str, current_regime: str) -> bool:
 
 _REGIME_LABELS = {0: "BEAR", 1: "RANGING", 2: "BULL"}
 
-def detect_regime_full(dataframe: pd.DataFrame, pair: str = "BTC/USDT") -> dict:
+def detect_regime_full(dataframe, pair: str = "BTC/USDT") -> dict:
     """
     Returns current + predicted next regime with confidence.
     Routes to the high-performance ONNX Runtime implementation.
@@ -133,3 +152,23 @@ def detect_regime_full(dataframe: pd.DataFrame, pair: str = "BTC/USDT") -> dict:
         print(f"Error routing to ONNX regime inference: {e}")
         current = detect_regime(dataframe, pair)
         return {"current_regime": current, "next_regime": current, "confidence": 0.5}
+
+
+try:
+    import torch
+    import torch.nn as nn
+    class RegimeLSTM(nn.Module):
+        """LSTM architecture for regime detection (mirrored in train_regime_lstm.py)."""
+        def __init__(self, input_size=1, hidden_size=64, num_layers=1, num_classes=3):
+            super().__init__()
+            self.lstm = nn.LSTM(input_size, hidden_size, num_layers, batch_first=True)
+            self.fc = nn.Linear(hidden_size, num_classes)
+
+        def forward(self, x):
+            out, _ = self.lstm(x)
+            return self.fc(out[:, -1, :])
+except ImportError:
+    class RegimeLSTM:
+        """Fallback placeholder when PyTorch is not installed."""
+        def __init__(self, *args, **kwargs):
+            raise ImportError("PyTorch is required to use RegimeLSTM. Please install torch.")

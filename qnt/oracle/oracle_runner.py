@@ -10,7 +10,6 @@ from oracle_sentiment import check_and_act as sentiment_check
 from oracle_anomaly import run_all_anomaly_checks
 from hmm_regime import detect_regime
 from memory_manager import log_action, get_device_identity
-import pandas as pd
 import freqtrade.data.history as history
 from pathlib import Path
 

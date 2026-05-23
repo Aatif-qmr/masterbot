@@ -9,7 +9,7 @@ from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_excep
 warnings.filterwarnings('ignore') # ignore transformer warnings
 
 # --- CONFIGURATION ---
-BASE_DIR = os.environ.get("MASTERBOT_DIR", os.path.join(os.path.expanduser("~"), "masterbot"))
+BASE_DIR = os.environ.get("MASTERBOT_DIR", os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 OUTPUT_PATH = os.path.join(BASE_DIR, "sentiment/scores/current_score.json")
 HISTORY_PATH = os.path.join(BASE_DIR, "sentiment/scores/history.csv")
 
@@ -67,7 +67,7 @@ def _keyword_sentiment(titles):
 @retry(stop=stop_after_attempt(3), wait=wait_exponential(multiplier=1, min=2, max=10),
        retry=retry_if_exception_type((requests.exceptions.RequestException, requests.exceptions.Timeout)))
 def get_fear_greed():
-    """Fetch Fear \u0026 Greed Index (0-100)"""
+    """Fetch Fear & Greed Index (0-100)"""
     try:
         url = "https://api.alternative.me/fng/"
         res = requests.get(url, timeout=10)
@@ -76,8 +76,8 @@ def get_fear_greed():
         # Normalize to -1 to 1
         return (val - 50) / 50.0
     except Exception as e:
-        print(f"Error fetching Fear \u0026 Greed: {e}")
-        return 0.0
+        print(f"Error fetching Fear & Greed: {e}")
+        return None
 
 @retry(stop=stop_after_attempt(3), wait=wait_exponential(multiplier=1, min=2, max=10),
        retry=retry_if_exception_type((requests.exceptions.RequestException, requests.exceptions.Timeout)))
@@ -91,29 +91,29 @@ def get_binance_funding():
         rates = [float(item['lastFundingRate']) for item in data[:20]]
         avg_rate = sum(rates) / len(rates)
         # Funding is usually small (e.g. 0.0001). 
-        # Normalize: 0.0001 (neutral) -\u003e 0. 0.0003 -\u003e 1. -0.0001 -\u003e -1.
+        # Normalize: 0.0001 (neutral) -> 0. 0.0003 -> 1. -0.0001 -> -1.
         normalized = (avg_rate - 0.0001) / 0.0002
         return max(-1.0, min(1.0, normalized))
     except Exception as e:
         print(f"Error fetching Binance Funding: {e}")
-        return 0.0
+        return None
 
 @retry(stop=stop_after_attempt(3), wait=wait_exponential(multiplier=1, min=2, max=10),
        retry=retry_if_exception_type((requests.exceptions.RequestException, requests.exceptions.Timeout)))
 def get_coingecko_sentiment():
     """Heuristic from Coingecko Trending"""
     try:
-        url = "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum\u0026vs_currencies=usd\u0026include_24hr_change=true"
+        url = "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum&vs_currencies=usd&include_24hr_change=true"
         res = requests.get(url, timeout=10)
         data = res.json()
         btc_change = data['bitcoin']['usd_24h_change']
         eth_change = data['ethereum']['usd_24h_change']
         avg_change = (btc_change + eth_change) / 2.0
-        # Normalize: 5% change -\u003e 1.0, -5% -\u003e -1.0
+        # Normalize: 5% change -> 1.0, -5% -> -1.0
         return max(-1.0, min(1.0, avg_change / 5.0))
     except Exception as e:
         print(f"Error fetching Coingecko: {e}")
-        return 0.0
+        return None
 
 @retry(stop=stop_after_attempt(3), wait=wait_exponential(multiplier=1, min=2, max=10),
        retry=retry_if_exception_type((requests.exceptions.RequestException, requests.exceptions.Timeout)))
@@ -121,14 +121,14 @@ def get_reddit_sentiment():
     """FinBERT sentiment from r/CryptoCurrency hot titles"""
     try:
         url = "https://www.reddit.com/r/CryptoCurrency/hot.json"
-        headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'}
+        headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/124.0.0.0'}
         res = requests.get(url, headers=headers, timeout=10)
         data = res.json()
         titles = [post['data']['title'] for post in data['data']['children']][:15]
         return score_with_finbert(titles)
     except Exception as e:
         print(f"Error fetching Reddit: {e}")
-        return 0.0
+        return None
 
 @retry(stop=stop_after_attempt(3), wait=wait_exponential(multiplier=1, min=2, max=10),
        retry=retry_if_exception_type((requests.exceptions.RequestException, requests.exceptions.Timeout)))
@@ -140,29 +140,57 @@ def get_news_sentiment():
         return score_with_finbert(titles)
     except Exception as e:
         print(f"Error fetching News RSS: {e}")
-        return 0.0
+        return None
+
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 def run_pipeline():
     print(f"[{datetime.now()}] Starting Sentiment Pipeline...")
     
-    scores = {
-        "reddit": get_reddit_sentiment(),
-        "news": get_news_sentiment(),
-        "coingecko": get_coingecko_sentiment(),
-        "feargreed": get_fear_greed(),
-        "funding": get_binance_funding()
+    # Run API fetches concurrently to optimize speed
+    raw_scores = {}
+    tasks = {
+        "reddit": get_reddit_sentiment,
+        "news": get_news_sentiment,
+        "coingecko": get_coingecko_sentiment,
+        "feargreed": get_fear_greed,
+        "funding": get_binance_funding
     }
     
-    # Ensure total weights approximate 1.0 based on available data
+    with ThreadPoolExecutor(max_workers=len(tasks)) as executor:
+        futures = {executor.submit(func): name for name, func in tasks.items()}
+        for future in as_completed(futures):
+            name = futures[future]
+            try:
+                raw_scores[name] = future.result()
+            except Exception as e:
+                print(f"Concurrent task error for {name}: {e}")
+                raw_scores[name] = None
+                
+    # Filter out failed sources (None values) to avoid weight dilution
+    scores = {k: v for k, v in raw_scores.items() if v is not None}
+    
+    # Ensure total weights sum to exactly 1.0 based on available data
     total_active_weight = sum(WEIGHTS[s] for s in scores)
-    final_score = sum(scores[s] * (WEIGHTS[s] / total_active_weight) for s in scores) if total_active_weight > 0 else 0.0
+    
+    active_weights = {}
+    if total_active_weight > 0:
+        for s in WEIGHTS:
+            if s in scores:
+                active_weights[s] = WEIGHTS[s] / total_active_weight
+            else:
+                active_weights[s] = 0.0
+    else:
+        active_weights = {s: 0.0 for s in WEIGHTS}
+        
+    final_score = sum(scores[s] * active_weights[s] for s in scores)
     
     result = {
         "score": round(final_score, 4),
         "timestamp": datetime.now(timezone.utc).isoformat(),
         "sources_used": list(scores.keys()),
         "component_scores": scores,
-        "weights": WEIGHTS
+        "weights": active_weights
     }
     
     # Ensure dir exists
@@ -175,14 +203,14 @@ def run_pipeline():
     with open(HISTORY_PATH, 'a') as f:
         if os.path.getsize(HISTORY_PATH) == 0:
             f.write("timestamp,score,reddit,news,coingecko,feargreed,funding\n")
-        f.write(f"{result['timestamp']},{result['score']},{scores['reddit']},{scores.get('news', 0)},{scores['coingecko']},{scores['feargreed']},{scores['funding']}\n")
+        f.write(f"{result['timestamp']},{result['score']},{scores.get('reddit', 0)},{scores.get('news', 0)},{scores.get('coingecko', 0)},{scores.get('feargreed', 0)},{scores.get('funding', 0)}\n")
         
     print(f"Pipeline complete. Final Score: {result['score']}")
 
     # Publish to NATS for real-time M1 delivery
     try:
         import sys
-        sys.path.insert(0, os.path.join(os.path.expanduser("~"), 'masterbot', 'qnt'))
+        sys.path.insert(0, os.path.join(BASE_DIR, 'qnt'))
         from nats_publisher import publish_sync
         from nats_subjects import SUBJECTS
 

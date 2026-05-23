@@ -4,7 +4,7 @@ Trains LSTM on HMM-labeled historical returns.
 Saves model to qnt/oracle/lstm_regime_model.pt
 """
 import numpy as np
-import pandas as pd
+import polars as pl
 import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader, TensorDataset
@@ -12,11 +12,10 @@ from pathlib import Path
 import joblib
 import sys
 
-HOME = Path.home()
-BASE_DIR = HOME / 'masterbot'
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(BASE_DIR / 'qnt/oracle'))
 
-from hmm_regime import load_hmm_model, RegimeLSTM, _REGIME_LABELS
+from hmm_regime import load_hmm_model, _REGIME_LABELS, RegimeLSTM
 
 SEQ_LEN = 20
 EPOCHS = 30
@@ -29,9 +28,15 @@ def load_returns_from_data() -> np.ndarray:
     data_path = BASE_DIR / 'data/BTC_USDT_1h.csv'
     if not data_path.exists():
         raise FileNotFoundError(f"Training data not found: {data_path}")
-    df = pd.read_csv(data_path, parse_dates=['date'])
-    df = df.sort_values('date').reset_index(drop=True)
-    return np.log(df['close'] / df['close'].shift(1)).dropna().values.astype(np.float32)
+    
+    # Fast lazy evaluation with polars
+    df = pl.scan_csv(data_path).sort('date').collect()
+    
+    returns = df.select(
+        (pl.col("close") / pl.col("close").shift(1)).log().alias("ret")
+    ).drop_nulls()["ret"].to_numpy().astype(np.float32)
+    
+    return returns
 
 
 def label_with_hmm(returns: np.ndarray) -> np.ndarray:

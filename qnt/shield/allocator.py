@@ -6,10 +6,10 @@ import numpy as np
 from pathlib import Path
 from datetime import datetime, timezone
 import sys
+import functools
 
 # Add base dir to path
-HOME = Path.home()
-BASE_DIR = Path("/Users/aatifquamre/masterbot")
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(BASE_DIR))
 
 from qnt.oracle.hmm_regime import detect_regime_full
@@ -46,6 +46,7 @@ LOG_PATH = BASE_DIR / 'logs' / 'capital_allocator.log'
 os.makedirs(LOG_PATH.parent, exist_ok=True)
 logging.basicConfig(filename=LOG_PATH, level=logging.INFO, format='%(asctime)s | %(message)s')
 
+@functools.lru_cache(maxsize=1)
 def get_hmm_regime():
     """Detects current market regime using the HMM/LSTM engine."""
     try:
@@ -65,7 +66,7 @@ def calculate_new_weights(regime):
     """Fetches predefined weights for the detected regime."""
     return STRATEGY_MAP.get(regime, STRATEGY_MAP["RANGING"])
 
-def apply_allocation(weights):
+def apply_allocation(weights, regime=None):
     """Saves the new allocation to balance_state.json and potentially updates Freqtrade configs."""
     state_path = BASE_DIR / 'risk/balance_state.json'
     try:
@@ -75,9 +76,12 @@ def apply_allocation(weights):
         else:
             state = {}
             
+        if regime is None:
+            regime = get_hmm_regime()
+
         state['strategy_allocation_weights'] = weights
         state['last_allocation_update'] = datetime.now(timezone.utc).isoformat()
-        state['current_regime_hmm'] = get_hmm_regime()
+        state['current_regime_hmm'] = regime
         
         # Update actual stake amounts based on a total budget (e.g. $50k)
         total_budget = state.get('total_budget', 50000.0)
@@ -95,4 +99,4 @@ def apply_allocation(weights):
 if __name__ == "__main__":
     regime = get_hmm_regime()
     new_weights = calculate_new_weights(regime)
-    apply_allocation(new_weights)
+    apply_allocation(new_weights, regime)

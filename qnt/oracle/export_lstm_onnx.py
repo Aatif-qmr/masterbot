@@ -21,26 +21,14 @@ import sys
 import os
 from pathlib import Path
 
-HOME = Path.home()
-BASE_DIR = HOME / "masterbot"
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(BASE_DIR / "qnt/oracle"))
 
 import torch
 import torch.nn as nn
 import numpy as np
 
-
-class RegimeLSTM(nn.Module):
-    """Mirror of the RegimeLSTM architecture from hmm_regime.py / train_regime_lstm.py."""
-
-    def __init__(self, input_size=1, hidden_size=64, num_layers=1, num_classes=3):
-        super().__init__()
-        self.lstm = nn.LSTM(input_size, hidden_size, num_layers, batch_first=True)
-        self.fc = nn.Linear(hidden_size, num_classes)
-
-    def forward(self, x):
-        out, _ = self.lstm(x)
-        return self.fc(out[:, -1, :])
+from hmm_regime import RegimeLSTM
 
 
 def export_to_onnx(

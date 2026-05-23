@@ -30,5 +30,20 @@ class TestSentimentPipeline(unittest.TestCase):
         from sentiment.pipeline import score_with_finbert
         self.assertEqual(score_with_finbert([]), 0.0)
 
+    def test_failed_source_redistributes_weights(self):
+        from sentiment.pipeline import WEIGHTS
+        active_sources = ["reddit", "news", "coingecko", "feargreed"]
+        total_active_weight = sum(WEIGHTS[s] for s in active_sources)
+        
+        active_weights = {}
+        for s in WEIGHTS:
+            if s in active_sources:
+                active_weights[s] = WEIGHTS[s] / total_active_weight
+            else:
+                active_weights[s] = 0.0
+                
+        self.assertAlmostEqual(sum(active_weights.values()), 1.0)
+        self.assertEqual(active_weights["funding"], 0.0)
+
 if __name__ == "__main__":
     unittest.main()
