@@ -97,3 +97,12 @@ websocket-client==1.9.0
 widgetsnbextension==4.0.15
 xgboost==3.2.0
 tenacity==8.2.3
+qdrant-client>=1.9.0
+sentence-transformers>=2.7.0
+order-book>=0.6.0
+orjson>=3.9.0
+cython>=3.0.0
+
+polars>=0.20.0
+onnxruntime>=1.17.0
+prefect>=3.0.0
