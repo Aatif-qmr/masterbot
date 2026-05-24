@@ -1,6 +1,0 @@
-#!/bin/bash
-BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-# qnt-anomaly-scan
-# Deep technical market audit with AI explanation
-
-$BASE_DIR/qnt/bin/qnt-python $BASE_DIR/qnt/src/anomaly_scan.py "$@"

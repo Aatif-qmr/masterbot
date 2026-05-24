@@ -1,4 +1,0 @@
-#!/bin/bash
-BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-# Alias for qnt-post-mortem weekly
-$BASE_DIR/qnt/bin/qnt-post-mortem weekly

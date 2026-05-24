@@ -2910,5 +2910,26 @@
     "btc_funding_rate": 0.0001,
     "btc_open_interest": 102943.565,
     "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-24T02:30:03.498387+00:00Z",
+    "dxy_24h_change": 0.1311,
+    "btc_funding_rate": 0.0001,
+    "btc_open_interest": 102753.247,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-24T03:30:03.043690+00:00Z",
+    "dxy_24h_change": 0.1311,
+    "btc_funding_rate": 0.0001,
+    "btc_open_interest": 102872.459,
+    "status": "HEALTHY"
+  },
+  {
+    "timestamp": "2026-05-24T04:30:03.774798+00:00Z",
+    "dxy_24h_change": 0.0,
+    "btc_funding_rate": 9.733e-05,
+    "btc_open_interest": 102487.202,
+    "status": "DEGRADED"
   }
 ]

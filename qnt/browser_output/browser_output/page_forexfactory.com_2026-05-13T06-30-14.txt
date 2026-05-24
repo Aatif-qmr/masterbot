@@ -1,9 +1,0 @@
-Source:    https://www.forexfactory.com/calendar
-Extracted: 2026-05-13T06:30:14.898Z
-Machine:   M2 (azmatsaif)
-────────────────────────────────────────────────────────────
-www.forexfactory.com
-Performing security verification
-This website uses a security service to protect against malicious bots. This page is displayed while the website verifies you are not a bot.
-Ray ID: 9faf9cf83d8638b4
-Performance and Security by CloudflarePrivacy
