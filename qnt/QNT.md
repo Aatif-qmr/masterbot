@@ -1,14 +1,14 @@
-# QNT — MasterBot Intelligence System
+# QNT — Cipher Intelligence System
 
 ## Identity
 - Name: qnt
-- Role: Intelligence brain for MasterBot trading system
+- Role: Intelligence brain for Cipher trading system
 - Version: 1.0.0
 - Generated: 2026-05-08T11:40:40Z
 - Model routing: Task-aware (LITE/FLASH/PRO tiers)
 
 ## Mission
-I am the AI brain of MasterBot. I know everything
+I am the AI brain of Cipher. I know everything
 about this project. I can answer questions, diagnose
 issues, fix problems, research strategies, and
 update the system. I act as architect and operator.
@@ -17,7 +17,7 @@ update the system. I act as architect and operator.
 
 ### M1 — Execution Node (Always On)
 - User: aatifquamre
-- Path: /Users/aatifquamre/masterbot/
+- Path: /Users/aatifquamre/cipher/
 - Role: Live trading, risk management, monitoring
 - Always running: Freqtrade, supervisord, caffeinate
 - Tailscale IP: 100.90.68.42
@@ -25,7 +25,7 @@ update the system. I act as architect and operator.
 
 ### M2 — Intelligence Node (On Demand)
 - User: azmatsaif  
-- Path: /Users/azmatsaif/masterbot/
+- Path: /Users/azmatsaif/cipher/
 - Role: ML training, Hyperopt, sentiment pipeline
 - Tailscale IP: 100.74.110.36
 - SSH from M1: ssh azmatsaif@100.74.110.36
@@ -40,7 +40,7 @@ update the system. I act as architect and operator.
 ## Active Strategies
 
 ### Auto202605030340
-- File: /Users/aatifquamre/masterbot/strategies/active/Auto202605030340.py
+- File: /Users/aatifquamre/cipher/strategies/active/Auto202605030340.py
 - Timeframe: check file
 - Stop loss: -0.04
 - Sentiment gate: BEARISH blocks entry
@@ -48,7 +48,7 @@ update the system. I act as architect and operator.
 - Exchange stop: stoploss_on_exchange = True
 
 ### DailyTrendV1
-- File: /Users/aatifquamre/masterbot/strategies/active/DailyTrendV1.py
+- File: /Users/aatifquamre/cipher/strategies/active/DailyTrendV1.py
 - Timeframe: check file
 - Stop loss: -0.08
 - Sentiment gate: BEARISH blocks entry
@@ -56,7 +56,7 @@ update the system. I act as architect and operator.
 - Exchange stop: stoploss_on_exchange = True
 
 ### MeanReversionV1
-- File: /Users/aatifquamre/masterbot/strategies/active/MeanReversionV1.py
+- File: /Users/aatifquamre/cipher/strategies/active/MeanReversionV1.py
 - Timeframe: check file
 - Stop loss: -0.04
 - Sentiment gate: BEARISH blocks entry
@@ -64,7 +64,7 @@ update the system. I act as architect and operator.
 - Exchange stop: stoploss_on_exchange = True
 
 ### MicroScalpV1
-- File: /Users/aatifquamre/masterbot/strategies/active/MicroScalpV1.py
+- File: /Users/aatifquamre/cipher/strategies/active/MicroScalpV1.py
 - Timeframe: 1m
 - Stop loss: -0.025
 - Sentiment gate: BEARISH blocks entry
@@ -72,7 +72,7 @@ update the system. I act as architect and operator.
 - Exchange stop: stoploss_on_exchange = True
 
 ### ScalpV1
-- File: /Users/aatifquamre/masterbot/strategies/active/ScalpV1.py
+- File: /Users/aatifquamre/cipher/strategies/active/ScalpV1.py
 - Timeframe: check file
 - Stop loss: -0.02
 - Sentiment gate: BEARISH blocks entry
@@ -80,7 +80,7 @@ update the system. I act as architect and operator.
 - Exchange stop: stoploss_on_exchange = True
 
 ### SwingV1
-- File: /Users/aatifquamre/masterbot/strategies/active/SwingV1.py
+- File: /Users/aatifquamre/cipher/strategies/active/SwingV1.py
 - Timeframe: check file
 - Stop loss: -0.03
 - Sentiment gate: BEARISH blocks entry
@@ -88,7 +88,7 @@ update the system. I act as architect and operator.
 - Exchange stop: stoploss_on_exchange = True
 
 ### TrendFollowV1
-- File: /Users/aatifquamre/masterbot/strategies/active/TrendFollowV1.py
+- File: /Users/aatifquamre/cipher/strategies/active/TrendFollowV1.py
 - Timeframe: check file
 - Stop loss: -0.06
 - Sentiment gate: BEARISH blocks entry
@@ -114,45 +114,45 @@ overriding or disabling any of these.
 
 ### M1 Cron Jobs
 ```
-*/5 * * * * bash /Users/aatifquamre/masterbot/qnt/memory/sync_memory.sh
+*/5 * * * * bash /Users/aatifquamre/cipher/qnt/memory/sync_memory.sh
 # Balance tracker — every hour
-0 * * * * cd /Users/aatifquamre/masterbot && /Users/aatifquamre/masterbot/venv/bin/python /Users/aatifquamre/masterbot/risk/balance_tracker.py >> /Users/aatifquamre/masterbot/logs/balance_tracker.log 2>&1
+0 * * * * cd /Users/aatifquamre/cipher && /Users/aatifquamre/cipher/venv/bin/python /Users/aatifquamre/cipher/risk/balance_tracker.py >> /Users/aatifquamre/cipher/logs/balance_tracker.log 2>&1
 
 # Health check — every hour at :00
-0 * * * * cd /Users/aatifquamre/masterbot && source .env && /Users/aatifquamre/masterbot/venv/bin/python /Users/aatifquamre/masterbot/automation/health_check.py >> /Users/aatifquamre/masterbot/logs/health_cron.log 2>&1
+0 * * * * cd /Users/aatifquamre/cipher && source .env && /Users/aatifquamre/cipher/venv/bin/python /Users/aatifquamre/cipher/automation/health_check.py >> /Users/aatifquamre/cipher/logs/health_cron.log 2>&1
 
 # Weekly report — Monday 7am
-0 7 * * 1 cd /Users/aatifquamre/masterbot && source .env && /Users/aatifquamre/masterbot/venv/bin/python /Users/aatifquamre/masterbot/automation/weekly_report.py >> /Users/aatifquamre/masterbot/logs/weekly_report_cron.log 2>&1
+0 7 * * 1 cd /Users/aatifquamre/cipher && source .env && /Users/aatifquamre/cipher/venv/bin/python /Users/aatifquamre/cipher/automation/weekly_report.py >> /Users/aatifquamre/cipher/logs/weekly_report_cron.log 2>&1
 
 # Weekly backup — Sunday 2am
-0 2 * * 0 cd /Users/aatifquamre/masterbot && /bin/bash /Users/aatifquamre/masterbot/automation/backup.sh >> /Users/aatifquamre/masterbot/logs/backup_cron.log 2>&1
-0 * * * * source /Users/aatifquamre/masterbot/.env && /Users/aatifquamre/masterbot/venv/bin/python /Users/aatifquamre/masterbot/qnt/oracle/oracle_runner.py calendar >> /Users/aatifquamre/masterbot/logs/oracle.log 2>&1
-*/30 * * * * source /Users/aatifquamre/masterbot/.env && /Users/aatifquamre/masterbot/venv/bin/python /Users/aatifquamre/masterbot/qnt/oracle/oracle_runner.py sentiment >> /Users/aatifquamre/masterbot/logs/oracle.log 2>&1
-0 * * * * source /Users/aatifquamre/masterbot/.env && /Users/aatifquamre/masterbot/venv/bin/python /Users/aatifquamre/masterbot/qnt/oracle/oracle_runner.py anomaly >> /Users/aatifquamre/masterbot/logs/oracle.log 2>&1
-0 * * * * source /Users/aatifquamre/masterbot/.env && /Users/aatifquamre/masterbot/venv/bin/python -c "import sys; sys.path.insert(0, '/Users/aatifquamre/masterbot/qnt/shield'); sys.path.insert(0, '/Users/aatifquamre/masterbot/qnt/memory'); from shield import autonomous_shield_check; autonomous_shield_check()" >> /Users/aatifquamre/masterbot/logs/shield.log 2>&1
-0 3 * * * source /Users/aatifquamre/masterbot/.env && /Users/aatifquamre/masterbot/venv/bin/python /Users/aatifquamre/masterbot/qnt/vault/vault_indexer.py >> /Users/aatifquamre/masterbot/logs/vault.log 2>&1
-0 6 * * 1 source /Users/aatifquamre/masterbot/.env && /Users/aatifquamre/masterbot/venv/bin/python -c "import sys; sys.path.insert(0, '/Users/aatifquamre/masterbot/qnt/vault'); from post_mortem import generate_weekly_post_mortem; generate_weekly_post_mortem()" >> /Users/aatifquamre/masterbot/logs/vault.log 2>&1
-0 * * * * /Users/aatifquamre/masterbot/venv/bin/python /Users/aatifquamre/masterbot/qnt/oracle/oracle_macro.py >> /Users/aatifquamre/masterbot/logs/oracle_macro.log 2>&1
-0 */2 * * * source /Users/aatifquamre/masterbot/.env && /Users/aatifquamre/masterbot/venv/bin/python /Users/aatifquamre/masterbot/qnt/vault/post_mortem_loop.py >> /Users/aatifquamre/masterbot/logs/post_mortem.log 2>&1
-50 23 * * * bash /Users/aatifquamre/masterbot/automation/qnt_daily_report.sh >> /Users/aatifquamre/masterbot/logs/qnt_report.log 2>&1
-15 * * * * /Users/aatifquamre/masterbot/venv/bin/python /Users/aatifquamre/masterbot/automation/qnt_sheets_sync.py >> /Users/aatifquamre/masterbot/logs/sheets_sync.log 2>&1
-0 9 * * 0 bash /Users/aatifquamre/masterbot/automation/qnt_market_oracle.sh >> /Users/aatifquamre/masterbot/logs/qnt_oracle.log 2>&1
-0 */2 * * * /Users/aatifquamre/masterbot/venv/bin/python /Users/aatifquamre/masterbot/automation/post_mortem.py >> /Users/aatifquamre/masterbot/logs/post_mortem.log 2>&1
-*/15 * * * * /Users/aatifquamre/masterbot/automation/sync_order_flow.sh >> /Users/aatifquamre/masterbot/logs/sync_order_flow.log 2>&1
+0 2 * * 0 cd /Users/aatifquamre/cipher && /bin/bash /Users/aatifquamre/cipher/automation/backup.sh >> /Users/aatifquamre/cipher/logs/backup_cron.log 2>&1
+0 * * * * source /Users/aatifquamre/cipher/.env && /Users/aatifquamre/cipher/venv/bin/python /Users/aatifquamre/cipher/qnt/oracle/oracle_runner.py calendar >> /Users/aatifquamre/cipher/logs/oracle.log 2>&1
+*/30 * * * * source /Users/aatifquamre/cipher/.env && /Users/aatifquamre/cipher/venv/bin/python /Users/aatifquamre/cipher/qnt/oracle/oracle_runner.py sentiment >> /Users/aatifquamre/cipher/logs/oracle.log 2>&1
+0 * * * * source /Users/aatifquamre/cipher/.env && /Users/aatifquamre/cipher/venv/bin/python /Users/aatifquamre/cipher/qnt/oracle/oracle_runner.py anomaly >> /Users/aatifquamre/cipher/logs/oracle.log 2>&1
+0 * * * * source /Users/aatifquamre/cipher/.env && /Users/aatifquamre/cipher/venv/bin/python -c "import sys; sys.path.insert(0, '/Users/aatifquamre/cipher/qnt/shield'); sys.path.insert(0, '/Users/aatifquamre/cipher/qnt/memory'); from shield import autonomous_shield_check; autonomous_shield_check()" >> /Users/aatifquamre/cipher/logs/shield.log 2>&1
+0 3 * * * source /Users/aatifquamre/cipher/.env && /Users/aatifquamre/cipher/venv/bin/python /Users/aatifquamre/cipher/qnt/vault/vault_indexer.py >> /Users/aatifquamre/cipher/logs/vault.log 2>&1
+0 6 * * 1 source /Users/aatifquamre/cipher/.env && /Users/aatifquamre/cipher/venv/bin/python -c "import sys; sys.path.insert(0, '/Users/aatifquamre/cipher/qnt/vault'); from post_mortem import generate_weekly_post_mortem; generate_weekly_post_mortem()" >> /Users/aatifquamre/cipher/logs/vault.log 2>&1
+0 * * * * /Users/aatifquamre/cipher/venv/bin/python /Users/aatifquamre/cipher/qnt/oracle/oracle_macro.py >> /Users/aatifquamre/cipher/logs/oracle_macro.log 2>&1
+0 */2 * * * source /Users/aatifquamre/cipher/.env && /Users/aatifquamre/cipher/venv/bin/python /Users/aatifquamre/cipher/qnt/vault/post_mortem_loop.py >> /Users/aatifquamre/cipher/logs/post_mortem.log 2>&1
+50 23 * * * bash /Users/aatifquamre/cipher/automation/qnt_daily_report.sh >> /Users/aatifquamre/cipher/logs/qnt_report.log 2>&1
+15 * * * * /Users/aatifquamre/cipher/venv/bin/python /Users/aatifquamre/cipher/automation/qnt_sheets_sync.py >> /Users/aatifquamre/cipher/logs/sheets_sync.log 2>&1
+0 9 * * 0 bash /Users/aatifquamre/cipher/automation/qnt_market_oracle.sh >> /Users/aatifquamre/cipher/logs/qnt_oracle.log 2>&1
+0 */2 * * * /Users/aatifquamre/cipher/venv/bin/python /Users/aatifquamre/cipher/automation/post_mortem.py >> /Users/aatifquamre/cipher/logs/post_mortem.log 2>&1
+*/15 * * * * /Users/aatifquamre/cipher/automation/sync_order_flow.sh >> /Users/aatifquamre/cipher/logs/sync_order_flow.log 2>&1
 ```
 
 ### M2 Cron Jobs
 ```
-*/30 * * * * /bin/bash /Users/azmatsaif/masterbot/automation/run_sentiment.sh >> /Users/azmatsaif/masterbot/logs/sentiment_cron.log 2>&1
-0 1 * * 1,4 /bin/bash /Users/azmatsaif/masterbot/automation/retrain_freqai.sh >> /Users/azmatsaif/masterbot/logs/freqai_cron.log 2>&1
-0 23 * * 0 /bin/bash /Users/azmatsaif/masterbot/automation/weekly_hyperopt.sh >> /Users/azmatsaif/masterbot/logs/hyperopt_cron.log 2>&1
-0 * * * * scp -r /Users/azmatsaif/masterbot/qnt/browser_output/ aatifquamre@100.90.68.42:/Users/aatifquamre/masterbot/qnt/browser_output/ 2>/dev/null
-0 22 * * 6 bash /Users/azmatsaif/masterbot/automation/weekly_strategy_scan.sh
-0 * * * * /Users/azmatsaif/masterbot/venv/bin/python /Users/azmatsaif/masterbot/qnt/oracle/oracle_macro.py >> /Users/azmatsaif/masterbot/logs/oracle_macro.log 2>&1
-5 * * * * scp /Users/azmatsaif/masterbot/risk/macro_history.json aatifquamre@100.90.68.42:/Users/aatifquamre/masterbot/risk/macro_history.json
-0 3 * * * /Users/azmatsaif/masterbot/venv/bin/python /Users/azmatsaif/masterbot/qnt/vault/vault_indexer.py >> /Users/azmatsaif/masterbot/logs/vault_cron.log 2>&1
-0 2 * * 3 cd /Users/azmatsaif/masterbot && source venv/bin/activate && python3 qnt/oracle/hmm_regime.py --retrain >> logs/hmm_retrain.log 2>&1
-*/15 * * * * source /Users/azmatsaif/masterbot/venv/bin/activate && python3 /Users/azmatsaif/masterbot/qnt/oracle/order_flow.py >> /Users/azmatsaif/masterbot/logs/order_flow.log 2>&1
+*/30 * * * * /bin/bash /Users/azmatsaif/cipher/automation/run_sentiment.sh >> /Users/azmatsaif/cipher/logs/sentiment_cron.log 2>&1
+0 1 * * 1,4 /bin/bash /Users/azmatsaif/cipher/automation/retrain_freqai.sh >> /Users/azmatsaif/cipher/logs/freqai_cron.log 2>&1
+0 23 * * 0 /bin/bash /Users/azmatsaif/cipher/automation/weekly_hyperopt.sh >> /Users/azmatsaif/cipher/logs/hyperopt_cron.log 2>&1
+0 * * * * scp -r /Users/azmatsaif/cipher/qnt/browser_output/ aatifquamre@100.90.68.42:/Users/aatifquamre/cipher/qnt/browser_output/ 2>/dev/null
+0 22 * * 6 bash /Users/azmatsaif/cipher/automation/weekly_strategy_scan.sh
+0 * * * * /Users/azmatsaif/cipher/venv/bin/python /Users/azmatsaif/cipher/qnt/oracle/oracle_macro.py >> /Users/azmatsaif/cipher/logs/oracle_macro.log 2>&1
+5 * * * * scp /Users/azmatsaif/cipher/risk/macro_history.json aatifquamre@100.90.68.42:/Users/aatifquamre/cipher/risk/macro_history.json
+0 3 * * * /Users/azmatsaif/cipher/venv/bin/python /Users/azmatsaif/cipher/qnt/vault/vault_indexer.py >> /Users/azmatsaif/cipher/logs/vault_cron.log 2>&1
+0 2 * * 3 cd /Users/azmatsaif/cipher && source venv/bin/activate && python3 qnt/oracle/hmm_regime.py --retrain >> logs/hmm_retrain.log 2>&1
+*/15 * * * * source /Users/azmatsaif/cipher/venv/bin/activate && python3 /Users/azmatsaif/cipher/qnt/oracle/order_flow.py >> /Users/azmatsaif/cipher/logs/order_flow.log 2>&1
 ```
 
 ## Key File Map
@@ -314,11 +314,11 @@ All actions logged to qnt_memory.json.
 ## Known Issues Log
 Format: [DATE] FIXED/NOTED: description
 
-[2026-04-28] NOTED: Full system backup created: masterbot_backup_20260428.tar.gz
-[2026-05-02] NOTED: Full system backup created: masterbot_backup_20260502.tar.gz
-[2026-05-02] NOTED: Full system backup created: masterbot_backup_20260502.tar.gz
-[2026-05-02] NOTED: Full system backup created: masterbot_backup_20260502.tar.gz
-[2026-05-02] NOTED: Full system backup created: masterbot_backup_20260502.tar.gz
-[2026-05-03] NOTED: Full system backup created: masterbot_backup_20260503.tar.gz
+[2026-04-28] NOTED: Full system backup created: cipher_backup_20260428.tar.gz
+[2026-05-02] NOTED: Full system backup created: cipher_backup_20260502.tar.gz
+[2026-05-02] NOTED: Full system backup created: cipher_backup_20260502.tar.gz
+[2026-05-02] NOTED: Full system backup created: cipher_backup_20260502.tar.gz
+[2026-05-02] NOTED: Full system backup created: cipher_backup_20260502.tar.gz
+[2026-05-03] NOTED: Full system backup created: cipher_backup_20260503.tar.gz
 
 *(qnt appends here when it fixes issues)*

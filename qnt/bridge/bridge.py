@@ -9,7 +9,7 @@ from rich.console import Console
 from requests.auth import HTTPBasicAuth
 
 # Add memory and bridge dirs to path
-BASE_DIR = '/Users/aatifquamre/masterbot'
+BASE_DIR = '/Users/aatifquamre/cipher'
 sys.path.insert(0, os.path.join(BASE_DIR, 'qnt/memory'))
 sys.path.insert(0, os.path.join(BASE_DIR, 'qnt/bridge'))
 
@@ -47,7 +47,7 @@ def bot_status():
     try:
         # 1. Process status (M1)
         # Check if all 5 are running
-        stdout, _, _ = run_on_m1("/Users/aatifquamre/masterbot/venv/bin/supervisorctl -c /Users/aatifquamre/masterbot/config/supervisord.conf status")
+        stdout, _, _ = run_on_m1("/Users/aatifquamre/cipher/venv/bin/supervisorctl -c /Users/aatifquamre/cipher/config/supervisord.conf status")
         lines = stdout.splitlines() if stdout else []
         running_count = 0
         for line in lines:
@@ -67,7 +67,7 @@ def bot_status():
         if total_balance == 0: total_balance = 50000.0
 
         # 3. Local state files (M1)
-        s_out, _, _ = run_on_m1("cat /Users/aatifquamre/masterbot/sentiment/scores/current_score.json")
+        s_out, _, _ = run_on_m1("cat /Users/aatifquamre/cipher/sentiment/scores/current_score.json")
         try:
             sentiment = json.loads(s_out)
             score = sentiment.get("score", 0)
@@ -77,7 +77,7 @@ def bot_status():
         if score >= 0.3: regime = "BULLISH"
         elif score <= -0.3: regime = "BEARISH"
 
-        b_out, _, _ = run_on_m1("cat /Users/aatifquamre/masterbot/risk/balance_state.json")
+        b_out, _, _ = run_on_m1("cat /Users/aatifquamre/cipher/risk/balance_state.json")
         try:
             b_state = json.loads(b_out)
             daily_pnl = total_balance - b_state.get('start_of_day', total_balance)
@@ -87,7 +87,7 @@ def bot_status():
         # Format output
         now = get_ist_now().strftime("%H:%M IST")
         output = [
-            f"🤖 MasterBot Status — {now}",
+            f"🤖 Cipher Status — {now}",
             "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
             f"Instances: {running_count}/5 RUNNING",
             f"Mode:      PAPER TRADING (Scaled)",
@@ -127,7 +127,7 @@ def bot_status():
 
 def bot_start(mode='paper'):
     def start_action(parsed_choice=None):
-        run_on_m1("/Users/aatifquamre/masterbot/venv/bin/supervisorctl -c /Users/aatifquamre/masterbot/config/supervisord.conf start all")
+        run_on_m1("/Users/aatifquamre/cipher/venv/bin/supervisorctl -c /Users/aatifquamre/cipher/config/supervisord.conf start all")
         return "Started all"
     from qnt_notifier import send_notify
     handle(situation_type="routine_maintenance", context="Starting all bot instances", action_fn=start_action)
@@ -135,7 +135,7 @@ def bot_start(mode='paper'):
 
 def bot_stop():
     def stop_action(parsed_choice=None):
-        run_on_m1("/Users/aatifquamre/masterbot/venv/bin/supervisorctl -c /Users/aatifquamre/masterbot/config/supervisord.conf stop all")
+        run_on_m1("/Users/aatifquamre/cipher/venv/bin/supervisorctl -c /Users/aatifquamre/cipher/config/supervisord.conf stop all")
         return "Stopped all"
     handle(situation_type="routine_maintenance", context="Stopping all bot instances", action_fn=stop_action)
     return "Bot instances stopping"
@@ -155,7 +155,7 @@ def killswitch():
             requests.post(f"http://{os.getenv('M1_TAILSCALE_IP', '127.0.0.1')}:{port}/api/v1/forceexit", auth=HTTPBasicAuth(FT_USER, FT_PASS), json={"tradeid": "all"}, timeout=5)
             requests.post(f"http://{os.getenv('M1_TAILSCALE_IP', '127.0.0.1')}:{port}/api/v1/stopentry", auth=HTTPBasicAuth(FT_USER, FT_PASS), timeout=5)
         except Exception as e: pass
-    run_on_m1("/Users/aatifquamre/masterbot/venv/bin/supervisorctl -c /Users/aatifquamre/masterbot/config/supervisord.conf stop all")
+    run_on_m1("/Users/aatifquamre/cipher/venv/bin/supervisorctl -c /Users/aatifquamre/cipher/config/supervisord.conf stop all")
     return "Killswitch executed on all instances."
 
 def stream_logs(lines=50, follow=False):
@@ -169,7 +169,7 @@ def stream_logs(lines=50, follow=False):
     ]
     
     for log_file in log_files:
-        log_path = f"/Users/aatifquamre/masterbot/logs/{log_file}"
+        log_path = f"/Users/aatifquamre/cipher/logs/{log_file}"
         bot_name = log_file.split('.')[0].replace('_', ' ').title()
         
         console.print(f"\n[bold blue]--- {bot_name} Logs ---[/bold blue]")

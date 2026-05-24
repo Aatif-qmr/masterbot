@@ -1,6 +1,6 @@
 ---
 name: sentiment-analyzer
-description: Monitor and maintain the MasterBot sentiment analysis pipeline.
+description: Monitor and maintain the Cipher sentiment analysis pipeline.
 ---
 
 # Sentiment Analyzer Skill

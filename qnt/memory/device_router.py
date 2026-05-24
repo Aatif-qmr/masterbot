@@ -9,8 +9,8 @@ from dotenv import load_dotenv
 # --- CONFIGURATION ---
 M1_USER = 'aatifquamre'
 M2_USER = 'azmatsaif'
-M1_PATH = '/Users/aatifquamre/masterbot'
-M2_PATH = '/Users/azmatsaif/masterbot'
+M1_PATH = '/Users/aatifquamre/cipher'
+M2_PATH = '/Users/azmatsaif/cipher'
 M1_FREQTRADE_API = 'http://100.90.68.42:8080/api/v1'
 
 # Load environment
@@ -40,7 +40,7 @@ def get_current_device():
         "device": device,
         "user": user,
         "hostname": hostname,
-        "masterbot_path": M1_PATH if is_m1 else M2_PATH,
+        "cipher_path": M1_PATH if is_m1 else M2_PATH,
         "role": "execution" if is_m1 else "intelligence",
         "can_reach_freqtrade_directly": is_m1,
         "other_device": "M2" if is_m1 else "M1",
@@ -53,7 +53,7 @@ def run_on_m1(command, capture=True):
     """Route command to M1 (Execution Node)."""
     # Import log_action inside to avoid circular dependencies if any
     try:
-        sys.path.insert(0, DEVICE_CONTEXT["masterbot_path"] + '/qnt/memory')
+        sys.path.insert(0, DEVICE_CONTEXT["cipher_path"] + '/qnt/memory')
         from memory_manager import log_action
     except ImportError:
         def log_action(*args, **kwargs): pass
@@ -73,7 +73,7 @@ def run_on_m1(command, capture=True):
 def run_on_m2(command, capture=True):
     """Route command to M2 (Intelligence Node)."""
     try:
-        sys.path.insert(0, DEVICE_CONTEXT["masterbot_path"] + '/qnt/memory')
+        sys.path.insert(0, DEVICE_CONTEXT["cipher_path"] + '/qnt/memory')
         from memory_manager import log_action
     except ImportError:
         def log_action(*args, **kwargs): pass

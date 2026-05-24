@@ -23,7 +23,7 @@ bot should be trading right now.
 ## Data Collection (fetch all, then synthesize)
 
 ### Source 1 — Live Sentiment Score
-Read: /Users/aatifquamre/masterbot/sentiment/scores/current_score.json
+Read: /Users/aatifquamre/cipher/sentiment/scores/current_score.json
 Extract: score, timestamp, breakdown by source
 
 ### Source 2 — Binance Funding Rate

@@ -32,7 +32,7 @@ def handle_command(text):
     
     # Handle help/menu specifically
     if text in ["/start", "/help"]:
-        help_text = """🚀 <b>MasterBot QNT Controller</b>
+        help_text = """🚀 <b>Cipher QNT Controller</b>
 ━━━━━━━━━━━━━━━━━━━━━
 /status  - Overall system status
 /health  - Run 11-point health audit

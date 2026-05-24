@@ -5,7 +5,7 @@ from datetime import datetime, timezone, timedelta
 from dotenv import load_dotenv
 from pathlib import Path
 
-BASE_DIR = Path.home() / 'masterbot'
+BASE_DIR = Path.home() / 'cipher'
 load_dotenv(BASE_DIR / '.env')
 
 STATE_FILE = BASE_DIR / 'risk' / 'balance_state.json'

@@ -8,7 +8,7 @@ from pathlib import Path
 
 # Machine-agnostic path setup
 HOME = Path.home()
-BASE_DIR = HOME / 'masterbot'
+BASE_DIR = HOME / 'cipher'
 sys.path.insert(0, str(BASE_DIR / 'qnt/memory'))
 sys.path.insert(0, str(BASE_DIR / 'qnt/vault'))
 

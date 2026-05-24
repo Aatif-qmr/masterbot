@@ -9,7 +9,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 HOME = Path.home()
-BASE_DIR = HOME / 'masterbot'
+BASE_DIR = HOME / 'cipher'
 DATA_DIR = BASE_DIR / 'user_data/data/binance'
 FUNDING_OUT = BASE_DIR / 'qnt/data/cdd_funding_history.csv'
 
@@ -26,7 +26,7 @@ PAIR_MAP = {
 
 TF_MAP = {'1h': '1h', '4h': '4h', '1d': 'd'}
 
-HEADERS = {'User-Agent': 'Mozilla/5.0 (compatible; masterbot-data-ingestor/1.0)'}
+HEADERS = {'User-Agent': 'Mozilla/5.0 (compatible; cipher-data-ingestor/1.0)'}
 
 
 def _fetch_csv(url: str) -> pd.DataFrame | None:

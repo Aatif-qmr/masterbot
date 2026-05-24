@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+  "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.cipher.qnt.reconnect</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/bin/bash</string>
+    <string>/Users/aatifquamre/cipher/qnt/memory/reconnect_watcher.sh</string>
+  </array>
+  <key>RunAtLoad</key>
+  <true/>
+  <key>KeepAlive</key>
+  <true/>
+  <key>StandardOutPath</key>
+  <string>/Users/aatifquamre/cipher/logs/reconnect_watcher.log</string>
+  <key>StandardErrorPath</key>
+  <string>/Users/aatifquamre/cipher/logs/reconnect_watcher.log</string>
+</dict>
+</plist>

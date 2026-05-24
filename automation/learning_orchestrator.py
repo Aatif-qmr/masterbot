@@ -7,7 +7,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 HOME = Path.home()
-BASE_DIR = HOME / 'masterbot'
+BASE_DIR = HOME / 'cipher'
 LOG_PATH = BASE_DIR / 'logs/learning.log'
 
 sys.path.insert(0, str(BASE_DIR / 'qnt/learning'))

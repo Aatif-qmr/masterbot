@@ -1,4 +1,4 @@
-import sys, os; home = os.path.expanduser('~'); sys.path.append(os.path.join(home, 'masterbot')); sys.path.append(os.path.join(home, 'masterbot', 'qnt', 'memory')); sys.path.append(os.path.join(home, 'masterbot', 'qnt', 'oracle'))
+import sys, os; home = os.path.expanduser('~'); sys.path.append(os.path.join(home, 'cipher')); sys.path.append(os.path.join(home, 'cipher', 'qnt', 'memory')); sys.path.append(os.path.join(home, 'cipher', 'qnt', 'oracle'))
 import logging
 import json
 from pathlib import Path
@@ -10,7 +10,7 @@ from freqtrade.strategy import IStrategy
 from freqtrade.persistence import Trade
 
 home = os.path.expanduser("~")
-sys.path.append(os.path.join(home, 'masterbot'))
+sys.path.append(os.path.join(home, 'cipher'))
 from risk.risk_manager import run_all_checks
 from risk.stake_sizer import get_stake_multiplier
 from sentiment.reader import get_current_sentiment
@@ -110,7 +110,7 @@ class BearScalpV1(IStrategy):
 
         try:
             total_balance = self.wallets.get_total('USDT')
-            state_file = Path(f'{home}/masterbot/risk/balance_state.json')
+            state_file = Path(f'{home}/cipher/risk/balance_state.json')
             state = json.loads(state_file.read_text()) if state_file.exists() else {}
             risk_result = run_all_checks(
                 current_balance=total_balance,

@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 
 # Machine-agnostic path setup
 HOME = Path.home()
-BASE_DIR = HOME / 'masterbot'
+BASE_DIR = HOME / 'cipher'
 load_dotenv(BASE_DIR / '.env')
 
 MACRO_STATE_FILE = BASE_DIR / 'risk/macro_state.json'

@@ -7,7 +7,7 @@ from pathlib import Path
 from datetime import datetime, timezone
 
 HOME = Path.home()
-BASE_DIR = HOME / 'masterbot'
+BASE_DIR = HOME / 'cipher'
 FT_BIN = str(BASE_DIR / 'venv/bin/freqtrade')
 CONFIG = str(BASE_DIR / 'config/config_daily.json')
 DATA_DIR = str(BASE_DIR / 'user_data/data/binance')

@@ -1,4 +1,4 @@
-import sys, os; home = os.path.expanduser('~'); sys.path.append(os.path.join(home, 'masterbot')); sys.path.append(os.path.join(home, 'masterbot', 'qnt', 'memory')); sys.path.append(os.path.join(home, 'masterbot', 'qnt', 'oracle'));
+import sys, os; home = os.path.expanduser('~'); sys.path.append(os.path.join(home, 'cipher')); sys.path.append(os.path.join(home, 'cipher', 'qnt', 'memory')); sys.path.append(os.path.join(home, 'cipher', 'qnt', 'oracle'));
 import logging
 import json
 import sys
@@ -12,7 +12,7 @@ from freqtrade.persistence import Trade
 import pandas as pd
 
 # Add base directory to path for custom imports
-sys.path.insert(0, '/Users/aatifquamre/masterbot')
+sys.path.insert(0, '/Users/aatifquamre/cipher')
 from risk.risk_manager import run_all_checks
 from risk.stake_sizer import get_stake_multiplier
 from risk.correlation_guard import is_blocked as corr_blocked
@@ -30,7 +30,7 @@ def merge_macro_data(dataframe: DataFrame) -> DataFrame:
     Uses timestamp-based merging to prevent look-ahead bias.
     """
     try:
-        history_file = Path('/Users/aatifquamre/masterbot/risk/macro_history.json')
+        history_file = Path('/Users/aatifquamre/cipher/risk/macro_history.json')
         if not history_file.exists():
             dataframe['dxy_24h_change'] = 0.0
             dataframe['btc_funding_rate'] = 0.0
@@ -92,8 +92,8 @@ class MeanReversionV1(IStrategy):
         self.sell_rsi_val = self.sell_rsi.value
 
         try:
-            path1 = Path('/Users/aatifquamre/masterbot/config/dynamic_params.json')
-            path2 = Path('/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/config/dynamic_params.json')
+            path1 = Path('/Users/aatifquamre/cipher/config/dynamic_params.json')
+            path2 = Path('/Users/aatifquamre/Downloads/Aatif-qmr/cipher/config/dynamic_params.json')
             path = path1 if path1.exists() else path2
             
             if path.exists():
@@ -125,8 +125,8 @@ class MeanReversionV1(IStrategy):
         # External signal features
         import json
         try:
-            MASTERBOT_PATH = '/Users/aatifquamre/masterbot'
-            with open(f'{MASTERBOT_PATH}/sentiment/scores/current_score.json') as f:
+            CIPHER_PATH = '/Users/aatifquamre/cipher'
+            with open(f'{CIPHER_PATH}/sentiment/scores/current_score.json') as f:
                 sentiment_data = json.load(f)
             
             dataframe['sentiment_score'] = sentiment_data.get('score', 0.0)
@@ -290,7 +290,7 @@ class MeanReversionV1(IStrategy):
             ])
             
             # Load balance state for drawdown checks
-            state_file = Path('/Users/aatifquamre/masterbot/risk/balance_state.json')
+            state_file = Path('/Users/aatifquamre/cipher/risk/balance_state.json')
             if state_file.exists():
                 with open(state_file) as f:
                     state = json.load(f)
@@ -323,7 +323,7 @@ class MeanReversionV1(IStrategy):
             # --- LAYER 2: SKEPTIC AGENT (final gate) ---
             try:
                 import sys
-                sys.path.insert(0, '/Users/aatifquamre/masterbot/qnt/agents')
+                sys.path.insert(0, '/Users/aatifquamre/cipher/qnt/agents')
                 from trade_gate import evaluate_trade
                 from strategist import summarize_signal
                 

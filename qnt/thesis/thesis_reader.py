@@ -4,7 +4,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 HOME = Path.home()
-DEFAULT_THESIS_DIR = HOME / 'masterbot' / 'thesis'
+DEFAULT_THESIS_DIR = HOME / 'cipher' / 'thesis'
 STALE_HOURS = 6
 MIN_CONFIDENCE = 0.5
 

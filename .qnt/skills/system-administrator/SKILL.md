@@ -1,6 +1,6 @@
 ---
 name: system-administrator
-description: Manage MasterBot infrastructure, deployments, and automation.
+description: Manage Cipher infrastructure, deployments, and automation.
 ---
 
 # System Administrator Skill

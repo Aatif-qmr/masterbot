@@ -1,6 +1,6 @@
 #!/bin/bash
 BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-# MasterBot Self-Healing Runner
+# Cipher Self-Healing Runner
 # ============================
 # This script runs the self-healing automation every 30 minutes.
 

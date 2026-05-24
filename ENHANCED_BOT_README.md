@@ -1,4 +1,4 @@
-# 🤖 Enhanced Telegram Bot for MasterBot QNT
+# 🤖 Enhanced Telegram Bot for Cipher QNT
 
 ## Overview
 

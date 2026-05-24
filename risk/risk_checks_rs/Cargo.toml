@@ -2,7 +2,7 @@
 name = "risk-checks-rs"
 version = "1.0.0"
 edition = "2021"
-description = "Rust-backed risk check arithmetic for MasterBot — replaces Cython risk_checks.pyx"
+description = "Rust-backed risk check arithmetic for Cipher — replaces Cython risk_checks.pyx"
 
 [lib]
 name = "risk_checks"

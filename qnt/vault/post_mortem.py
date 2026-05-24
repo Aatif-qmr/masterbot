@@ -1,4 +1,4 @@
-import sys, os; home = os.path.expanduser('~'); sys.path.append(os.path.join(home, 'masterbot')); sys.path.append(os.path.join(home, 'masterbot', 'qnt', 'memory')); sys.path.append(os.path.join(home, 'masterbot', 'qnt', 'oracle')); sys.path.append(os.path.join(home, 'masterbot', 'qnt', 'shield'));
+import sys, os; home = os.path.expanduser('~'); sys.path.append(os.path.join(home, 'cipher')); sys.path.append(os.path.join(home, 'cipher', 'qnt', 'memory')); sys.path.append(os.path.join(home, 'cipher', 'qnt', 'oracle')); sys.path.append(os.path.join(home, 'cipher', 'qnt', 'shield'));
 import os
 import sys
 import sqlite3
@@ -8,7 +8,7 @@ import pandas as pd
 from datetime import datetime, timezone
 
 # Add paths
-BASE_DIR = os.path.join(home, 'masterbot')
+BASE_DIR = os.path.join(home, 'cipher')
 sys.path.insert(0, os.path.join(BASE_DIR, 'qnt/memory'))
 sys.path.insert(0, os.path.join(BASE_DIR, 'qnt/vault'))
 sys.path.insert(0, os.path.join(BASE_DIR, 'qnt/oracle'))

@@ -13,7 +13,7 @@ from dotenv import load_dotenv
 logging.getLogger('nats').setLevel(logging.CRITICAL)
 
 # Add project root to sys.path
-# Script is at masterbot/qnt/nats_subscriber.py
+# Script is at cipher/qnt/nats_subscriber.py
 BASE_DIR = Path(__file__).resolve().parent.parent
 if str(BASE_DIR) not in sys.path:
     sys.path.insert(0, str(BASE_DIR))

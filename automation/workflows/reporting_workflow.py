@@ -15,14 +15,14 @@ load_dotenv(BASE_DIR / '.env')
 
 # Configuration
 DB_NAMES = {
-    "micro": "masterbot_micro",
-    "scalp": "masterbot_scalp",
-    "mean_reversion": "masterbot_mean_reversion",
-    "trend_follow": "masterbot_trend_follow",
-    "daily": "masterbot_daily",
-    "swing": "masterbot_swing",
-    "bear_scalp": "masterbot_bear_scalp",
-    "hyperliquid": "masterbot_hyperliquid"
+    "micro": "cipher_micro",
+    "scalp": "cipher_scalp",
+    "mean_reversion": "cipher_mean_reversion",
+    "trend_follow": "cipher_trend_follow",
+    "daily": "cipher_daily",
+    "swing": "cipher_swing",
+    "bear_scalp": "cipher_bear_scalp",
+    "hyperliquid": "cipher_hyperliquid"
 }
 SENTIMENT_PATH = str(BASE_DIR / 'sentiment' / 'scores' / 'history.csv')
 TELEGRAM_TOKEN = os.getenv('QNT_TELEGRAM_TOKEN')
@@ -186,7 +186,7 @@ def generate_quant_report(data: dict) -> str:
 - **Rationale**: {risk_rationale}
 - **Market Sentiment context**: `{sentiment_str}`
 
-#### 3. MasterBot Directives
+#### 3. Cipher Directives
 - {directives[0]}
 - {directives[1]}
 - {directives[2]}
@@ -227,7 +227,7 @@ def send_telegram_brief(date_str: str, analysis: str, aggregated: str):
 
     # Telegram message limit is 4096 characters
     short_analysis = analysis[:3500]
-    msg = f"🧠 *MasterBot Intelligence Brief - {date_str}*\n\n{short_analysis}"
+    msg = f"🧠 *Cipher Intelligence Brief - {date_str}*\n\n{short_analysis}"
     
     try:
         res = requests.post(
@@ -242,7 +242,7 @@ def send_telegram_brief(date_str: str, analysis: str, aggregated: str):
         raise e
 
     # Send aggregated summary as a second message
-    agg_msg = f"📊 *MasterBot Aggregated Summary - {date_str}*\n\n{aggregated[:3500]}"
+    agg_msg = f"📊 *Cipher Aggregated Summary - {date_str}*\n\n{aggregated[:3500]}"
     try:
         res = requests.post(
             f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage",
@@ -276,9 +276,9 @@ def save_report_locally(date_str: str, quant_report: str, aggregated_report: str
     
     print(f"✓ Report saved locally: {report_path}")
 
-@flow(name="MasterBot Reporting Flow")
+@flow(name="Cipher Reporting Flow")
 def run_reporting_flow():
-    """Orchestrates MasterBot's reporting pipeline.
+    """Orchestrates Cipher's reporting pipeline.
     
     Tasks:
       1. gather_data — queries all SQLite databases and sentiment history
@@ -287,7 +287,7 @@ def run_reporting_flow():
       4. save_report_locally — archives the report as JSON in logs/reports/
       5. send_telegram_brief — dispatches both reports to Telegram
     """
-    print("MasterBot Reporting Flow starting...")
+    print("Cipher Reporting Flow starting...")
     
     # 1. Gather all trade data
     raw_data = gather_data()
@@ -313,7 +313,7 @@ def run_reporting_flow():
         aggregated=aggregated_report_content
     )
     
-    print("✓ MasterBot Reporting Flow complete.")
+    print("✓ Cipher Reporting Flow complete.")
 
 if __name__ == "__main__":
     run_reporting_flow()

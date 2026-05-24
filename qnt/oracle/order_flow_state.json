@@ -1,9 +1,9 @@
 {
-  "last_updated": "2026-05-24T03:00:00.492179",
+  "last_updated": "2026-05-24T07:00:00.605914",
   "liquidation": {
-    "ratio": 1.2687083333333333,
+    "ratio": 1.1926666666666665,
     "trend": "neutral",
-    "timestamp": "2026-05-24T03:00:01.575642"
+    "timestamp": "2026-05-24T07:00:01.380031"
   },
-  "cvd_divergence": "bullish_divergence"
+  "cvd_divergence": "bearish_divergence"
 }

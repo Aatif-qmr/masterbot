@@ -13,7 +13,7 @@ async function main() {
   let extractors;
   try {
     extractors = await import(
-      '/Users/azmatsaif/masterbot/qnt/src/packages/core/dist/src/qnt/extractors.js'
+      '/Users/azmatsaif/cipher/qnt/src/packages/core/dist/src/qnt/extractors.js'
     );
   } catch(e) {
     console.error('Extractors not compiled or error loading. Run: npm run build');

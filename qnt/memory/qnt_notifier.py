@@ -110,7 +110,7 @@ def send_escalation(situation, options, recommendation, context=None):
             # Log to memory
             try:
                 import sys
-                sys.path.insert(0, '/Users/aatifquamre/masterbot/qnt/memory')
+                sys.path.insert(0, '/Users/aatifquamre/cipher/qnt/memory')
                 from memory_manager import log_decision
                 log_decision(situation, options, "PENDING", recommendation)
             except ImportError:
@@ -172,7 +172,7 @@ def send_weekly_summary(actions_count, decisions_count, autonomous_count, escala
     """Sends weekly intelligence summary."""
     try:
         import sys
-        sys.path.insert(0, '/Users/aatifquamre/masterbot/qnt/memory')
+        sys.path.insert(0, '/Users/aatifquamre/cipher/qnt/memory')
         from memory_manager import load_memory
         total_logs = len(load_memory().get('action_log', []))
     except Exception as e:

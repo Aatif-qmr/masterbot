@@ -4,7 +4,7 @@ import pyarrow as pa
 import pyarrow.parquet as pq
 from pathlib import Path
 
-BASE_DIR = Path('/Users/azmatsaif/masterbot')
+BASE_DIR = Path('/Users/azmatsaif/cipher')
 DATA_DIR = BASE_DIR / 'user_data/data/binance'
 PARQUET_DIR = BASE_DIR / 'data_parquet'
 PARQUET_DIR.mkdir(exist_ok=True)

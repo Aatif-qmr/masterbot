@@ -31,7 +31,7 @@ Path: start_bot.sh
 File Type: Shell Script
 
 Purpose:
-Initializes and starts the MasterBot system in either paper or live mode. It ensures the environment is secure and healthy before launching any trading instances.
+Initializes and starts the Cipher system in either paper or live mode. It ensures the environment is secure and healthy before launching any trading instances.
 
 Functionality:
 Runs security checks via 'security_check.sh', updates the supervisord configuration to point to the correct mode's config, and starts or reloads supervisord. It also executes a full health check, enables 'caffeinate' to prevent system sleep, and sends a detailed startup summary to Telegram.
@@ -57,7 +57,7 @@ Path: stop_bot.sh
 File Type: Shell Script
 
 Purpose:
-Gracefully or forcefully shuts down the MasterBot system.
+Gracefully or forcefully shuts down the Cipher system.
 
 Functionality:
 Notifies Telegram, force-exits trades if requested, stops all Freqtrade instances via supervisord, and triggers a system backup.
@@ -521,7 +521,7 @@ Path: automation/security_check.sh
 File Type: Shell Script
 
 Purpose:
-Pre-flight security auditor for the MasterBot system.
+Pre-flight security auditor for the Cipher system.
 
 Functionality:
 Verifies .env file permissions, Git tracking status, API key presence, and network reachability.
@@ -1338,7 +1338,7 @@ Path: qnt/bin/qnt-audit
 File Type: System File
 
 Purpose:
-Unified security and permission auditor for the MasterBot system.
+Unified security and permission auditor for the Cipher system.
 
 Functionality:
 Runs system security checks, verifies API permissions, and scans for sensitive leaks (like `.env` files) in Git history.
@@ -1776,7 +1776,7 @@ Purpose:
 A wrapper script that ensures Python commands are executed within the project's virtual environment.
 
 Functionality:
-Executes the specified Python command or script using the interpreter located in `/Users/aatifquamre/masterbot/venv/bin/python`.
+Executes the specified Python command or script using the interpreter located in `/Users/aatifquamre/cipher/venv/bin/python`.
 
 Role in System:
 Ensures dependency isolation and consistent execution across all project modules.
@@ -2093,7 +2093,7 @@ Functionality:
 Implements vector-based storage and retrieval for trade lessons, market events, and operator journals. It uses local SentenceTransformer embeddings to avoid external API dependency.
 
 Role in System:
-The "Limbic System" of MasterBot, allowing for experience-based recall.
+The "Limbic System" of Cipher, allowing for experience-based recall.
 
 Dependencies:
 - None
@@ -2394,8 +2394,8 @@ None.
 
 ---
 
-### File: com.masterbot.qnt.reconnect.plist
-Path: qnt/memory/com.masterbot.qnt.reconnect.plist
+### File: com.cipher.qnt.reconnect.plist
+Path: qnt/memory/com.cipher.qnt.reconnect.plist
 File Type: System File
 
 Purpose:
@@ -2785,7 +2785,7 @@ Path: PROJECT_DOCUMENTATION.txt
 File Type: Text File
 
 Purpose:
-A comprehensive master document providing an executive overview of the entire MasterBot + QNT system.
+A comprehensive master document providing an executive overview of the entire Cipher + QNT system.
 
 Functionality:
 Contains high-level details on node architecture (M1 and M2), strategy cluster configurations, risk management rules (The Shield), and the functional pillars of the QNT CLI. It also outlines the automation schedule and operating rules for AI agents.
@@ -2833,7 +2833,7 @@ Path: all_files.txt
 File Type: Text File
 
 Purpose:
-A comprehensive flat-file index of every file and directory within the MasterBot project.
+A comprehensive flat-file index of every file and directory within the Cipher project.
 
 Functionality:
 A simple list of absolute paths generated periodically to provide a global map of the project's physical structure.
@@ -3079,7 +3079,7 @@ Functionality:
 Provides high-performance implementations of Bollinger Bands, Keltner Channels, Awesome Oscillator, and various crossover/crossunder detection helpers.
 
 Role in System:
-The primary source of advanced technical indicators used across most MasterBot strategies.
+The primary source of advanced technical indicators used across most Cipher strategies.
 
 Dependencies:
 - None
@@ -4519,7 +4519,7 @@ Path: logs/health_check.log
 File Type: Log File
 
 Purpose:
-Logs from manual or on-demand executions of the MasterBot health check script.
+Logs from manual or on-demand executions of the Cipher health check script.
 
 Functionality:
 Details the results of the 8 critical system health audits when run via CLI or manual trigger.
@@ -6013,7 +6013,7 @@ Functionality:
 Orchestrates a 5-phase research lifecycle: Searching (arXiv/SSRN), Logic Extraction (signals/timeframes), Feasibility Rating, Presentation, and Implementation (Freqtrade Python generation).
 
 Role in System:
-The innovation engine that ensures MasterBot's strategy pool evolves with the latest academic and market research.
+The innovation engine that ensures Cipher's strategy pool evolves with the latest academic and market research.
 
 Dependencies:
 - None
@@ -7357,7 +7357,7 @@ Functionality:
 Implements data handling using the Feather format, optimized for speed and efficient pandas integration.
 
 Role in System:
-Default and recommended data storage format for MasterBot.
+Default and recommended data storage format for Cipher.
 
 Dependencies:
 - None
@@ -11753,7 +11753,7 @@ Functionality:
 A Node.js script that utilizes Puppeteer (via compiled extractors) to scrape data from websites like alternative.me (Fear & Greed), Coinglass, and ArXiv. It outputs the extracted data to stdout and saves it to text files.
 
 Role in System:
-Provides MasterBot with the ability to "see" and extract data from the web where official APIs are unavailable or insufficient.
+Provides Cipher with the ability to "see" and extract data from the web where official APIs are unavailable or insufficient.
 
 Dependencies:
 - Node.js
@@ -11888,8 +11888,8 @@ None.
 
 ---
 
-### File: masterbot_backup_20260428.tar.gz
-Path: logs/reports/backups/masterbot_backup_20260428.tar.gz
+### File: cipher_backup_20260428.tar.gz
+Path: logs/reports/backups/cipher_backup_20260428.tar.gz
 File Type: System File
 
 Purpose:
@@ -11912,8 +11912,8 @@ None.
 
 ---
 
-### File: masterbot_backup_20260426.tar.gz
-Path: logs/reports/backups/masterbot_backup_20260426.tar.gz
+### File: cipher_backup_20260426.tar.gz
+Path: logs/reports/backups/cipher_backup_20260426.tar.gz
 File Type: System File
 
 Purpose:
@@ -11936,8 +11936,8 @@ None.
 
 ---
 
-### File: masterbot_backup_20260502.tar.gz
-Path: logs/reports/backups/masterbot_backup_20260502.tar.gz
+### File: cipher_backup_20260502.tar.gz
+Path: logs/reports/backups/cipher_backup_20260502.tar.gz
 File Type: System File
 
 Purpose:
@@ -11960,8 +11960,8 @@ None.
 
 ---
 
-### File: masterbot_backup_20260503.tar.gz
-Path: logs/reports/backups/masterbot_backup_20260503.tar.gz
+### File: cipher_backup_20260503.tar.gz
+Path: logs/reports/backups/cipher_backup_20260503.tar.gz
 File Type: System File
 
 Purpose:
@@ -12325,7 +12325,7 @@ Path: qnt/QNT.md
 File Type: Markdown Documentation
 
 Purpose:
-The "Intelligence Manifest" and foundational instruction set for the MasterBot project.
+The "Intelligence Manifest" and foundational instruction set for the Cipher project.
 
 Functionality:
 Records the project's mission, machine architecture, risk management rules, automation schedules, and operational protocols. It serves as the persistent memory and directive for the QNT agent.
@@ -12349,7 +12349,7 @@ Path: project_files.txt
 File Type: Text File
 
 Purpose:
-A recursive directory listing of the entire MasterBot project.
+A recursive directory listing of the entire Cipher project.
 
 Functionality:
 Maintains an up-to-date record of every file within the repository, including active scripts, logs, and data assets.
@@ -13357,7 +13357,7 @@ Path: PROJECT_DOCUMENTATION.txt
 File Type: Text File
 
 Purpose:
-A comprehensive text-based technical documentation of the MasterBot project.
+A comprehensive text-based technical documentation of the Cipher project.
 
 Functionality:
 Contains high-level architectural descriptions, module breakdowns, and technical specifications for the entire system, intended for quick reference and search.
@@ -22923,7 +22923,7 @@ File Type: Shell Script
 Purpose: Synchronizes hyperopt results between the M1 and M2 nodes.
 Functionality: Uses rsync or scp to move .json and .fthypt files from M2 training folder to M1 log folder.
 Role in System: Ensures performance data is available for reporting on the execution node.
-Dependencies: - /Users/aatifquamre/masterbot/.env
+Dependencies: - /Users/aatifquamre/cipher/.env
 Used By: - weekly_report.py
 Notes: Requires Tailscale connectivity.
 

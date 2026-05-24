@@ -57,7 +57,7 @@
         "username": "Aatif-qmr",
         "password": "2001"
     },
-    "bot_name": "masterbot",
+    "bot_name": "cipher",
     "initial_state": "running",
     "force_entry_enable": false,
     "internals": {

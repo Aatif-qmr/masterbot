@@ -1,7 +1,7 @@
 """
 qnt/polars_indicators.py
 ────────────────────────
-Polars-based technical indicator library for MasterBot strategies.
+Polars-based technical indicator library for Cipher strategies.
 Replaces Pandas-based indicator calculations with Rust-compiled Polars
 expressions that release the GIL and run on all CPU cores.
 

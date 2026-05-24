@@ -1,10 +1,10 @@
 {
-  "updated_at": "2026-05-23T21:30:03.006173+00:00",
+  "updated_at": "2026-05-24T01:30:02.940803+00:00",
   "weights": {
-    "reddit": 0.1279,
-    "news": 0.099,
-    "coingecko": 0.3292,
-    "feargreed": 0.099,
-    "funding": 0.3449
+    "reddit": 0.3219,
+    "news": 0.0988,
+    "coingecko": 0.1982,
+    "feargreed": 0.0988,
+    "funding": 0.2824
   }
 }

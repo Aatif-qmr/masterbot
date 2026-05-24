@@ -10,7 +10,7 @@ from freqtrade.strategy import IStrategy
 from freqtrade.persistence import Trade
 
 # Add base directory to path for custom imports
-BASE_DIR = '/Users/aatifquamre/masterbot'
+BASE_DIR = '/Users/aatifquamre/cipher'
 if BASE_DIR not in sys.path:
     sys.path.insert(0, BASE_DIR)
 
@@ -22,7 +22,7 @@ logger = logging.getLogger(__name__)
 class Auto202605030340(IStrategy):
     """
     Hypothesis: Buy BTC when RSI below 30.
-    Integrates MasterBot Sentiment Gate and Risk Manager.
+    Integrates Cipher Sentiment Gate and Risk Manager.
     """
     # Strategy Interface Version
     INTERFACE_VERSION = 3
@@ -114,7 +114,7 @@ class Auto202605030340(IStrategy):
             ])
             
             # 4. Load balance baselines from state file
-            state_file = Path('/Users/aatifquamre/masterbot/risk/balance_state.json')
+            state_file = Path('/Users/aatifquamre/cipher/risk/balance_state.json')
             if state_file.exists():
                 with open(state_file) as f:
                     state = json.load(f)

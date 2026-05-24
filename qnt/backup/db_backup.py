@@ -11,7 +11,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 # Get base directory from environment or use default
-BASE_DIR = Path(os.environ.get("MASTERBOT_DIR", Path.home() / "masterbot"))
+BASE_DIR = Path(os.environ.get("CIPHER_DIR", Path.home() / "cipher"))
 VAULT_DB = BASE_DIR / "qnt" / "vault" / "vault.db"
 MEMORY_DB = BASE_DIR / "qnt" / "memory" / "memory.db"
 TRADES_DB = BASE_DIR / "user_data" / "trades.sqlite"

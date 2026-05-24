@@ -8,7 +8,7 @@ from pathlib import Path
 
 # Path setup for M2 environment
 HOME = Path.home()
-BASE_DIR = HOME / 'masterbot'
+BASE_DIR = HOME / 'cipher'
 MONITOR_FILE = BASE_DIR / 'qnt/shadow/resource_state.json'
 LOG_FILE = BASE_DIR / 'logs/resource_alerts.log'
 

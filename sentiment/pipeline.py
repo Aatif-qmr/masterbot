@@ -9,7 +9,7 @@ from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_excep
 warnings.filterwarnings('ignore') # ignore transformer warnings
 
 # --- CONFIGURATION ---
-BASE_DIR = os.environ.get("MASTERBOT_DIR", os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+BASE_DIR = os.environ.get("CIPHER_DIR", os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 OUTPUT_PATH = os.path.join(BASE_DIR, "sentiment/scores/current_score.json")
 HISTORY_PATH = os.path.join(BASE_DIR, "sentiment/scores/history.csv")
 

@@ -1,12 +1,12 @@
 #!/bin/bash
 # qnt-shadow — Control and monitor Shadow Hyperopt on M2
 set -a
-source /Users/aatifquamre/masterbot/.env
+source /Users/aatifquamre/cipher/.env
 set +a
 
 M2_USER="azmatsaif"
-M2_PATH="/Users/azmatsaif/masterbot"
-M2_IP=$(tailscale ip azmatsaif-m2 2>/dev/null || grep M2_TAILSCALE_IP /Users/aatifquamre/masterbot/.env | cut -d= -f2)
+M2_PATH="/Users/azmatsaif/cipher"
+M2_IP=$(tailscale ip azmatsaif-m2 2>/dev/null || grep M2_TAILSCALE_IP /Users/aatifquamre/cipher/.env | cut -d= -f2)
 
 case "$1" in
   status)

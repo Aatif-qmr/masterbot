@@ -1,6 +1,6 @@
 #!/bin/bash
 # qnt-audit [full|quick]
-# Unified Security & Permission Auditor for MasterBot
+# Unified Security & Permission Auditor for Cipher
 
 BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 cd "$BASE_DIR"

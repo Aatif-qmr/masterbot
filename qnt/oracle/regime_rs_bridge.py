@@ -11,7 +11,7 @@ except ImportError:
 from pathlib import Path
 
 HOME = Path.home()
-BASE_DIR = HOME / "masterbot"
+BASE_DIR = HOME / "cipher"
 WEIGHTS_PATH = str(BASE_DIR / "qnt/oracle/regime_rs/lstm_weights.bin")
 
 try:

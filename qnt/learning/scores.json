@@ -1,16 +1,18 @@
 {
-  "updated_at": "2026-05-23T20:30:01.604295+00:00",
-  "trade_count": 42,
+  "updated_at": "2026-05-24T01:30:02.574218+00:00",
+  "trade_count": 45,
   "thesis_accuracy": {
+    "SOL_USDT": 1.0,
+    "ETH_USDT": 1.0,
     "BNB_USDT": 1.0
   },
-  "regime_accuracy": 0.238,
+  "regime_accuracy": 0.289,
   "skeptic_false_positive_rate": 0.0,
   "sentiment_correlations": {
-    "reddit": -0.0208,
-    "news": -0.0447,
-    "coingecko": 0.0692,
+    "reddit": 0.3419,
+    "news": -0.1774,
+    "coingecko": -0.412,
     "feargreed": 0.0,
-    "funding": 0.1036
+    "funding": 0.0991
   }
 }

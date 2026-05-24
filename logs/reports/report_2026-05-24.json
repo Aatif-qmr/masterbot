@@ -1,16 +1,20 @@
 {
   "date": "2026-05-24",
-  "generated_at": "2026-05-23T21:34:01.489243+00:00",
-  "quant_report": "### Senior Quant Executive Assessment\n\n#### 1. Detailed Performance Assessment\n- **Total Trades executed**: `42`\n- **Total Net Profit**: `-130.74 USDT`\n- **Active Open Trades**: `2`\n- **Most Profitable Strategy**: **TrendFollowV1** (Profit: `-8.54` USDT)\n\n#### 2. Risk Allocation Decision\n- **Action**: **MAINTAIN NEUTRAL/BALANCED RISK STATE**\n- **Rationale**: Global sentiment is in a neutral range. Execute baseline position sizes and monitor key strategy boundaries.\n- **Market Sentiment context**: `-0.282 (NEUTRAL)`\n\n#### 3. MasterBot Directives\n- Capitalize on **TrendFollowV1** outperformance; consider routing 10% more allocation to this slot during the next rebalancing cycle.\n- Enforce baseline capital allocations. Maintain standard stoploss settings and run ScalpV1/SwingV1 at standard risk parameters.\n- Monitor cluster health and ensure Tailscale link connectivity to M1/M2 remains stable for automated SCP model updates.\n",
-  "aggregated_report": "### Overall Summary\n- Total Closed Trades: 42\n- Total Cumulative Profit: -26.13%\n\n### \ud83d\udfe2 Active/Open Trades (2)\n- ETH/USDT (MeanReversionV1) - Opened: 2026-05-22 20:00:02.192412\n- SOL/USDT (MeanReversionV1) - Opened: 2026-05-22 20:00:03.058213\n\n### \ud83d\udd34 Last Closed Trades\n- BNB/USDT (ScalpV1): -0.60% at 2026-05-22 20:05:11.298000\n- BNB/USDT (ScalpV1): -0.19% at 2026-05-22 11:05:11.287000\n- BNB/USDT (ScalpV1): -2.12% at 2026-05-20 20:56:29.844000\n- ETH/USDT (MeanReversionV1): -6.99% at 2026-05-20 20:55:43.316000\n- XRP/USDT (MeanReversionV1): 0.04% at 2026-05-14 00:03:58.649000\n",
+  "generated_at": "2026-05-24T00:35:37.276201+00:00",
+  "quant_report": "### Senior Quant Executive Assessment\n\n#### 1. Detailed Performance Assessment\n- **Total Trades executed**: `45`\n- **Total Net Profit**: `-98.00 USDT`\n- **Active Open Trades**: `2`\n- **Most Profitable Strategy**: **MicroScalpV1** (Profit: `11.86` USDT)\n\n#### 2. Risk Allocation Decision\n- **Action**: **MAINTAIN NEUTRAL/BALANCED RISK STATE**\n- **Rationale**: Global sentiment is in a neutral range. Execute baseline position sizes and monitor key strategy boundaries.\n- **Market Sentiment context**: `-0.268 (NEUTRAL)`\n\n#### 3. MasterBot Directives\n- Capitalize on **MicroScalpV1** outperformance; consider routing 10% more allocation to this slot during the next rebalancing cycle.\n- Enforce baseline capital allocations. Maintain standard stoploss settings and run ScalpV1/SwingV1 at standard risk parameters.\n- Monitor cluster health and ensure Tailscale link connectivity to M1/M2 remains stable for automated SCP model updates.\n",
+  "aggregated_report": "### Overall Summary\n- Total Closed Trades: 45\n- Total Cumulative Profit: -19.00%\n\n### \ud83d\udfe2 Active/Open Trades (2)\n- SOL/USDT (MicroScalpV1) - Opened: 2026-05-23 22:24:02.390518\n- XRP/USDT (MicroScalpV1) - Opened: 2026-05-23 23:52:00.362986\n\n### \ud83d\udd34 Last Closed Trades\n- SOL/USDT (MicroScalpV1): 2.96% at 2026-05-23 21:16:13.231000\n- BNB/USDT (ScalpV1): -0.60% at 2026-05-22 20:05:11.298000\n- BNB/USDT (ScalpV1): -0.19% at 2026-05-22 11:05:11.287000\n- BNB/USDT (ScalpV1): -2.12% at 2026-05-20 20:56:29.844000\n- SOL/USDT (MeanReversionV1): 1.87% at 2026-05-23 22:00:11.276000\n",
   "raw_summary": {
+    "MicroScalpV1": {
+      "trades": 1,
+      "profit": 11.85959688
+    },
     "ScalpV1": {
       "trades": 21,
       "profit": -55.22495331
     },
     "MeanReversionV1": {
-      "trades": 4,
-      "profit": -18.968310029999998
+      "trades": 6,
+      "profit": 1.9059522200000014
     },
     "TrendFollowV1": {
       "trades": 1,
@@ -18,8 +22,8 @@
     },
     "SwingV1": {
       "trades": 16,
-      "profit": -48.000146550000004
+      "profit": -48.00014654999999
     }
   },
-  "sentiment": "-0.282 (NEUTRAL)"
+  "sentiment": "-0.268 (NEUTRAL)"
 }

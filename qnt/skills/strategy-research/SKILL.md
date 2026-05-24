@@ -63,7 +63,7 @@ Wait for explicit confirmation.
    (copy run_all_checks pattern)
 5. Include stoploss_on_exchange = True
 6. Save to:
-   /Users/aatifquamre/masterbot/strategies/candidates/
+   /Users/aatifquamre/cipher/strategies/candidates/
    Named: [StrategyName]_[YYYYMMDD].py
 7. Never save to strategies/active/ directly
 8. Report: "Strategy saved to candidates/. 

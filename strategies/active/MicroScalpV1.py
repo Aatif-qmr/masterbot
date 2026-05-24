@@ -87,10 +87,10 @@ class MicroScalpV1(IStrategy):
 
         # --- Order Flow Trap Filter ---
         import json
-        of_path = Path("/Users/aatifquamre/masterbot/qnt/oracle/order_flow_live.json")
+        of_path = Path("/Users/aatifquamre/cipher/qnt/oracle/order_flow_live.json")
         if not of_path.exists():
             # Fallback to 15m polling file
-            of_path = Path("/Users/aatifquamre/masterbot/qnt/oracle/order_flow_state.json")
+            of_path = Path("/Users/aatifquamre/cipher/qnt/oracle/order_flow_state.json")
         
         if of_path.exists():
             with open(of_path) as f:
@@ -160,7 +160,7 @@ class MicroScalpV1(IStrategy):
 
         try:
             import sys
-            sys.path.insert(0, '/Users/aatifquamre/masterbot/qnt/agents')
+            sys.path.insert(0, '/Users/aatifquamre/cipher/qnt/agents')
             from trade_gate import evaluate_trade
             from strategist import summarize_signal
             

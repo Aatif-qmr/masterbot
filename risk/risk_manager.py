@@ -66,7 +66,7 @@ _USE_CYTHON = _BACKEND in ('rust', 'cython')
 
 # Use home directory to make it machine-agnostic
 HOME = Path.home()
-BASE_DIR = HOME / 'masterbot'
+BASE_DIR = HOME / 'cipher'
 
 load_dotenv(BASE_DIR / '.env')
 

@@ -32,7 +32,7 @@ TELEGRAM_TOKEN = os.getenv('QNT_TELEGRAM_TOKEN')
 TELEGRAM_CHAT_ID = os.getenv('QNT_TELEGRAM_CHAT_ID')
 
 def gather_data():
-    """Gathers all relevant data from MasterBot databases and sentiment files."""
+    """Gathers all relevant data from Cipher databases and sentiment files."""
     total_trades = 0
     total_profit_abs = 0.0
     open_trades_list = []
@@ -135,7 +135,7 @@ def generate_quant_report(data: dict) -> str:
         risk_action = "DELEGATE DYNAMIC STAKE CONTRACTION (DECREASE RISK / ENFORCE HEDGE)"
         risk_rationale = f"Global sentiment is highly bearish ({sentiment_score:.3f}). Contraction phase active. Reduce maximum position slots to 1, enforce tight stoplosses, and prioritize BearScalp allocations."
 
-    # 3. Formulate MasterBot Directives (3 concise bullet points)
+    # 3. Formulate Cipher Directives (3 concise bullet points)
     directives = []
     # Directive 1 based on best strategy
     if best_strategy != "None":
@@ -171,7 +171,7 @@ def generate_quant_report(data: dict) -> str:
 - **Rationale**: {risk_rationale}
 - **Market Sentiment context**: `{sentiment_str}`
 
-#### 3. MasterBot Directives
+#### 3. Cipher Directives
 - {directives[0]}
 - {directives[1]}
 - {directives[2]}
@@ -181,7 +181,7 @@ def generate_quant_report(data: dict) -> str:
 def notify(analysis, data):
     """Generates the Google Doc and sends Telegram notification."""
     date_str = datetime.now().strftime("%Y-%m-%d")
-    title = f"MasterBot Intelligence Report - {date_str}"
+    title = f"Cipher Intelligence Report - {date_str}"
     
     # 1. Google Doc via qnt CLI
     report_content = f"# {title}\n\nGenerated at: {data['timestamp']}\n\n## Analysis\n{analysis}\n\n## Raw Stats Summary\n{json.dumps(data['summary'], indent=2)}"
@@ -196,11 +196,11 @@ def notify(analysis, data):
     # 2. Telegram
     if TELEGRAM_TOKEN and TELEGRAM_CHAT_ID:
         short_analysis = analysis[:3500] # Telegram limit is 4096
-        msg = f"🧠 *MasterBot Intelligence Brief - {date_str}*\n\n{short_analysis}\n\n_Full report synced to MasterBot_Vault_"
+        msg = f"🧠 *Cipher Intelligence Brief - {date_str}*\n\n{short_analysis}\n\n_Full report synced to Cipher_Vault_"
         requests.post(f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage", data={'chat_id': TELEGRAM_CHAT_ID, 'text': msg, 'parse_mode': 'Markdown'})
 
 if __name__ == "__main__":
-    print("MasterBot Intelligent Reporter starting...")
+    print("Cipher Intelligent Reporter starting...")
     data = gather_data()
     print("Data gathered. Synthesizing quantitative intelligence...")
     analysis = generate_quant_report(data)

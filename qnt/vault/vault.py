@@ -11,7 +11,7 @@ from qdrant_client.models import Distance, VectorParams, PointStruct
 from sentence_transformers import SentenceTransformer
 
 HOME = Path.home()
-BASE_DIR = HOME / 'masterbot'
+BASE_DIR = HOME / 'cipher'
 sys.path.insert(0, str(BASE_DIR / 'qnt/memory'))
 
 try:

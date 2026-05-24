@@ -3,7 +3,7 @@ from pathlib import Path
 from datetime import datetime, timezone
 from dotenv import load_dotenv
 
-load_dotenv('/Users/aatifquamre/masterbot/.env')
+load_dotenv('/Users/aatifquamre/cipher/.env')
 
 def get_r2_client():
     return boto3.client(
@@ -30,7 +30,7 @@ def upload_to_clouds(filepath, key_prefix=''):
         
     # 2. rclone GDrive Upload
     import subprocess
-    rclone_dest = f"MasterBot:masterbot-backups/{key}"
+    rclone_dest = f"Cipher:cipher-backups/{key}"
     try:
         subprocess.run(['rclone', 'copyto', str(filepath), rclone_dest], 
                        check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
@@ -42,7 +42,7 @@ def upload_to_clouds(filepath, key_prefix=''):
 
 def backup_sqlite_databases():
     # Detect all sqlite files in user_data/
-    user_data_dir = Path('/Users/aatifquamre/masterbot/user_data')
+    user_data_dir = Path('/Users/aatifquamre/cipher/user_data')
     paths = list(user_data_dir.glob('*.sqlite'))
     
     # Also include the specific one mentioned in the request if not captured
@@ -55,7 +55,7 @@ def backup_sqlite_databases():
             upload_to_clouds(path, 'databases')
 
 def backup_chromadb():
-    vault_dir = Path('/Users/aatifquamre/masterbot/qnt/vault/chroma_db')
+    vault_dir = Path('/Users/aatifquamre/cipher/qnt/vault/chroma_db')
     if not vault_dir.exists():
         print("ChromaDB vault not found, skipping.")
         return
@@ -70,14 +70,14 @@ def backup_chromadb():
 def backup_models():
     # Oracle models
     model_files = [
-        Path('/Users/aatifquamre/masterbot/qnt/oracle/hmm_model.pkl'),
+        Path('/Users/aatifquamre/cipher/qnt/oracle/hmm_model.pkl'),
     ]
     for path in model_files:
         if path.exists():
             upload_to_clouds(path, 'models')
     
     # FreqAI models directory
-    freqai_dir = Path('/Users/aatifquamre/masterbot/user_data/models')
+    freqai_dir = Path('/Users/aatifquamre/cipher/user_data/models')
     if freqai_dir.exists():
         archive = '/tmp/freqai_models.tar.gz'
         with tarfile.open(archive, 'w:gz') as tar:
@@ -86,7 +86,7 @@ def backup_models():
         os.remove(archive)
 
 def backup_constraints():
-    constraints_dir = Path('/Users/aatifquamre/masterbot/qnt/vault/constraints')
+    constraints_dir = Path('/Users/aatifquamre/cipher/qnt/vault/constraints')
     if constraints_dir.exists():
         archive = '/tmp/constraints.tar.gz'
         with tarfile.open(archive, 'w:gz') as tar:
@@ -122,7 +122,7 @@ def restore_latest_sqlite():
         if files:
             latest = files[0]['Key']
             print(f"Restoring: {latest}")
-            restore_path = '/Users/aatifquamre/masterbot/user_data/tradesv3_restored.sqlite'
+            restore_path = '/Users/aatifquamre/cipher/user_data/tradesv3_restored.sqlite'
             client.download_file(bucket, latest, restore_path)
             print(f"Restored to {restore_path}")
             print("Rename manually to tradesv3.sqlite after verification")

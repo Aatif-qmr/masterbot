@@ -1,6 +1,6 @@
-# MasterBot Development Guide
+# Cipher Development Guide
 
-This guide provides comprehensive documentation for developers contributing to the MasterBot project.
+This guide provides comprehensive documentation for developers contributing to the Cipher project.
 
 ## Table of Contents
 
@@ -21,7 +21,7 @@ This guide provides comprehensive documentation for developers contributing to t
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                     MasterBot System                        │
+│                     Cipher System                        │
 ├─────────────────────────────────────────────────────────────┤
 │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐      │
 │  │   Freqtrade  │  │    QNT CLI   │  │  Sentiment   │      │
@@ -78,8 +78,8 @@ sqlite3 --version
 
 ```bash
 # Clone repository
-git clone https://github.com/aatifqmr/masterbot.git
-cd masterbot
+git clone https://github.com/aatifqmr/cipher.git
+cd cipher
 
 # Create virtual environment
 python3 -m venv venv
@@ -132,7 +132,7 @@ cp .env.example .env
 ### Directory Structure
 
 ```
-masterbot/
+cipher/
 ├── strategies/              # Trading strategies
 │   ├── active/             # Production strategies
 │   │   ├── ScalpV1.py
@@ -444,7 +444,7 @@ import logging
 import sys
 from pathlib import Path
 
-def setup_logging(log_file: str = "logs/masterbot.log"):
+def setup_logging(log_file: str = "logs/cipher.log"):
     """Configure centralized logging."""
     
     # Create logs directory
@@ -471,11 +471,11 @@ Enable debug mode for verbose output:
 
 ```bash
 # Set environment variable
-export MASTERBOT_DEBUG=1
+export CIPHER_DEBUG=1
 
 # Or in Python
 import os
-os.environ['MASTERBOT_DEBUG'] = '1'
+os.environ['CIPHER_DEBUG'] = '1'
 ```
 
 ### Profiling
@@ -711,4 +711,4 @@ curl -s https://api.coingecko.com/api/v3/coins/bitcoin | jq
 ---
 
 **Last Updated**: December 2025  
-**Maintained By**: MasterBot Development Team
+**Maintained By**: Cipher Development Team

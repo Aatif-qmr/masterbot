@@ -40,10 +40,11 @@
         "listen_port": 8086,
         "verbosity": "error",
         "enable_openapi": false,
+        "jwt_secret_key": "b3d8f1a2c4e6071923456789abcdef0123456789abcdef0123456789abcdef01",
         "username": "Aatif-qmr",
         "password": "2001"
     },
-    "bot_name": "masterbot_hyperliquid",
+    "bot_name": "cipher_hyperliquid",
     "initial_state": "running",
     "cancel_open_orders_on_exit": false,
     "entry_pricing": {

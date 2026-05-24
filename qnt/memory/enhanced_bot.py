@@ -418,7 +418,7 @@ def execute_command_raw(command: str) -> str:
 def send_main_menu() -> Optional[int]:
     """Send the main control menu."""
     text = (
-        f"{EMOJI['ROBOT']} <b>MasterBot QNT Control Center</b>\n"
+        f"{EMOJI['ROBOT']} <b>Cipher QNT Control Center</b>\n"
         f"━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
         f"Welcome! Select an action below:\n\n"
         f"<b>Quick Stats:</b>\n"

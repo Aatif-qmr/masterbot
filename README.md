@@ -1,10 +1,10 @@
-# MasterBot - Autonomous Crypto Trading System
+# Cipher - Autonomous Crypto Trading System
 
-[![Strategy Tests](https://github.com/aatifqmr/masterbot/actions/workflows/strategy_test.yml/badge.svg)](https://github.com/aatifqmr/masterbot/actions/workflows/strategy_test.yml)
+[![Strategy Tests](https://github.com/aatifqmr/cipher/actions/workflows/strategy_test.yml/badge.svg)](https://github.com/aatifqmr/cipher/actions/workflows/strategy_test.yml)
 
 ## Overview
 
-MasterBot is a sophisticated, multi-strategy cryptocurrency trading system built on top of [Freqtrade](https://www.freqtrade.io/). It features an intelligent orchestration layer (QNT), real-time sentiment analysis, risk management, and autonomous agent-based decision making.
+Cipher is a sophisticated, multi-strategy cryptocurrency trading system built on top of [Freqtrade](https://www.freqtrade.io/). It features an intelligent orchestration layer (QNT), real-time sentiment analysis, risk management, and autonomous agent-based decision making.
 
 ## 🚀 Features
 
@@ -41,7 +41,7 @@ MasterBot is a sophisticated, multi-strategy cryptocurrency trading system built
 ## 📁 Project Structure
 
 ```
-masterbot/
+cipher/
 ├── strategies/           # Freqtrade trading strategies
 │   ├── active/          # Production-ready strategies
 │   └── candidates/      # Experimental strategies in testing
@@ -84,8 +84,8 @@ masterbot/
 
 1. **Clone the repository**
 ```bash
-git clone https://github.com/aatifqmr/masterbot.git
-cd masterbot
+git clone https://github.com/aatifqmr/cipher.git
+cd cipher
 ```
 
 2. **Create virtual environment**
@@ -449,7 +449,7 @@ All code modifications must be logged:
 python3 .qnt/hooks/audit_log.py "AgentName" "What changed" "Why changed"
 ```
 
-Audit log: [MasterBot System Audit Log](https://docs.google.com/document/d/1N1Mk2z4WYtWAd9JU1VK52HeLu3IqucBHA2_ZBHvZasQ/edit)
+Audit log: [Cipher System Audit Log](https://docs.google.com/document/d/1N1Mk2z4WYtWAd9JU1VK52HeLu3IqucBHA2_ZBHvZasQ/edit)
 
 ## 📚 Additional Documentation
 

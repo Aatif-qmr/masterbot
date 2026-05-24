@@ -77,4 +77,4 @@ class LarkNotifier:
 if __name__ == "__main__":
     # Test
     notifier = LarkNotifier()
-    notifier.send_text("🚀 MasterBot Lark Integration Test: Active")
+    notifier.send_text("🚀 Cipher Lark Integration Test: Active")

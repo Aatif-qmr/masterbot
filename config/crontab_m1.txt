@@ -1,2 +1,2 @@
 # Thesis pipeline — every 4h
-0 */4 * * * cd /Users/aatifquamre/masterbot && source venv/bin/activate && python qnt/thesis/thesis_runner.py BTC/USDT ETH/USDT SOL/USDT BNB/USDT XRP/USDT >> logs/thesis.log 2>&1
+0 */4 * * * cd /Users/aatifquamre/cipher && source venv/bin/activate && python qnt/thesis/thesis_runner.py BTC/USDT ETH/USDT SOL/USDT BNB/USDT XRP/USDT >> logs/thesis.log 2>&1

@@ -6,7 +6,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 HOME = Path.home()
-BASE_DIR = HOME / 'masterbot'
+BASE_DIR = HOME / 'cipher'
 sys.path.insert(0, str(BASE_DIR / 'qnt/vault'))
 CONSTRAINTS_PATH = BASE_DIR / 'config/vault_constraints.json'
 

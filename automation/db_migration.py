@@ -13,35 +13,35 @@ sys.path.insert(0, str(BASE_DIR / 'freqtrade'))
 DB_MAPS = {
     "mean_reversion": {
         "sqlite": str(BASE_DIR / 'user_data' / 'mean_reversion.sqlite'),
-        "postgres_db": "masterbot_mean_reversion"
+        "postgres_db": "cipher_mean_reversion"
     },
     "trend_follow": {
         "sqlite": str(BASE_DIR / 'user_data' / 'trend_follow.sqlite'),
-        "postgres_db": "masterbot_trend_follow"
+        "postgres_db": "cipher_trend_follow"
     },
     "scalp": {
         "sqlite": str(BASE_DIR / 'user_data' / 'scalp.sqlite'),
-        "postgres_db": "masterbot_scalp"
+        "postgres_db": "cipher_scalp"
     },
     "swing": {
         "sqlite": str(BASE_DIR / 'user_data' / 'swing.sqlite'),
-        "postgres_db": "masterbot_swing"
+        "postgres_db": "cipher_swing"
     },
     "daily": {
         "sqlite": str(BASE_DIR / 'user_data' / 'daily.sqlite'),
-        "postgres_db": "masterbot_daily"
+        "postgres_db": "cipher_daily"
     },
     "micro": {
         "sqlite": str(BASE_DIR / 'user_data' / 'tradesv3_micro.sqlite'),
-        "postgres_db": "masterbot_micro"
+        "postgres_db": "cipher_micro"
     },
     "bear_scalp": {
         "sqlite": str(BASE_DIR / 'user_data' / 'bear_scalp.sqlite'),
-        "postgres_db": "masterbot_bear_scalp"
+        "postgres_db": "cipher_bear_scalp"
     },
     "hyperliquid": {
         "sqlite": str(BASE_DIR / 'user_data' / 'hyperliquid.sqlite'),
-        "postgres_db": "masterbot_hyperliquid"
+        "postgres_db": "cipher_hyperliquid"
     }
 }
 
@@ -173,7 +173,7 @@ def reset_sequences(pg_conn):
     cursor.close()
 
 def main():
-    print("=== MasterBot Database Migration (SQLite -> PostgreSQL) ===")
+    print("=== Cipher Database Migration (SQLite -> PostgreSQL) ===")
     
     for strategy_name, config in DB_MAPS.items():
         print(f"\n>>> Processing Strategy: {strategy_name.upper()} <<<")

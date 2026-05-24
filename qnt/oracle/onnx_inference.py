@@ -25,7 +25,7 @@ import numpy as np
 from pathlib import Path
 
 HOME = Path.home()
-BASE_DIR = HOME / "masterbot"
+BASE_DIR = HOME / "cipher"
 ONNX_MODEL_PATH = str(BASE_DIR / "qnt/oracle/lstm_regime_model.onnx")
 REGIME_LABELS = {0: "BEAR", 1: "RANGING", 2: "BULL"}
 
@@ -202,7 +202,7 @@ def benchmark(n_runs: int = 1000) -> dict:
 
 if __name__ == "__main__":
     print("=" * 50)
-    print("MasterBot ONNX Regime Inference Test")
+    print("Cipher ONNX Regime Inference Test")
     print("=" * 50)
 
     try:

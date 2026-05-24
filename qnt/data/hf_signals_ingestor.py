@@ -9,7 +9,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 HOME = Path.home()
-BASE_DIR = HOME / 'masterbot'
+BASE_DIR = HOME / 'cipher'
 HF_CACHE_DIR = BASE_DIR / 'qnt/data/hf_cache'
 NEWS_OUT = BASE_DIR / 'sentiment/scores/hf_news_history.csv'
 SIGNALS_OUT = BASE_DIR / 'qnt/data/hf_trading_signals.csv'

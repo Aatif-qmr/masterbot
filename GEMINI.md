@@ -1,14 +1,14 @@
-# MasterBot Project Mandates
+# Cipher Project Mandates
 
 ## Core Identity
-This is the MasterBot trading system intelligence layer. All agents (Gemini CLI or QNT CLI) must adhere to these rules.
+This is the Cipher trading system intelligence layer. All agents (Gemini CLI or QNT CLI) must adhere to these rules.
 
 ## Tool Permissions
 - **YOLO Mode:** All agents are authorized to operate in YOLO/Permission-free mode for standard shell utilities (`cat`, `ls`, `grep`, `find`, `for`, `echo`, `head`, `tail`, `wc`).
-- **Policy Files:** Refer to `.qnt/policies/masterbot.toml` and `.gemini/policies/masterbot.toml` for high-priority allow rules.
+- **Policy Files:** Refer to `.qnt/policies/cipher.toml` and `.gemini/policies/cipher.toml` for high-priority allow rules.
 
 ## Mandatory Audit Logging
-- **The Rule:** Every modification to the source code, strategies, or configurations MUST be logged in the **[MasterBot System Audit Log](https://docs.google.com/document/d/1N1Mk2z4WYtWAd9JU1VK52HeLu3IqucBHA2_ZBHvZasQ/edit)**.
+- **The Rule:** Every modification to the source code, strategies, or configurations MUST be logged in the **[Cipher System Audit Log](https://docs.google.com/document/d/1N1Mk2z4WYtWAd9JU1VK52HeLu3IqucBHA2_ZBHvZasQ/edit)**.
 - **The Tool:** Use the shared utility script at `.qnt/hooks/audit_log.py` or `.gemini/hooks/audit_log.py`.
 - **The Format:** `python3 .qnt/hooks/audit_log.py "AgentName" "What was changed" "Why it was changed"`
 
@@ -18,7 +18,7 @@ This is the MasterBot trading system intelligence layer. All agents (Gemini CLI 
 - **Execution:** Run via `python3 automation/intelligent_reporter.py`.
 - **Rate Limits:** Uses `tenacity` for retries to respect Mistral's 1 RPS limit on the free tier.
 - **Owner Account:** `aatifqmr@gmail.com`
-- **Reports Folder:** `1Vdst3YI9wFFfFPurpVVGJfrA3y2aT9BI` (MasterBot_Vault/Reports)
+- **Reports Folder:** `1Vdst3YI9wFFfFPurpVVGJfrA3y2aT9BI` (Cipher_Vault/Reports)
 - **Automated Reporter:** Trigger `python3 automation/workspace_reporter.py` for aggregated performance summaries.
 
 ## Database Access

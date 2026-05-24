@@ -104,7 +104,7 @@
         "username": "Aatif-qmr",
         "password": "2001"
     },
-    "bot_name": "masterbot",
+    "bot_name": "cipher",
     "initial_state": "running",
     "cancel_open_orders_on_exit": false,
     "force_entry_enable": false,

@@ -1,6 +1,6 @@
 """
 One-time export: converts lstm_regime_model.pt → lstm_weights.bin
-Run from masterbot root: python qnt/oracle/regime_rs/export_weights.py
+Run from cipher root: python qnt/oracle/regime_rs/export_weights.py
 Requires torch (only needed once on a machine that has the .pt file).
 """
 import struct
@@ -8,7 +8,7 @@ import sys
 from pathlib import Path
 
 HOME = Path.home()
-BASE_DIR = HOME / "masterbot"
+BASE_DIR = HOME / "cipher"
 PT_PATH = BASE_DIR / "qnt/oracle/lstm_regime_model.pt"
 BIN_PATH = BASE_DIR / "qnt/oracle/regime_rs/lstm_weights.bin"
 

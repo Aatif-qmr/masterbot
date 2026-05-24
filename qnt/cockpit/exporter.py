@@ -6,7 +6,7 @@ from prometheus_client import start_http_server, Gauge
 from dotenv import load_dotenv
 
 # Load configuration
-load_dotenv('/Users/aatifquamre/masterbot/.env')
+load_dotenv('/Users/aatifquamre/cipher/.env')
 
 API_USER = os.getenv('API_USERNAME', 'Aatif-qmr')
 API_PW = os.getenv('API_PASSWORD', '2001')

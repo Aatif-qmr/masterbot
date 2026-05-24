@@ -1,7 +1,7 @@
 """
 qnt/polars_ohlcv.py
 ───────────────────
-Polars-based OHLCV data loader for MasterBot.
+Polars-based OHLCV data loader for Cipher.
 Replaces Pandas read_csv / DataFrame manipulation with Polars
 for 5-20x lower memory usage and faster I/O.
 
@@ -27,7 +27,7 @@ except ImportError:
     _HAS_POLARS = False
 
 
-BASE_DIR = Path.home() / "masterbot"
+BASE_DIR = Path.home() / "cipher"
 
 
 def load_ohlcv(

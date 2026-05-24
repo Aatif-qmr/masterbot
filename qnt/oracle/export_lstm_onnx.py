@@ -146,7 +146,7 @@ def verify_onnx_output(
 
 if __name__ == "__main__":
     print("=" * 50)
-    print("MasterBot LSTM → ONNX Export")
+    print("Cipher LSTM → ONNX Export")
     print("=" * 50)
 
     try:

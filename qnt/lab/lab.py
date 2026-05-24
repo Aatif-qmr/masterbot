@@ -9,7 +9,7 @@ import pandas as pd
 from datetime import datetime, timezone
 
 # Add paths
-BASE_DIR = '/Users/aatifquamre/masterbot'
+BASE_DIR = '/Users/aatifquamre/cipher'
 sys.path.insert(0, os.path.join(BASE_DIR, 'qnt/memory'))
 sys.path.insert(0, os.path.join(BASE_DIR, 'qnt/bridge'))
 sys.path.insert(0, os.path.join(BASE_DIR, 'qnt/shield'))
@@ -20,10 +20,10 @@ from qnt_notifier import send_notify, send_escalation, get_pending_reply, parse_
 from autonomy_router import handle
 
 DEVICE = get_current_device()
-M2_PATH = '/Users/azmatsaif/masterbot'
-M1_PATH = '/Users/aatifquamre/masterbot'
-CANDIDATES_DIR = os.path.join(DEVICE['masterbot_path'], 'strategies/candidates')
-ACTIVE_DIR = os.path.join(DEVICE['masterbot_path'], 'strategies/active')
+M2_PATH = '/Users/azmatsaif/cipher'
+M1_PATH = '/Users/aatifquamre/cipher'
+CANDIDATES_DIR = os.path.join(DEVICE['cipher_path'], 'strategies/candidates')
+ACTIVE_DIR = os.path.join(DEVICE['cipher_path'], 'strategies/active')
 
 os.makedirs(CANDIDATES_DIR, exist_ok=True)
 

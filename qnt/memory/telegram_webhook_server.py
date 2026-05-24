@@ -75,13 +75,21 @@ class TelegramWebhookHandler(BaseHTTPRequestHandler):
             content_length = int(self.headers.get('Content-Length', 0))
             post_data = self.rfile.read(content_length)
             try:
-                body = post_data.decode('utf-8').strip()
+                # errors='replace' handles non-UTF8 bytes; strip null bytes that fool the empty check
+                body = post_data.decode('utf-8', errors='replace').strip().strip('\x00')
                 if not body:
                     self.send_response(200)
                     self.end_headers()
                     return
-                payload = json.loads(body)
-                # Freqtrade Webhook JSON: we can just forward the pre-formatted text if configured
+                try:
+                    payload = json.loads(body)
+                except (json.JSONDecodeError, ValueError) as e:
+                    # Return 200 so freqtrade does not retry on bad/empty payloads
+                    logger.warning(f"ft_alert received invalid JSON (ignoring): {e}")
+                    self.send_response(200)
+                    self.end_headers()
+                    return
+                # Freqtrade Webhook JSON: forward the pre-formatted message if present
                 msg = payload.get('message', str(payload))
                 if 'message' in payload:
                     send_telegram_message(msg, chat_id=str(CHAT_ID))
@@ -89,13 +97,6 @@ class TelegramWebhookHandler(BaseHTTPRequestHandler):
                 self.send_header('Content-type', 'application/json')
                 self.end_headers()
                 self.wfile.write(b'{"status":"ok"}')
-            except json.JSONDecodeError as e:
-                logger.warning(f"ft_alert received invalid JSON (ignoring): {e}")
-                try:
-                    self.send_response(400)
-                    self.end_headers()
-                except Exception:
-                    pass
             except Exception as e:
                 logger.error(f"Error processing ft_alert: {e}")
                 try:
@@ -200,7 +201,7 @@ class TelegramWebhookHandler(BaseHTTPRequestHandler):
     def send_help(self) -> str:
         """Return help message."""
         return (
-            "🤖 <b>MasterBot QNT Control Center</b>\n"
+            "🤖 <b>Cipher QNT Control Center</b>\n"
             "━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
             "<b>Available Commands:</b>\n\n"
             "/menu - Show interactive control menu\n"

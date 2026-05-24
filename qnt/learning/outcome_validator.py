@@ -7,7 +7,7 @@ from datetime import datetime, timezone, timedelta
 from pathlib import Path
 
 HOME = Path.home()
-BASE_DIR = HOME / 'masterbot'
+BASE_DIR = HOME / 'cipher'
 SCORES_PATH = BASE_DIR / 'qnt/learning/scores.json'
 SENTIMENT_HISTORY = BASE_DIR / 'sentiment/scores/history.csv'
 THESIS_DIR = BASE_DIR / 'thesis/history'

@@ -215,7 +215,7 @@ def verify_sentiment_output(
 
 if __name__ == "__main__":
     print("=" * 60)
-    print("MasterBot CryptoBERT → ONNX Export")
+    print("Cipher CryptoBERT → ONNX Export")
     print("=" * 60)
 
     try:

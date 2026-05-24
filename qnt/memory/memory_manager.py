@@ -9,9 +9,9 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 # --- CONFIGURATION ---
-BASE_DIR = Path("/Users/aatifquamre/masterbot")
-M1_PATH = Path("/Users/aatifquamre/masterbot")
-M2_PATH = Path("/Users/azmatsaif/masterbot")
+BASE_DIR = Path("/Users/aatifquamre/cipher")
+M1_PATH = Path("/Users/aatifquamre/cipher")
+M2_PATH = Path("/Users/azmatsaif/cipher")
 MEMORY_DIR = "qnt/memory"
 MEMORY_FILENAME = "qnt_memory.json"
 MAX_ACTION_LOG_ENTRIES = 1000
@@ -34,7 +34,7 @@ def get_device_identity():
             "username": M2_USER,
             "hostname": hostname,
             "role": "intelligence",
-            "masterbot_path": M2_PATH
+            "cipher_path": M2_PATH
         }
     else:
         return {
@@ -42,11 +42,11 @@ def get_device_identity():
             "username": M1_USER,
             "hostname": hostname,
             "role": "execution",
-            "masterbot_path": M1_PATH
+            "cipher_path": M1_PATH
         }
 
 IDENTITY = get_device_identity()
-MEMORY_FILE = IDENTITY["masterbot_path"] / MEMORY_DIR / MEMORY_FILENAME
+MEMORY_FILE = IDENTITY["cipher_path"] / MEMORY_DIR / MEMORY_FILENAME
 
 def create_initial_memory():
     return {

@@ -11,7 +11,7 @@ from datetime import datetime, timezone
 from itertools import product
 
 HOME = Path.home()
-BASE_DIR = HOME / 'masterbot'
+BASE_DIR = HOME / 'cipher'
 DATA_DIR = BASE_DIR / 'user_data/data/binance'
 PARAMS_PATH = BASE_DIR / 'config/dynamic_params.json'
 

@@ -9,7 +9,7 @@ from requests.auth import HTTPBasicAuth
 from dotenv import load_dotenv
 
 # Add paths
-BASE_DIR = '/Users/aatifquamre/masterbot'
+BASE_DIR = '/Users/aatifquamre/cipher'
 load_dotenv(os.path.join(BASE_DIR, '.env'))
 sys.path.insert(0, os.path.join(BASE_DIR, 'qnt/memory'))
 sys.path.insert(0, os.path.join(BASE_DIR, 'qnt/bridge'))

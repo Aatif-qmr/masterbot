@@ -7,7 +7,7 @@ import requests
 from datetime import datetime, timezone, timedelta
 
 # Add paths
-BASE_DIR = '/Users/aatifquamre/masterbot'
+BASE_DIR = '/Users/aatifquamre/cipher'
 sys.path.insert(0, os.path.join(BASE_DIR, 'qnt/memory'))
 
 from memory_manager import load_memory, save_memory, log_action
@@ -33,7 +33,7 @@ def fetch_calendar():
     try:
         # run_on_m1 is used here because browser_bridge.sh is usually triggered from M1
         # but the actual browser runs on M2. The bridge script handles the M1 -> M2 path.
-        cmd = "bash /Users/aatifquamre/masterbot/qnt/browser_bridge.sh page https://www.forexfactory.com/calendar"
+        cmd = "bash /Users/aatifquamre/cipher/qnt/browser_bridge.sh page https://www.forexfactory.com/calendar"
         # We need the output file. The bridge script says it syncs to qnt/browser_output/
         subprocess.run(cmd, shell=True, capture_output=True, text=True)
         

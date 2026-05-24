@@ -3,7 +3,7 @@ import subprocess
 from pathlib import Path
 
 HOME = Path.home()
-BASE_DIR = HOME / 'masterbot'
+BASE_DIR = HOME / 'cipher'
 QNT_BIN = str(BASE_DIR / 'qnt/bin')
 
 _QNT_TOOLS = {

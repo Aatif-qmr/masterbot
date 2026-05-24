@@ -4,100 +4,104 @@
     "hash": "3b377e5e10ab141f826e7fb0ac64271f"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/strategies/active/DailyTrendV1.py": {
-    "mtime": 1779511360.9413893,
-    "hash": "ae704e54e29ae6ea3d58ec5f18bd2559"
+    "mtime": 1779586855.020365,
+    "hash": "d1dc317745faa3388b5abdba301eb78a"
+  },
+  "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/strategies/active/VectorVaultV1.py": {
+    "mtime": 1779559399.7751029,
+    "hash": "fe92278db2bb8990dff7c56aaa2bcc30"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/strategies/active/SwingV1.py": {
-    "mtime": 1779511337.0184479,
-    "hash": "d6904cf55108c65207a274fe9ea9d29c"
+    "mtime": 1779586855.0917873,
+    "hash": "3e47eaef53f2842cd70b8fe54ad83b4f"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/strategies/active/Auto202605030340.py": {
-    "mtime": 1779511447.7512739,
-    "hash": "0b7f5cab8ad6c97eec3d236803128e0b"
+    "mtime": 1779586855.0284498,
+    "hash": "abb676759eb882a5f24c056a5e5fa4c4"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/strategies/active/BearScalpV1.py": {
-    "mtime": 1779511437.611363,
-    "hash": "da144c14337e98cc72f09c9d003c8435"
+    "mtime": 1779586855.041601,
+    "hash": "dafdde8801575f4f667a130274914009"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/strategies/active/TrendFollowV1.py": {
-    "mtime": 1779511308.9734008,
-    "hash": "c6094c01c16c5e6370ba0977402e5118"
+    "mtime": 1779586988.3051736,
+    "hash": "5f933657d3efacfed4592b03919548ef"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/strategies/active/MicroScalpV1.py": {
-    "mtime": 1779511003.9374535,
-    "hash": "d9042c47616f827e9e17ea903f028562"
+    "mtime": 1779586855.0592957,
+    "hash": "8d19ec3b7f648fbb8b9c3d38bb8f2a7a"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/strategies/active/ScalpV1.py": {
-    "mtime": 1779511245.5601032,
-    "hash": "7d78db6433f9a6cb2f16f08744f5f9be"
+    "mtime": 1779586855.0915024,
+    "hash": "835885e25ebc2b74220a6b15729ce51c"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/strategies/active/MeanReversionV1.py": {
-    "mtime": 1779511274.2004194,
-    "hash": "69d39b1f31155ce373f58ad2451e6ce2"
+    "mtime": 1779586988.3057027,
+    "hash": "974ba3a6091290b657ef4912a3198ac8"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/nats_publisher.py": {
-    "mtime": 1778156459.4021354,
-    "hash": "acf6e1a83f2f4151283d440a35821422"
+    "mtime": 1779560746.3876748,
+    "hash": "331a15674e5644a8275b2030613f7bef"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/polars_ohlcv.py": {
-    "mtime": 1779510156.4679964,
-    "hash": "b18004b8c6fed786aae1466be2950ba8"
+    "mtime": 1779586855.089404,
+    "hash": "b52c518fd5236b2104e8031c3b879591"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/nats_subscriber.py": {
-    "mtime": 1779372210.9067929,
-    "hash": "87f31239d1f29bfacb0f53a0eabdd304"
+    "mtime": 1779586855.0789478,
+    "hash": "107c078c56075776aa988ddcd4becfc5"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/polars_indicators.py": {
-    "mtime": 1779510156.1371417,
-    "hash": "d72ea8bc30310c88d7df2c706c2485d1"
+    "mtime": 1779586855.0619988,
+    "hash": "ae60598e6224e1ad34bf15ec701afb81"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/nats_subjects.py": {
-    "mtime": 1778320257.354411,
-    "hash": "1a21943ffe54ec19db387cb36ab26155"
+    "mtime": 1779586855.0659776,
+    "hash": "fd59b3b2f53febb068d34f2130102224"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/browser_fetch.js": {
-    "mtime": 1777305881.8990242,
-    "hash": "6962eba3731729b7d4af994d0a9a3257"
+    "mtime": 1779586855.0306644,
+    "hash": "90103987e41806c5f3298420d242f6ae"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/shield/shield.py": {
-    "mtime": 1778056194.1515608,
-    "hash": "fa0b3eff40a1b07a84da11895073867e"
+    "mtime": 1779586855.0248473,
+    "hash": "6665bb2645c1020285b83f1e86497e7f"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/shield/allocator.py": {
-    "mtime": 1779394622.575628,
-    "hash": "1ae5c073ee6191aaab1ca9ce18fcf687"
+    "mtime": 1779561829.0038965,
+    "hash": "fa4bcb602d6cb9b32470083caa357182"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/memory/memory_manager.py": {
-    "mtime": 1777753671.333819,
-    "hash": "228ddc8ace06983299ba2fbe9b6ab654"
+    "mtime": 1779586855.0845945,
+    "hash": "6ae5067a7cc08b15faad63254b74a334"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/memory/enhanced_bot.py": {
-    "mtime": 1778631034.6672482,
-    "hash": "25e48ca883b18d618e74d508fe709653"
+    "mtime": 1779586855.0588167,
+    "hash": "92a40efe3af9d4b58bd47e827e9fdfb0"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/memory/telegram_webhook_server.py": {
-    "mtime": 1778631034.6681342,
-    "hash": "1978d4c4fa3cbdaefbd2c1fe6fadb1f5"
+    "mtime": 1779586855.087744,
+    "hash": "bc32cdbf939588a06572926e9939bd05"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/memory/qnt_notifier.py": {
-    "mtime": 1778253151.668632,
-    "hash": "3c3a7a72435e20939ae4dbf2e401762c"
+    "mtime": 1779586855.0740702,
+    "hash": "c6de3f6b78dd8bd8b78474565b81a0cd"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/memory/autonomy_router.py": {
-    "mtime": 1777673749.851672,
-    "hash": "aeffc278f7b7a2fc40a615895f7bc04e"
+    "mtime": 1779586855.0437229,
+    "hash": "84ab5d448bcdb1fd6fa8c65a6809b39e"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/memory/device_router.py": {
-    "mtime": 1777753437.1795607,
-    "hash": "44a3f616b6b54c631b19830e36af6969"
+    "mtime": 1779586855.0811462,
+    "hash": "fbf6bb9bf269c5235cedd62543da0493"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/memory/reply_listener.py": {
-    "mtime": 1778631034.6679735,
-    "hash": "c83d9ad7ee3331380c3d71ae0b3051dc"
+    "mtime": 1779586854.9956734,
+    "hash": "39f785c6c642fc21ab12a381d00e36a0"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/bin/qnt-skeptic": {
-    "mtime": 1778235640.703109,
-    "hash": "d8b510092101ce5516b2e530a3e7241d"
+    "mtime": 1779586855.0450842,
+    "hash": "1423e0688235562e543aaec58cc87f4f"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/bin/qnt-backtest": {
     "mtime": 1778195835.5004022,
@@ -120,8 +124,8 @@
     "hash": "0dbd2545efcf4362c665d7effd832c00"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/bin/qnt-calendar-gate": {
-    "mtime": 1778195835.5998516,
-    "hash": "7083e948c1e02bededb96510e2d27279"
+    "mtime": 1779586855.0301735,
+    "hash": "60c1aec4549f89df68f92f8453427293"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/bin/qnt-balance": {
     "mtime": 1778195835.5511606,
@@ -136,8 +140,8 @@
     "hash": "acaa56f9d7fdd294b98325e92d165389"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/bin/qnt-shadow": {
-    "mtime": 1778199272.6288934,
-    "hash": "4b3b580a3d3711e25a801db772242f6c"
+    "mtime": 1779586855.0499227,
+    "hash": "91abbd3b14eaa97734871ae7d1dc60a4"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/bin/qnt-evolve": {
     "mtime": 1778195835.6557107,
@@ -156,8 +160,8 @@
     "hash": "e33d9d18b0c9751440521b174131a17a"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/bin/qnt-audit": {
-    "mtime": 1778195835.487374,
-    "hash": "491449a042517c72d73aa16e4875de7d"
+    "mtime": 1779586855.0375946,
+    "hash": "80ca910148fca0e3bb4a2ed40d5cdd3c"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/bin/qnt-recall": {
     "mtime": 1778195835.8021536,
@@ -228,144 +232,132 @@
     "hash": "1792bfc1b2d56ab9aa63a60afdf6ae5e"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/bridge/bridge.py": {
-    "mtime": 1777811446.7559106,
-    "hash": "52e960daad785ddb96bdd9a535c16e10"
+    "mtime": 1779586855.0623927,
+    "hash": "49b529f1d7afc59ac0b5268cc49480c9"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/learning/constraint_extractor.py": {
-    "mtime": 1779476346.4712927,
-    "hash": "28b5429fd7a765ae9f86a17f90a64e8a"
+    "mtime": 1779586855.0678537,
+    "hash": "82ec1b78721d5cade09e484c397d5f09"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/learning/sentiment_calibrator.py": {
-    "mtime": 1779498694.3282106,
-    "hash": "51f63b6e5408dc745b6ea0f8550326dd"
+    "mtime": 1779586855.043152,
+    "hash": "c7600f938c55eff0ebe40088f48f5610"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/learning/__init__.py": {
     "mtime": 1779476262.8474293,
     "hash": "d41d8cd98f00b204e9800998ecf8427e"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/learning/param_optimizer.py": {
-    "mtime": 1779476436.3997068,
-    "hash": "9e8e65bc6d8f28a1cd7ae9698c394a5e"
+    "mtime": 1779586855.0139318,
+    "hash": "6041436d600fe0f578467ed057da105b"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/learning/outcome_validator.py": {
-    "mtime": 1779476289.8275313,
-    "hash": "ff5395d53c1f308e5df349c4a6d6c13b"
+    "mtime": 1779586855.0580723,
+    "hash": "3bc6f72424e593e61842edc937a95899"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/shadow/shadow_hyperopt.py": {
-    "mtime": 1778284260.1759183,
-    "hash": "e884485cd51db01acdcf637a4afda645"
+    "mtime": 1779532870.5419521,
+    "hash": "791e4d83bf00fb909b98b7a45b85384b"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/shadow/resource_monitor.py": {
-    "mtime": 1777954897.7304614,
-    "hash": "8229eda1149a3da9e80e8b4d584e526b"
+    "mtime": 1779586855.0346801,
+    "hash": "f8e8e601edfb4dde0a1ad7dad8eaad36"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/oracle/oracle_anomaly.py": {
-    "mtime": 1777708217.085024,
-    "hash": "ba92cb77fd9add3dc40b936c132ca587"
+    "mtime": 1779586855.0530877,
+    "hash": "c531578127164db7d3641cf832709f45"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/oracle/test_hmm_regime.py": {
-    "mtime": 1779309344.761365,
-    "hash": "36c377322a56a94e339890ad54f28a09"
+    "mtime": 1779524647.7318356,
+    "hash": "5e36b8a5dabf85a94275798abf34dcd1"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/oracle/realtime_orderflow.py": {
     "mtime": 1779311390.0314746,
     "hash": "a2ce745a525ed350a6452c3d35175def"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/oracle/regime_rs_bridge.py": {
-    "mtime": 1779456997.739614,
-    "hash": "8638f5073802d23cb2d2261245cf8d67"
+    "mtime": 1779586855.090533,
+    "hash": "f1ed44eb4d822e361db1feaedabc3dec"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/oracle/order_flow.py": {
-    "mtime": 1778200306.1547127,
-    "hash": "1fb36fec2f780c352940cf231abc0e40"
+    "mtime": 1779586855.032608,
+    "hash": "6a13b9a3d42c3af063927842e6426c06"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/oracle/oracle_runner.py": {
-    "mtime": 1779432651.0962746,
-    "hash": "e86d89a17b5684253b89786e185c841d"
+    "mtime": 1779586855.0259464,
+    "hash": "1de179c0deaae8a6b1e73f88b70239ae"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/oracle/train_regime_lstm.py": {
-    "mtime": 1779309388.2564526,
-    "hash": "9dd2118aae18ef3fa4d6843123e25aca"
+    "mtime": 1779561803.2776816,
+    "hash": "bad46a63d4ed861377915debc42a9fb0"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/oracle/oracle_sentiment.py": {
-    "mtime": 1777708197.6681442,
-    "hash": "3f389bd913246e1abb120068c9214af2"
+    "mtime": 1779586855.0803626,
+    "hash": "d7064867d86fe91237b44a662de6a202"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/oracle/export_lstm_onnx.py": {
-    "mtime": 1779510211.3601239,
-    "hash": "161f450efa182f5c816833ddca8ddd43"
+    "mtime": 1779586855.091252,
+    "hash": "0e044ccebb163161a6c9e0cf23eb774b"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/oracle/oracle_calendar.py": {
-    "mtime": 1777727723.2192435,
-    "hash": "ee6edae60574ac30dde8aa6b697a13eb"
+    "mtime": 1779586855.0583372,
+    "hash": "d886c94ba0188ca58e8cdce615d5b383"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/oracle/onnx_inference.py": {
-    "mtime": 1779510275.1359174,
-    "hash": "d2367a634125c8f7167bab9001b36451"
+    "mtime": 1779586855.0654948,
+    "hash": "e82ce8919f2782ddd9b9247ab6cc8d40"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/oracle/sentiment_gate.py": {
     "mtime": 1778197373.5894501,
     "hash": "5ac13612c6511fab3075e0351e697678"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/oracle/hmm_regime.py": {
-    "mtime": 1779510992.23089,
-    "hash": "015831518786ff8797e91acd46dfb802"
+    "mtime": 1779586855.0699801,
+    "hash": "0170b16585263255faeea1cf99699005"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/oracle/oracle_macro.py": {
-    "mtime": 1778156448.2206192,
-    "hash": "68f1c69e41752be1140f137abcb10fe5"
+    "mtime": 1779586855.0032282,
+    "hash": "37d52591f69f9f93a771eec2718968e5"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/oracle/regime_rs/export_weights.py": {
-    "mtime": 1779456987.7014527,
-    "hash": "54ecf4151dc66e6436b4a657e5601e89"
+    "mtime": 1779586855.0568619,
+    "hash": "2a60c56a2cf58dea6e5ee09428d82eee"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/oracle/regime_rs/src/lib.rs": {
-    "mtime": 1779456978.0118275,
-    "hash": "b83ddfea372df0f6140964af9d0efc73"
+    "mtime": 1779559770.5734453,
+    "hash": "8cc84dfcc40f2ad9c5795bbbd49f691f"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/lab/lab.py": {
-    "mtime": 1777755538.9795477,
-    "hash": "dbd6bc0b906049abf6bc1642c49c64dc"
+    "mtime": 1779586855.0800662,
+    "hash": "91142fb7d32b9c00655e4c73959e83d9"
   },
-  "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/agents/skeptic.py": {
-    "mtime": 1779308980.6961176,
-    "hash": "2943547a3e3165105247d1576cb718df"
-  },
-  "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/agents/trade_gate.py": {
-    "mtime": 1779476389.1356785,
-    "hash": "f2af8279c3bddb3ae400047f32d46482"
-  },
-  "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/agents/orchestrator.py": {
-    "mtime": 1779394663.148126,
-    "hash": "dd5ce5869ba55c9394072e601f26e1ca"
-  },
-  "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/agents/strategist.py": {
-    "mtime": 1778235510.0573838,
-    "hash": "89fb764595f7585153a9a4c26cf626a1"
+  "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/rust_engine/src/lib.rs": {
+    "mtime": 1779560284.4575427,
+    "hash": "a0ae1e3f3ef3eef112991f965939627a"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/cockpit/cockpit.py": {
-    "mtime": 1777843271.8320298,
-    "hash": "6dc1ad49302bf3db9a0dda209854bb7e"
+    "mtime": 1779586855.0093803,
+    "hash": "e19977f80b58e095d51adc332ffb7eba"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/cockpit/exporter.py": {
-    "mtime": 1779393280.2209373,
-    "hash": "c8e925a0cb9aab9163601f89b0c10974"
+    "mtime": 1779586855.0404453,
+    "hash": "55a4248774c418f78a5405d202ca5889"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/cockpit/cockpit_static.py": {
-    "mtime": 1777844374.7019694,
-    "hash": "7dcb26bf2b259461b0020752390c64a3"
+    "mtime": 1779586855.0458927,
+    "hash": "4e6b3c9f095ea2e36899cb2d379ed74f"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/thesis/cli_caller.py": {
     "mtime": 1779451968.3395298,
     "hash": "eeb8fe2f2ac1d7e8df4202e47ad1b1a1"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/thesis/context_builder.py": {
-    "mtime": 1779309570.849769,
-    "hash": "7bf356911e756989fb96b5fe952187c1"
+    "mtime": 1779586855.016026,
+    "hash": "6f6599306706750627a52c0cb26cfa82"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/thesis/thesis_runner.py": {
-    "mtime": 1779451961.6719568,
-    "hash": "cf4cc18c2ff95e8df2fe8f75701e111c"
+    "mtime": 1779586855.0684235,
+    "hash": "19a52c1dc8dda88b93877e15860be8e0"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/thesis/test_thesis_runner.py": {
     "mtime": 1779309617.3272054,
@@ -380,8 +372,8 @@
     "hash": "4aac33fe4e406b0080c9b9ee4a1ab078"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/thesis/thesis_reader.py": {
-    "mtime": 1779309662.936811,
-    "hash": "1012dd0812e2b1c20e92734100c53f37"
+    "mtime": 1779586855.0493386,
+    "hash": "118e6175bae58d11f349ae0bbe88ab6e"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/thesis/test_cli_caller.py": {
     "mtime": 1779309554.9840004,
@@ -396,160 +388,192 @@
     "hash": "f32a2d3fdc613e36c414fead3cce8f21"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/backup/db_backup.py": {
-    "mtime": 1778541184.4444506,
-    "hash": "bd67706817154c89ea9c7fbaba440627"
+    "mtime": 1779586997.3603196,
+    "hash": "24779ee73f3062392685e37e17f224f7"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/backup/r2_backup.py": {
-    "mtime": 1778193656.3805401,
-    "hash": "e586d916264301d2ec3f6fb23d70f849"
+    "mtime": 1779586855.0716052,
+    "hash": "e5573e388f2d87b328e8df6ff3e33084"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/data/retrain_hmm_extended.py": {
-    "mtime": 1779477621.8826725,
-    "hash": "14c97800004b5916147d74ed111f808d"
+    "mtime": 1779586855.0795844,
+    "hash": "a0ea0f451f4a23124aa435dc1fb1bebd"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/data/data_pipeline.py": {
-    "mtime": 1779481473.5062602,
-    "hash": "ce856e7fcf1633f9bdaed91009181b71"
+    "mtime": 1779586855.0223343,
+    "hash": "5ae69709fb2b6c97cf23b7f0ec5088cb"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/data/hf_signals_ingestor.py": {
-    "mtime": 1779477581.840612,
-    "hash": "617726ba344cffdf3934e33b0d97e598"
+    "mtime": 1779586855.064868,
+    "hash": "0dd705f962d67ce5fedbb4fa1fea683e"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/data/__init__.py": {
     "mtime": 1779477559.36285,
     "hash": "d41d8cd98f00b204e9800998ecf8427e"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/data/historical_ingestor.py": {
-    "mtime": 1779496085.0429916,
-    "hash": "d525c16ce606748067c5dc5fd5876132"
+    "mtime": 1779586855.035076,
+    "hash": "378a5cc68f046df145bbf9290d9a5b55"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/data/backtest_calibrator.py": {
-    "mtime": 1779497208.9956205,
-    "hash": "64748810f7e2444ca9e28449ba19bb13"
+    "mtime": 1779586855.0131412,
+    "hash": "33758e210977ad52c7db3913d7a41860"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/data/cdd_ingestor.py": {
-    "mtime": 1779478140.7275674,
-    "hash": "77f0e4fa8626afaea1c9d688f691c9bc"
+    "mtime": 1779586855.0883415,
+    "hash": "8734c839fbc944fcd9c2bbc579398f0e"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/vault/test_vault.py": {
     "mtime": 1779308856.19981,
     "hash": "5890790ddd8732c17d0a0017c7eb5cdb"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/vault/post_mortem.py": {
-    "mtime": 1777841389.2592478,
-    "hash": "0bf9dd2d0be86a20722a9c33a39cce11"
+    "mtime": 1779586855.0006819,
+    "hash": "155ecd53ae889fb9d3b296ca69c0acf3"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/vault/vault.py": {
-    "mtime": 1779390411.6835496,
-    "hash": "059c52e4dbed27f0ede657c4255ba8f5"
+    "mtime": 1779586855.016958,
+    "hash": "bae828be5a4cd4ade72f7fdd61098552"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/vault/post_mortem_loop.py": {
-    "mtime": 1779350974.968219,
-    "hash": "679cc9c224a2e274f659be291391fa89"
+    "mtime": 1779586855.0281281,
+    "hash": "b7a8c49f1ddeb38188e5121f984ffb63"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/vault/vault_indexer.py": {
-    "mtime": 1777814200.5445166,
-    "hash": "425178198a091b9d65a8ed25f7f628b4"
+    "mtime": 1779586855.051365,
+    "hash": "45be2c186a0799d3cf6e4665e48cdab5"
+  },
+  "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/user_data/shadow_test/DailyTrendV1.py": {
+    "mtime": 1779586997.36299,
+    "hash": "d1dc317745faa3388b5abdba301eb78a"
+  },
+  "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/user_data/shadow_test/SwingV1.py": {
+    "mtime": 1779586997.364311,
+    "hash": "3e47eaef53f2842cd70b8fe54ad83b4f"
+  },
+  "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/user_data/shadow_test/TrendFollowV1.py": {
+    "mtime": 1779586997.3650353,
+    "hash": "5f933657d3efacfed4592b03919548ef"
+  },
+  "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/user_data/shadow_test/MicroScalpV1.py": {
+    "mtime": 1779586997.3655462,
+    "hash": "8d19ec3b7f648fbb8b9c3d38bb8f2a7a"
+  },
+  "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/user_data/shadow_test/ScalpV1.py": {
+    "mtime": 1779586997.3659267,
+    "hash": "835885e25ebc2b74220a6b15729ce51c"
+  },
+  "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/user_data/shadow_test/MeanReversionV1.py": {
+    "mtime": 1779586997.3662834,
+    "hash": "974ba3a6091290b657ef4912a3198ac8"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/user_data/hyperopts/sample_hyperopt_loss.py": {
     "mtime": 1777128668.064896,
     "hash": "e993c6706ff18ea1232a1e6101e630b3"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/automation/weekly_report.py": {
-    "mtime": 1779494162.358777,
-    "hash": "fed0f0a1e042661f5bcf8784595b61c6"
+    "mtime": 1779586855.056503,
+    "hash": "73343f0b2a53a8943cfb8987a0b8403c"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/automation/post_mortem.py": {
-    "mtime": 1779499581.6886797,
-    "hash": "ba4df9c42e4e42d4b748dc69d009cf27"
+    "mtime": 1779561225.371941,
+    "hash": "0b2270c940fa6f2c6e0bc49a4675da41"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/automation/parse_hyperopt.py": {
-    "mtime": 1777139866.7810214,
-    "hash": "bdf266be25fdddb8c064e638d8960341"
+    "mtime": 1779586855.0646064,
+    "hash": "5dcbd8425ee866d88730200d2277fe73"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/automation/convert_to_parquet.py": {
-    "mtime": 1778284310.3598468,
-    "hash": "ecc3faa4da4f2621b7dee36270de1efd"
+    "mtime": 1779586855.0693007,
+    "hash": "142476028366c4261e35eef35e6731ff"
+  },
+  "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/automation/db_migration.py": {
+    "mtime": 1779586855.0820763,
+    "hash": "9628cd5cb210e66ad9b2a811e94c8fcd"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/automation/workspace_reporter.py": {
-    "mtime": 1778190000.2365198,
-    "hash": "0f34d4df68c6e9b916e0aad52df82835"
+    "mtime": 1779586855.063822,
+    "hash": "6bf622923c5cb7ca8387d855caa393f8"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/automation/test_hyperliquid.py": {
     "mtime": 1779394355.883092,
     "hash": "b040ec0b7eac69b4c6de498bd5a8486f"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/automation/lark_notifier.py": {
-    "mtime": 1778153260.5757065,
-    "hash": "ae39d3ac63cf94b25c37bfa36dd5ceeb"
+    "mtime": 1779586855.0754695,
+    "hash": "899f6d17fc82c83b994e1cc85f91f29b"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/automation/update_qnt_brain.py": {
     "mtime": 1777278599.8624394,
     "hash": "fd768010f63b62f56ed62a9ebe726565"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/automation/verify_api_permissions.py": {
-    "mtime": 1777139338.8623972,
-    "hash": "97b20ba7fc8f1f9d62d436ee9e576e1c"
+    "mtime": 1779586855.0816538,
+    "hash": "752f3d3dc722beefb4981b73ac4d187c"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/automation/health_check.py": {
-    "mtime": 1779400221.826204,
-    "hash": "97f114edff91f2688bc290c0bd81a824"
+    "mtime": 1779586855.033202,
+    "hash": "bd9c24839277c959d7a8ef8ed9cd1d33"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/automation/intelligent_reporter.py": {
-    "mtime": 1778636564.2530072,
-    "hash": "03ea853f9c690155e9aaff43ce4fa521"
+    "mtime": 1779586855.0174658,
+    "hash": "57cb91b8d7a24238a7ee303f090dcb27"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/automation/self_healer.py": {
-    "mtime": 1779394522.8410554,
-    "hash": "d73fd2f82bd79a11c93d482d5d61199d"
+    "mtime": 1779586855.0423107,
+    "hash": "f3a5670f6422789d9ddc985b122c0e60"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/automation/learning_orchestrator.py": {
-    "mtime": 1779476369.6895523,
-    "hash": "5b98f85cdb122fc797c0734c56f00812"
+    "mtime": 1779586855.0192916,
+    "hash": "e240a78aa0b5dd0912beda832f0b2de9"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/automation/graduation_check.py": {
-    "mtime": 1779493854.8188756,
-    "hash": "970369372a864d0d69b9b4d8cf63491f"
+    "mtime": 1779586855.0856268,
+    "hash": "bf67b412a360649e7adf8ff73f6965ab"
+  },
+  "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/automation/workflows/reporting_workflow.py": {
+    "mtime": 1779586855.033761,
+    "hash": "e557f916283e2f09a417eb1a8436e962"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/sentiment/onnx_pipeline.py": {
-    "mtime": 1779510275.484826,
-    "hash": "055cca509c7fd3a6110089c3cddd85c0"
+    "mtime": 1779586855.026931,
+    "hash": "3b6afab5c3432d753036bb2fd7e5dd27"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/sentiment/export_cryptobert_onnx.py": {
-    "mtime": 1779510211.7295425,
-    "hash": "22de31852292a108b558e1227abf0f72"
+    "mtime": 1779586855.0265818,
+    "hash": "dc21ec704c014cf979d9453ce7ae50e8"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/sentiment/reader.py": {
-    "mtime": 1779498743.458214,
-    "hash": "d73b8d2271f8911698a3f65636e87f1d"
+    "mtime": 1779586855.0538533,
+    "hash": "6834ea1b3a051cd7728a21485672f317"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/sentiment/pipeline.py": {
-    "mtime": 1779510974.471458,
-    "hash": "1786215cf870b8c1d7805ca9a909a311"
+    "mtime": 1779586998.3562584,
+    "hash": "bb008fc608111140a9e26a46e0f08608"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/sentiment/test_pipeline.py": {
-    "mtime": 1779309222.3999975,
-    "hash": "4874e85bc1ea4337b0195ec32c27b2d1"
+    "mtime": 1779561879.2525148,
+    "hash": "06c71acd43b8d9acdcd4a985ad2a7411"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/risk/stake_sizer.py": {
-    "mtime": 1779496033.9700673,
-    "hash": "39dc2493fe326b9bcfd9e22727ff602e"
+    "mtime": 1779561163.130888,
+    "hash": "c349eac598a41045797f60da5bca2d95"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/risk/test_risk_manager.py": {
-    "mtime": 1777755580.0802598,
-    "hash": "8101a8949603dd90b587fa5c1ab5ec75"
+    "mtime": 1779560450.249302,
+    "hash": "c1822ef3a43f6b8a45a7be5e05ae3530"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/risk/balance_tracker.py": {
-    "mtime": 1777924824.4294865,
-    "hash": "6422d93f04267c2530ff28dfa38512fa"
+    "mtime": 1779586855.0521493,
+    "hash": "759ace6c95908a04f25f08a418aa62dd"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/risk/correlation_guard.py": {
-    "mtime": 1779496107.8727508,
-    "hash": "3a190db70c94450f716474a8dca524b4"
+    "mtime": 1779561155.8422723,
+    "hash": "f3c77404a9a33c53216578a5d6f5ee8d"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/risk/risk_manager.py": {
-    "mtime": 1779510096.5308952,
-    "hash": "ef2a017841bea58b159bbc24cae1c5a2"
+    "mtime": 1779586855.005454,
+    "hash": "ff48e0fa6e053df956f3048a8c69d8d2"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/risk/risk_checks_rs/src/lib.rs": {
     "mtime": 1779510342.7749813,
@@ -616,8 +640,8 @@
     "hash": "1c9ec9df8fde568112c2c6a84e04cebc"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/freqtrade/freqtrade/freqtradebot.py": {
-    "mtime": 1777125965.2649953,
-    "hash": "5377fcff64e07b4a69f956d5f4d9ae30"
+    "mtime": 1779572886.7592885,
+    "hash": "8c5ecc75e0381d766da475b35c6087db"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/freqtrade/freqtrade/constants.py": {
     "mtime": 1777125965.247743,
@@ -716,8 +740,8 @@
     "hash": "bc56a75c69f5f4f900f21c5b1406ca83"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/freqtrade/freqtrade/exchange/hyperliquid.py": {
-    "mtime": 1777125965.258852,
-    "hash": "db428b481246f01d035f32b624d5f326"
+    "mtime": 1779559911.5857682,
+    "hash": "52522d2f586f61906256a7dbdb048692"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/freqtrade/freqtrade/exchange/bybit.py": {
     "mtime": 1777125965.256221,
@@ -740,8 +764,8 @@
     "hash": "467abcfdf9332b5f64206b88a10337b7"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/freqtrade/freqtrade/exchange/exchange.py": {
-    "mtime": 1777125965.2567887,
-    "hash": "4db8478daf88489e107d036dd250f8dc"
+    "mtime": 1779539319.2744215,
+    "hash": "9153ac2635d43a20636d15d37e515c4e"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/freqtrade/freqtrade/exchange/__init__.py": {
     "mtime": 1777125965.2516594,
@@ -2116,419 +2140,463 @@
     "hash": "dd01398280bfb58d904b719bde525328"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/requirements.txt": {
-    "mtime": 1779312701.965958,
-    "hash": "17aa42e060d331094ac3d289be94d608"
+    "mtime": 1779582766.3500972,
+    "hash": "0377ec0782eafdd59363a49de8ac83bf"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/QNT.md": {
-    "mtime": 1778240441.9976695,
-    "hash": "f275bc235ccea1935e570c26af0c407c"
+    "mtime": 1779586854.9931514,
+    "hash": "4530a9b9f10ea9e0b3ff28f967829a2d"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/ENHANCED_BOT_README.md": {
-    "mtime": 1778631034.6643784,
-    "hash": "3e73edd0b521175b47dba3799655d391"
+    "mtime": 1779586855.04798,
+    "hash": "d3a9f495aee7d5e09d00858e3df5c2f7"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/README.md": {
-    "mtime": 1778541184.4415014,
-    "hash": "7163fdfb70730ca4afeef732511aa70f"
+    "mtime": 1779586855.029078,
+    "hash": "d4472aab86011bc570c27b47366547e8"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/PROJECT_DOCUMENTATION.txt": {
-    "mtime": 1777806876.8681262,
-    "hash": "020187a682f19f09459df027405b3a22"
+    "mtime": 1779586988.2897875,
+    "hash": "e1ebe0eb5dd3f27ae5bdd6d70a2e0338"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/docker-compose.yml": {
-    "mtime": 1779394648.3851523,
-    "hash": "646f8132cfff93600fb190e7ccebe448"
-  },
-  "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/test.txt": {
-    "mtime": 1779513219.0502028,
-    "hash": "eb61eead90e3b899c6bcbe27ac581660"
+    "mtime": 1779586988.292269,
+    "hash": "b42f55109af364f32e8e030711f590e3"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/GEMINI.md": {
-    "mtime": 1778626031.5556574,
-    "hash": "9fe35baf9ff1405655de6c801a75ff24"
+    "mtime": 1779586855.0070782,
+    "hash": "2dcf4af7ca3b66f93d614ea19fad96c7"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/MANUAL.md": {
-    "mtime": 1778185391.9521182,
-    "hash": "a77bb621d0be98c29a453d4ace1f2bba"
+    "mtime": 1779586855.037325,
+    "hash": "b7f1689d486d7a37e0eaeafd90758329"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/DEVELOPMENT.md": {
-    "mtime": 1778541184.4405143,
-    "hash": "2a6c35a1b2565faf3c57c748e8187371"
+    "mtime": 1779586988.2944992,
+    "hash": "2197d8a38351b6e48cc7f43f8c0b50d1"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/config/crontab_m1.txt": {
-    "mtime": 1779309894.306194,
-    "hash": "a06ccf3b94fdd53795d155ed352d2941"
+    "mtime": 1779586855.0145519,
+    "hash": "8f39f60d1f8409f4e68439512f0d2707"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/config/prometheus.yml": {
     "mtime": 1779393149.8731253,
     "hash": "96aca18d521a4d08caf4776368d5cb2d"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/strategies/research/scan_20260428.md": {
-    "mtime": 1777319527.1733959,
-    "hash": "8a0cd74eb651153f97b922761c337114"
+    "mtime": 1779586855.076893,
+    "hash": "1092980c0aec7bb46217871efed926d1"
   },
-  "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/docs/superpowers/plans/2026-05-21-masterbot-merge.md": {
-    "mtime": 1779307956.1448572,
-    "hash": "1c04ebbfc1c15c5d51d2a00b7f2dbd77"
+  "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/docs/superpowers/plans/2026-05-21-cipher-merge.md": {
+    "mtime": 1779586997.3091297,
+    "hash": "9ce05da7a39151bc8cd56e684d43260f"
+  },
+  "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/docs/superpowers/specs/2026-05-21-cipher-merge-design.md": {
+    "mtime": 1779586997.3099518,
+    "hash": "1560732caf5496423b26f50134040528"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/docs/superpowers/specs/2026-05-23-closed-loop-learning-design.md": {
     "mtime": 1779476255.226634,
     "hash": "8ce7063cc28506f07c5db411a61b0bb3"
-  },
-  "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/docs/superpowers/specs/2026-05-21-masterbot-merge-design.md": {
-    "mtime": 1779307493.5711873,
-    "hash": "153f71272cfaa40d163186c14724285b"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/logs/reports/weekly_report_20260511.html": {
     "mtime": 1778463006.3634934,
     "hash": "e70300544a3da53e9bdb2888f40c38d2"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/QNT.md": {
-    "mtime": 1778240441.9976695,
-    "hash": "f275bc235ccea1935e570c26af0c407c"
+    "mtime": 1779586854.9931514,
+    "hash": "4530a9b9f10ea9e0b3ff28f967829a2d"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/browser_output/browser_output/page_forexfactory.com_2026-05-21T13-30-11.txt": {
-    "mtime": 1779510603.9594839,
+    "mtime": 1779586202.766116,
     "hash": "e7bdfea009d4583bbae2f625a3ef9f71"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/browser_output/browser_output/page_forexfactory.com_2026-05-11T20-30-12.txt": {
-    "mtime": 1779510604.317382,
+    "mtime": 1779586203.1862614,
     "hash": "b3a031ae75fb6a814bd5f26250860007"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/browser_output/browser_output/page_forexfactory.com_2026-05-12T10-30-14.txt": {
-    "mtime": 1779510604.748269,
+    "mtime": 1779586203.6189675,
     "hash": "974e13d2fb48d2eb98d0abed4dcced32"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/browser_output/browser_output/page_forexfactory.com_2026-05-14T10-30-12.txt": {
-    "mtime": 1779510605.0995965,
+    "mtime": 1779586203.9496624,
     "hash": "a798a42bb119ae6d58c95ed072b3ce88"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/browser_output/browser_output/page_forexfactory.com_2026-05-22T02-30-17.txt": {
-    "mtime": 1779510605.4526541,
+    "mtime": 1779586204.3249528,
     "hash": "12f4b09c1ec3811ac9695e46f765fc5f"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/browser_output/browser_output/page_forexfactory.com_2026-05-05T13-30-07.txt": {
-    "mtime": 1779510605.8131206,
+    "mtime": 1779586204.7549002,
     "hash": "029afc85aadae49c4b7a0dee0b756663"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/browser_output/browser_output/page_forexfactory.com_2026-05-06T23-30-15.txt": {
-    "mtime": 1779510606.1584013,
+    "mtime": 1779586205.0698862,
     "hash": "9035e0894554b6a19ca705de2f43ee46"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/browser_output/browser_output/page_forexfactory.com_2026-05-11T00-00-07.txt": {
-    "mtime": 1779510606.4992533,
+    "mtime": 1779586205.4504206,
     "hash": "6700b007cdcdd24baa74b3dd12ac8027"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/browser_output/browser_output/page_forexfactory.com_2026-05-14T10-30-10.txt": {
-    "mtime": 1779510606.9351087,
+    "mtime": 1779586205.8145266,
     "hash": "6275b6c929d105ceb54c3241210541e3"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/browser_output/browser_output/page_forexfactory.com_2026-05-22T18-30-36.txt": {
-    "mtime": 1779510607.3002896,
+    "mtime": 1779586206.1456363,
     "hash": "acb92186c211c37e27c0cc153beda24b"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/browser_output/browser_output/page_forexfactory.com_2026-05-22T02-30-14.txt": {
-    "mtime": 1779510607.6731598,
+    "mtime": 1779586206.5752635,
     "hash": "e2ffe24c5ca632c3fe3f3ad335a40085"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/browser_output/browser_output/page_forexfactory.com_2026-05-20T22-30-51.txt": {
-    "mtime": 1779510608.3280714,
+    "mtime": 1779586206.93457,
     "hash": "00abe72102318c274a90fa394df3dd30"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/browser_output/browser_output/page_forexfactory.com_2026-05-09T06-30-07.txt": {
-    "mtime": 1779510608.9798644,
+    "mtime": 1779586207.2875662,
     "hash": "c4ca51ebb45b6d86fd0374bbc8a77df9"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/browser_output/browser_output/page_forexfactory.com_2026-05-11T20-30-10.txt": {
-    "mtime": 1779510609.373375,
+    "mtime": 1779586207.6347995,
     "hash": "656bc701f8f55d6ef4e40ecb6ee76c63"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/browser_output/browser_output/page_forexfactory.com_2026-05-13T13-30-09.txt": {
-    "mtime": 1779510609.8184888,
+    "mtime": 1779586208.07573,
     "hash": "d4578d6edc0b0a31fb36e7e1c3a977c7"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/browser_output/browser_output/page_forexfactory.com_2026-05-03T02-30-08.txt": {
-    "mtime": 1779510610.1787996,
+    "mtime": 1779586208.5153675,
     "hash": "4355ea866f68dfee50aaf3eb1578d6ba"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/browser_output/browser_output/page_forexfactory.com_2026-05-10T10-30-08.txt": {
-    "mtime": 1779510610.5378175,
+    "mtime": 1779586208.9303992,
     "hash": "99e9d652c08439496313cc454e94e71d"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/browser_output/browser_output/page_forexfactory.com_2026-05-07T20-30-08.txt": {
-    "mtime": 1779510610.9681573,
+    "mtime": 1779586209.25619,
     "hash": "d5b61be82726a77baa37fee29071e77f"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/browser_output/browser_output/page_forexfactory.com_2026-05-04T23-30-08.txt": {
-    "mtime": 1779510611.3530889,
+    "mtime": 1779586209.6302273,
     "hash": "6dd1d19e956e3466098339648af1ebf0"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/browser_output/browser_output/page_forexfactory.com_2026-05-03T16-30-09.txt": {
-    "mtime": 1779510611.674397,
+    "mtime": 1779586209.99484,
     "hash": "06b543ad62cedd5b6f87c1205e2e086a"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/browser_output/browser_output/page_forexfactory.com_2026-05-21T13-30-16.txt": {
-    "mtime": 1779510612.023012,
+    "mtime": 1779586210.330237,
     "hash": "366ff0b29aa263c2746643e6ac877663"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/browser_output/browser_output/page_forexfactory.com_2026-05-12T10-30-11.txt": {
-    "mtime": 1779510612.3631833,
+    "mtime": 1779586210.6650083,
     "hash": "2ebb7a37e8cb8d6735e758b0346c5b95"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/browser_output/browser_output/feargreed_alternative.me_2026-05-02T20-49-57.txt": {
-    "mtime": 1779510612.7338476,
+    "mtime": 1779586211.040018,
     "hash": "ee71e968cd632e036f21c0b86a583142"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/browser_output/browser_output/page_forexfactory.com_2026-05-08T17-30-08.txt": {
-    "mtime": 1779510613.0982947,
+    "mtime": 1779586211.3751667,
     "hash": "1f04767925a6754ebd17e47ae2fe4282"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/browser_output/browser_output/page_forexfactory.com_2026-05-22T09-30-17.txt": {
-    "mtime": 1779510613.4487379,
+    "mtime": 1779586211.7400017,
     "hash": "18ca01056006ccc9a872e142115b4a5e"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/browser_output/browser_output/page_forexfactory.com_2026-05-11T13-30-10.txt": {
-    "mtime": 1779510613.8129,
+    "mtime": 1779586212.0953095,
     "hash": "d6788b46bb45bf4e03e7768c375b7668"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/browser_output/browser_output/page_forexfactory.com_2026-05-10T03-30-08.txt": {
-    "mtime": 1779510614.1577137,
+    "mtime": 1779586212.5296237,
     "hash": "13211774588c92a989356e0616d62e4f"
   },
+  "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/browser_output/browser_output/page_forexfactory.com_2026-05-23T14-30-19.txt": {
+    "mtime": 1779586212.8705935,
+    "hash": "39f08b7d3f6226372de9c0b8f661e575"
+  },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/browser_output/browser_output/feargreed_alternative.me_2026-05-02T20-44-58.txt": {
-    "mtime": 1779510614.5227904,
+    "mtime": 1779586213.2196677,
     "hash": "ee869b9c18268b0c0cea86112644ad9b"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/browser_output/browser_output/page_forexfactory.com_2026-05-07T06-30-08.txt": {
-    "mtime": 1779510614.8928888,
+    "mtime": 1779586213.578012,
     "hash": "f4edb42c94a813848c02b120f119ec9f"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/browser_output/browser_output/feargreed_alternative.me_2026-04-27T15-13-00.txt": {
-    "mtime": 1779510615.3238792,
+    "mtime": 1779586213.934469,
     "hash": "7815a84a9cc2f3c1e772bf7718d92358"
   },
+  "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/browser_output/browser_output/page_forexfactory.com_2026-05-23T14-30-18.txt": {
+    "mtime": 1779586214.355749,
+    "hash": "c391b3dd2d7f61d626581047ae48dde7"
+  },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/browser_output/browser_output/page_forexfactory.com_2026-05-20T22-30-33.txt": {
-    "mtime": 1779510615.6589596,
+    "mtime": 1779586214.7943647,
     "hash": "35e2c253673d2693c1237da6743d57b2"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/browser_output/browser_output/page_forexfactory.com_2026-05-12T17-30-10.txt": {
-    "mtime": 1779510616.0083954,
+    "mtime": 1779586215.1539938,
     "hash": "674975a98b9baf1554af7c0be3bf5817"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/browser_output/browser_output/page_forexfactory.com_2026-05-12T03-30-10.txt": {
-    "mtime": 1779510616.3954813,
+    "mtime": 1779586215.5150397,
     "hash": "e74339763ca2fea2e1eff065c5b4ffd1"
   },
+  "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/browser_output/browser_output/page_forexfactory.com_2026-05-23T14-30-32.txt": {
+    "mtime": 1779586216.3701632,
+    "hash": "2be798b6fc66315ea813384b11efeea4"
+  },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/browser_output/browser_output/page_forexfactory.com_2026-05-08T10-30-09.txt": {
-    "mtime": 1779510617.138513,
+    "mtime": 1779586216.7244213,
     "hash": "2d28a3a8fb32732a4a38549cbda22ea3"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/browser_output/browser_output/page_forexfactory.com_2026-05-22T11-30-07.txt": {
-    "mtime": 1779510617.483366,
+    "mtime": 1779586217.0453541,
     "hash": "ee922751581ac782bcf718380123fda1"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/browser_output/browser_output/page_forexfactory.com_2026-05-09T00-00-07.txt": {
-    "mtime": 1779510617.8395774,
+    "mtime": 1779586217.4098475,
     "hash": "0502b9601cc1df4ef4fc207966ccb408"
   },
+  "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/browser_output/browser_output/page_forexfactory.com_2026-05-23T14-37-02.txt": {
+    "mtime": 1779586217.7729588,
+    "hash": "139369a240ab2a4a919ba49d12d3051d"
+  },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/browser_output/browser_output/feargreed_alternative.me_2026-04-27T15-26-57.txt": {
-    "mtime": 1779510618.2137804,
+    "mtime": 1779586218.105477,
     "hash": "a6ed3887a5ec4d0771a388f3fdad8456"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/browser_output/browser_output/page_forexfactory.com_2026-05-04T10-33-00.txt": {
-    "mtime": 1779510618.5830126,
+    "mtime": 1779586218.4753356,
     "hash": "6a611b26f12fcf3761748a12a040feef"
   },
+  "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/browser_output/browser_output/page_forexfactory.com_2026-05-23T14-36-57.txt": {
+    "mtime": 1779586218.9098878,
+    "hash": "57d56e5a9514d0ac4c41906cf5799229"
+  },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/browser_output/browser_output/page_forexfactory.com_2026-05-11T06-30-07.txt": {
-    "mtime": 1779510618.9376993,
+    "mtime": 1779586219.346627,
     "hash": "00ffd42ce02cb10574d233ce7f3de36c"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/browser_output/browser_output/page_forexfactory.com_2026-05-09T20-30-10.txt": {
-    "mtime": 1779510619.283376,
+    "mtime": 1779586219.666692,
     "hash": "6096cf7242e92c23de144e4cc6aeb38f"
   },
+  "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/browser_output/browser_output/page_forexfactory.com_2026-05-23T21-30-09.txt": {
+    "mtime": 1779586220.0251234,
+    "hash": "f35143c3d1aff643fed86b968654b83b"
+  },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/browser_output/browser_output/page_forexfactory.com_2026-05-06T03-30-10.txt": {
-    "mtime": 1779510619.658259,
+    "mtime": 1779586220.3972933,
     "hash": "646541aeaa9c5dbf2634ca0dfaad24aa"
   },
+  "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/browser_output/browser_output/page_forexfactory.com_2026-05-23T14-30-20.txt": {
+    "mtime": 1779586220.7266808,
+    "hash": "419cff5bc2783ef99b2dc8a03603222c"
+  },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/browser_output/browser_output/page_forexfactory.com_2026-05-04T16-55-34.txt": {
-    "mtime": 1779510619.998282,
+    "mtime": 1779586221.094991,
     "hash": "56f0eca499f5816079623ef3a4ea06e7"
   },
+  "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/browser_output/browser_output/page_forexfactory.com_2026-05-23T14-37-00.txt": {
+    "mtime": 1779586221.4449189,
+    "hash": "7b8768d8db62c2df534e25e3a6949167"
+  },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/browser_output/browser_output/page_forexfactory.com_2026-05-04T09-21-14.txt": {
-    "mtime": 1779510620.343881,
+    "mtime": 1779586221.764473,
     "hash": "afb581b840a70aa5870d443ec1ba2ca5"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/browser_output/browser_output/page_forexfactory.com_2026-05-14T03-30-10.txt": {
-    "mtime": 1779510620.7132158,
+    "mtime": 1779586222.1498227,
     "hash": "f759aa432eeef764123c8b0d8737ee5c"
   },
+  "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/browser_output/browser_output/page_forexfactory.com_2026-05-23T21-30-20.txt": {
+    "mtime": 1779586222.5645692,
+    "hash": "d14a3a9358d91082889d433f9a90e28e"
+  },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/browser_output/browser_output/feargreed_alternative.me_2026-05-02T20-43-59.txt": {
-    "mtime": 1779510621.1187465,
+    "mtime": 1779586223.0174656,
     "hash": "ef5ec487193f1da757c6dda25f1bc61a"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/browser_output/browser_output/feargreed_alternative.me_2026-04-27T15-25-34.txt": {
-    "mtime": 1779510621.712976,
+    "mtime": 1779586223.3752413,
     "hash": "b5b03de3edea4cbfa1498b1a1e5bfbc4"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/browser_output/browser_output/feargreed_alternative.me_2026-04-27T15-20-04.txt": {
-    "mtime": 1779510622.1676042,
+    "mtime": 1779586223.7951336,
     "hash": "5f268ac82cb708f800a01693e8f6497e"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/browser_output/browser_output/feargreed_alternative.me_2026-05-02T20-56-45.txt": {
-    "mtime": 1779510622.7170928,
+    "mtime": 1779586224.154913,
     "hash": "dc1bac28f79dc7f67e826aa2fb272242"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/browser_output/browser_output/page_forexfactory.com_2026-05-14T03-30-08.txt": {
-    "mtime": 1779510623.0543077,
+    "mtime": 1779586224.490577,
     "hash": "4583fd9332c316ef0eccb4a060fcf678"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/browser_output/browser_output/feargreed_alternative.me_2026-05-02T20-56-53.txt": {
-    "mtime": 1779510623.4787736,
+    "mtime": 1779586224.8257754,
     "hash": "5f69ca96ae3f28dff6a9fd11e969b02b"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/browser_output/browser_output/page_forexfactory.com_2026-05-21T06-30-26.txt": {
-    "mtime": 1779510623.8529668,
+    "mtime": 1779586225.1907115,
     "hash": "49cc093b893abb0e3b9a687a04062ff8"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/browser_output/browser_output/page_forexfactory.com_2026-05-06T09-52-29.txt": {
-    "mtime": 1779510624.4386764,
+    "mtime": 1779586225.5352156,
     "hash": "ee03afb6c375843082e552827257e862"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/browser_output/browser_output/page_forexfactory.com_2026-05-20T22-30-17.txt": {
-    "mtime": 1779510626.1833608,
+    "mtime": 1779586225.8955271,
     "hash": "ad403635f8b59f54d75d0c3edba2ef28"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/browser_output/browser_output/page_forexfactory.com_2026-05-12T03-30-08.txt": {
-    "mtime": 1779510626.709481,
+    "mtime": 1779586226.335449,
     "hash": "34bc33ca855bbc45a01b87b080405078"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/browser_output/browser_output/page_forexfactory.com_2026-05-10T17-30-07.txt": {
-    "mtime": 1779510628.78654,
+    "mtime": 1779586226.7641077,
     "hash": "66d9d6aef3c471a4c367c4c03181ca4b"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/browser_output/browser_output/page_forexfactory.com_2026-05-13T06-30-14.txt": {
-    "mtime": 1779510630.5881033,
+    "mtime": 1779586227.090292,
     "hash": "a9d9597e4eb7af66b30f83f7d60cd910"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/browser_output/browser_output/page_forexfactory.com_2026-05-12T17-30-09.txt": {
-    "mtime": 1779510631.1988435,
+    "mtime": 1779586227.463004,
     "hash": "3d800f94ea7771dff7399a72190ef8c2"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/browser_output/browser_output/page_forexfactory.com_2026-05-05T06-30-08.txt": {
-    "mtime": 1779510632.3135388,
+    "mtime": 1779586228.5055175,
     "hash": "719bb2fe79e73b468b226b8bd6d17903"
   },
+  "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/browser_output/browser_output/page_forexfactory.com_2026-05-23T14-36-48.txt": {
+    "mtime": 1779586228.8703864,
+    "hash": "b0764b6de8d0bdeab6c80808178ba731"
+  },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/browser_output/browser_output/feargreed_alternative.me_2026-05-02T20-49-29.txt": {
-    "mtime": 1779510633.5152817,
+    "mtime": 1779586229.3076124,
     "hash": "cf2cb3983def1706a4d366f448a1e3c6"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/browser_output/browser_output/page_forexfactory.com_2026-05-21T19-53-30.txt": {
-    "mtime": 1779510633.9233887,
+    "mtime": 1779586229.6406896,
     "hash": "88be21fa93d15b6842ba9fc56832404b"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/browser_output/browser_output/page_forexfactory.com_2026-05-21T06-30-08.txt": {
-    "mtime": 1779510634.4076788,
+    "mtime": 1779586230.0100713,
     "hash": "58cf97bc181ae402ad2cf6a1fc5a8a76"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/browser_output/browser_output/page_forexfactory.com_2026-05-09T13-30-08.txt": {
-    "mtime": 1779510635.2781234,
+    "mtime": 1779586230.6251547,
     "hash": "bd571d8d04bf9a5328c2b87a5b367488"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/browser_output/browser_output/page_api.alternative.me_2026-04-27T15-27-36.txt": {
-    "mtime": 1779510635.732873,
+    "mtime": 1779586231.055983,
     "hash": "1f8f39bd5fcb69b2ad8896b4d87db769"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/browser_output/browser_output/feargreed_alternative.me_2026-05-02T22-40-28.txt": {
-    "mtime": 1779510636.435424,
+    "mtime": 1779586231.4037673,
     "hash": "911b1e82ca2f8d37a165b352c99285fb"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/browser_output/browser_output/page_forexfactory.com_2026-05-11T13-30-09.txt": {
-    "mtime": 1779510637.34382,
+    "mtime": 1779586231.764826,
     "hash": "9203c7a8a1173f3af1c86496e0f91780"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/browser_output/browser_output/page_forexfactory.com_2026-05-16T16-30-12.txt": {
-    "mtime": 1779510637.8146584,
+    "mtime": 1779586232.1958494,
     "hash": "c8904f68d9e7721cb299c6d41769db36"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/browser_output/browser_output/page_forexfactory.com_2026-05-06T16-30-08.txt": {
-    "mtime": 1779510638.3296928,
+    "mtime": 1779586232.640119,
     "hash": "5ea9d3ac27df608f87514835575753c7"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/browser_output/browser_output/page_forexfactory.com_2026-05-05T20-30-08.txt": {
-    "mtime": 1779510638.7737408,
+    "mtime": 1779586233.0555518,
     "hash": "11d97d80b4c1ef0c18558a686ed11d0b"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/browser_output/browser_output/page_forexfactory.com_2026-05-08T03-30-07.txt": {
-    "mtime": 1779510639.2392879,
+    "mtime": 1779586233.406078,
     "hash": "61125247446eaa00a5160966b25b6e4e"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/browser_output/browser_output/page_forexfactory.com_2026-05-03T16-30-10.txt": {
-    "mtime": 1779510639.7292926,
+    "mtime": 1779586233.7647803,
     "hash": "a7b2ebd1a3929c8e1027d1b4f14c96cb"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/browser_output/browser_output/page_forexfactory.com_2026-05-22T02-30-08.txt": {
-    "mtime": 1779510640.894065,
+    "mtime": 1779586234.1149166,
     "hash": "4e8681a0b15002471d31ef04907024b2"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/browser_output/browser_output/page_forexfactory.com_2026-05-13T13-30-11.txt": {
-    "mtime": 1779510641.348284,
+    "mtime": 1779586234.4452858,
     "hash": "f9470c48f7469a467b7cecd82778dec2"
   },
+  "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/browser_output/browser_output/page_forexfactory.com_2026-05-23T07-31-54.txt": {
+    "mtime": 1779586234.794459,
+    "hash": "106906ff625675e62022425052f5373e"
+  },
+  "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/browser_output/browser_output/page_forexfactory.com_2026-05-23T07-31-40.txt": {
+    "mtime": 1779586235.1555336,
+    "hash": "a9f0638039747b74ea7201a01595d22a"
+  },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/browser_output/browser_output/page_forexfactory.com_2026-05-22T18-30-17.txt": {
-    "mtime": 1779510641.8592625,
+    "mtime": 1779586235.4646187,
     "hash": "e75ac1473f4f37c441812abf395d2d22"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/browser_output/browser_output/page_forexfactory.com_2026-05-22T18-30-16.txt": {
-    "mtime": 1779510642.2542417,
+    "mtime": 1779586235.8546557,
     "hash": "f742dfda054b59a009c1b0d4c4570634"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/browser_output/browser_output/page_forexfactory.com_2026-05-16T16-30-10.txt": {
-    "mtime": 1779510643.074244,
+    "mtime": 1779586236.2943444,
     "hash": "16a08e936e7ac0b943b861bb3f62113b"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/browser_output/browser_output/page_forexfactory.com_2026-05-16T23-30-11.txt": {
-    "mtime": 1779510643.4933918,
+    "mtime": 1779586236.6517808,
     "hash": "c4fc458606d3069118176dcb2bf53cab"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/browser_output/browser_output/page_forexfactory.com_2026-05-13T00-00-10.txt": {
-    "mtime": 1779510643.91659,
+    "mtime": 1779586236.9969592,
     "hash": "f5bef82eb4d03d6746f3157498af3a61"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/browser_output/browser_output/page_forexfactory.com_2026-05-22T09-30-09.txt": {
-    "mtime": 1779510644.4189024,
+    "mtime": 1779586237.3548014,
     "hash": "7c32fd64611291d366b263522b52b431"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/browser_output/browser_output/page_forexfactory.com_2026-05-13T20-30-13.txt": {
-    "mtime": 1779510644.904362,
+    "mtime": 1779586237.7752216,
     "hash": "ee4776caad0b3f0f6317a4ff57913411"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/browser_output/browser_output/page_forexfactory.com_2026-05-07T13-30-07.txt": {
-    "mtime": 1779510645.3988822,
+    "mtime": 1779586238.1252835,
     "hash": "5b764f1cde31238318d9f7d4382845f3"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/browser_output/browser_output/feargreed_alternative.me_2026-04-27T16-05-16.txt": {
-    "mtime": 1779510646.058967,
+    "mtime": 1779586238.5544703,
     "hash": "07c24eb8ffa4b2e79944769dbb97cc59"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/browser_output/browser_output/page_forexfactory.com_2026-05-13T20-30-10.txt": {
-    "mtime": 1779510646.5141854,
+    "mtime": 1779586238.9257736,
     "hash": "824c13062f098e5371a956cfd27cc134"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/browser_output/browser_output/page_forexfactory.com_2026-05-23T00-42-26.txt": {
-    "mtime": 1779510646.9583948,
+    "mtime": 1779586239.345503,
     "hash": "9def50ea566b578ca3b6dd73a6b69116"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/browser_output/browser_output/feargreed_alternative.me_2026-05-02T22-40-38.txt": {
-    "mtime": 1779510647.608583,
+    "mtime": 1779586239.690656,
     "hash": "c65f828a75e61f011a7afc38d406fa0f"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/browser_output/browser_output/page_forexfactory.com_2026-05-22T02-30-27.txt": {
-    "mtime": 1779510648.1337414,
+    "mtime": 1779586240.0548677,
     "hash": "dd376c548da556c9dcc0a34794106692"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/browser_output/browser_output/page_forexfactory.com_2026-05-03T09-30-07.txt": {
-    "mtime": 1779510648.5703394,
+    "mtime": 1779586240.485541,
     "hash": "76a98d2342cf21121fbc0aa1f1696f92"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/skills/code-fix/SKILL.md": {
@@ -2536,20 +2604,24 @@
     "hash": "b5b76ad6d7e871275f2b9075d234f1fb"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/skills/bot-diagnostics/SKILL.md": {
-    "mtime": 1777731844.5349474,
-    "hash": "999829eb30c2421484974f1196fb625a"
+    "mtime": 1779586855.0105762,
+    "hash": "ce9eac56c1e9a7085b51aa6fb3d3d573"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/skills/market-analysis/SKILL.md": {
-    "mtime": 1777731863.0237792,
-    "hash": "84b71450f1acba4c9c793d3f7ebda5ac"
+    "mtime": 1779586854.9970913,
+    "hash": "322c9f1ea6b04eaf302b52e0be5a4e42"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/skills/browser-extract/SKILL.md": {
-    "mtime": 1777305674.3164535,
-    "hash": "394c2019dde34d8b0b126b68c5e8da42"
+    "mtime": 1779586855.086974,
+    "hash": "24c66754f2aacf4b2f6a8da683a632f5"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/skills/strategy-research/SKILL.md": {
-    "mtime": 1777281075.463849,
-    "hash": "727ee38d0c8403b4e700ff86260ebc6f"
+    "mtime": 1779586855.0046003,
+    "hash": "0410fdcae282a01d0526fba150ac1578"
+  },
+  "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/sentiment/models/merges.txt": {
+    "mtime": 1779560706.8813229,
+    "hash": "75a37753dd7a28a2c5df80c28bf06e4e"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/freqtrade/requirements-plot.txt": {
     "mtime": 1777125965.293883,
@@ -2596,7 +2668,7 @@
     "hash": "88b3ad005a6535c632113f41b1faf824"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/qnt/browser_output/browser_output/arxiv_arxiv.org_2026-04-27T15-27-22.txt": {
-    "mtime": 1779510616.7783945,
+    "mtime": 1779586215.97576,
     "hash": "8c793ce035d675981a9907fcc50dfe52"
   },
   "/Users/aatifquamre/Downloads/Aatif-qmr/masterbot/freqtrade/freqtrade/rpc/api_server/ui/installed/assets/freqtrade-logo-C0SSQ9oN.png": {

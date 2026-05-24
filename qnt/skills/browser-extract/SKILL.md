@@ -37,15 +37,15 @@ Use it first — it is faster than full browser:
 
 ### Step 1b — Heavy Browser (via M2)
 If built-in fetch insufficient (JS-heavy sites):
-  Run: bash /Users/aatifquamre/masterbot/qnt/browser_bridge.sh page <url>
+  Run: bash /Users/aatifquamre/cipher/qnt/browser_bridge.sh page <url>
   This triggers M2's Puppeteer engine remotely.
   Results returned to M1 automatically.
 
 ### Pre-configured Extractions
-- Fear & Greed: bash /Users/aatifquamre/masterbot/qnt/browser_bridge.sh feargreed
-- CoinGlass:    bash /Users/aatifquamre/masterbot/qnt/browser_bridge.sh coinglass
-- arXiv papers: bash /Users/aatifquamre/masterbot/qnt/browser_bridge.sh arxiv
-- Any page:     bash /Users/aatifquamre/masterbot/qnt/browser_bridge.sh page <url>
+- Fear & Greed: bash /Users/aatifquamre/cipher/qnt/browser_bridge.sh feargreed
+- CoinGlass:    bash /Users/aatifquamre/cipher/qnt/browser_bridge.sh coinglass
+- arXiv papers: bash /Users/aatifquamre/cipher/qnt/browser_bridge.sh arxiv
+- Any page:     bash /Users/aatifquamre/cipher/qnt/browser_bridge.sh page <url>
 
 ### Step 2 — Extract Clean Content
 Remove: navigation, headers, footers, ads,
@@ -67,12 +67,12 @@ KEY FINDINGS:
 
 ### Step 4 — Save Output
 Save to:
-/Users/aatifquamre/masterbot/qnt/browser_output/
+/Users/aatifquamre/cipher/qnt/browser_output/
 Filename: [domain]_[YYYYMMDD_HHMMSS].txt
 
 Report: "Saved to: [path]"
 
-## Useful Sites For MasterBot Context
+## Useful Sites For Cipher Context
 - arxiv.org — research papers
 - ssrn.com — finance papers
 - coinmarketcap.com — market data

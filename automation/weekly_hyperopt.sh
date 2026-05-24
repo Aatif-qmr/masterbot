@@ -1,7 +1,7 @@
 #!/bin/bash
-# Masterbot Weekly Hyperopt Automation (SCALED)
+# Cipher Weekly Hyperopt Automation (SCALED)
 
-BASE_DIR="/Users/azmatsaif/masterbot"
+BASE_DIR="/Users/azmatsaif/cipher"
 LOG="$BASE_DIR/logs/hyperopt_log.txt"
 mkdir -p "$BASE_DIR/logs"
 

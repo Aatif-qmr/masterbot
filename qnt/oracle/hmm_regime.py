@@ -24,7 +24,7 @@ def load_hmm_model():
     if not m2_ip or not m2_user:
         raise ValueError("Missing critical configuration: M2_TAILSCALE_IP and M2_SSH_USER must be set in .env")
         
-    m2_path = os.getenv("M2_HMM_PATH", f"/Users/{m2_user}/masterbot/qnt/oracle/hmm_model.pkl")
+    m2_path = os.getenv("M2_HMM_PATH", f"/Users/{m2_user}/cipher/qnt/oracle/hmm_model.pkl")
     
     if not local_path.exists():
         import subprocess

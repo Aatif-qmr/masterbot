@@ -1,6 +1,6 @@
 ---
 name: strategy-researcher
-description: Research, backtest, and refine MasterBot trading strategies.
+description: Research, backtest, and refine Cipher trading strategies.
 ---
 
 # Strategy Researcher Skill

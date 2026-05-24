@@ -3,7 +3,7 @@ import os
 import glob
 from datetime import datetime
 
-BASE_DIR = '/Users/azmatsaif/masterbot'
+BASE_DIR = '/Users/azmatsaif/cipher'
 RESULTS_DIR = os.path.join(BASE_DIR, 'user_data/hyperopt_results')
 SUMMARY_PATH = os.path.join(BASE_DIR, 'logs/hyperopt_summary.json')
 

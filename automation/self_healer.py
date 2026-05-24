@@ -5,9 +5,9 @@ import glob
 from pathlib import Path
 
 # --- CONFIGURATION ---
-LOG_DIR = "/Users/aatifquamre/masterbot/logs"
+LOG_DIR = "/Users/aatifquamre/cipher/logs"
 CLAUDE_BIN = "/Users/aatifquamre/.local/bin/claude"
-WORKSPACE = "/Users/aatifquamre/masterbot"
+WORKSPACE = "/Users/aatifquamre/cipher"
 ERROR_KEYWORDS = ["Traceback", "ERROR", "CRITICAL", "NameError", "ValueError", "TypeError"]
 
 # Patterns that indicate expected infrastructure failures — not fixable by code changes.
@@ -70,7 +70,7 @@ def run_self_healing():
     
     # Construct the prompt for QNT CLI
     healing_prompt = f"""
-I am the MasterBot Self-Healer. I have detected the following errors in the system logs.
+I am the Cipher Self-Healer. I have detected the following errors in the system logs.
 Your task:
 1. Analyze the errors below.
 2. Identify the source files causing these issues.

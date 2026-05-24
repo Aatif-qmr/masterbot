@@ -1,18 +1,15 @@
 {
   "pair": "BTC/USDT",
   "bias": "HOLD",
-  "confidence": 0.3,
+  "confidence": 0.1,
   "stake_modifier": 0.5,
-  "reasoning": "Synthesis unavailable \u2014 defaulting to HOLD.",
+  "reasoning": "Default thesis \u2014 gemini_unavailable",
   "key_risks": [
-    "claude_unavailable"
+    "thesis_pipeline_failure"
   ],
-  "bull_confidence": 0.68,
-  "bear_confidence": 0.82,
-  "valid_until": "2026-05-23T06:30:01.423205+00:00",
-  "generated_at": "2026-05-23T02:30:01.423205+00:00",
-  "context_snapshot": {
-    "sentiment_score": -0.277,
-    "shield_status": "UNKNOWN"
-  }
+  "bull_confidence": 0.0,
+  "bear_confidence": 0.0,
+  "valid_until": "2026-05-24T02:31:43.251366+00:00",
+  "generated_at": "2026-05-23T22:31:43.251366+00:00",
+  "context_snapshot": {}
 }

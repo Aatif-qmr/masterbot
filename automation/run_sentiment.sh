@@ -1,8 +1,8 @@
 #!/bin/bash
 BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-# Masterbot Sentiment Runner & Synchronizer
+# Cipher Sentiment Runner & Synchronizer
 
-BASE_DIR="/Users/azmatsaif/masterbot"
+BASE_DIR="/Users/azmatsaif/cipher"
 LOG_FILE="$BASE_DIR/logs/sentiment_sync.log"
 ERR_LOG="$BASE_DIR/logs/sentiment_errors.log"
 VENV_ACTIVATE="$BASE_DIR/venv/bin/activate"

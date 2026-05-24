@@ -156,12 +156,12 @@ def get_risk_events():
     return events
 
 def get_qnt_intelligence(current, sentiment):
-    prompt = f"Act as MasterBot brain. Analyze: {current['total_profit_usdt']} USDT profit, {current['win_rate_pct']}% win rate. Sentiment: {sentiment.get('avg_sentiment_score', 'N/A')}. Give exactly 2 sentences of tactical advice."
+    prompt = f"Act as Cipher brain. Analyze: {current['total_profit_usdt']} USDT profit, {current['win_rate_pct']}% win rate. Sentiment: {sentiment.get('avg_sentiment_score', 'N/A')}. Give exactly 2 sentences of tactical advice."
     qnt_path = get_qnt_path()
     try:
         result = subprocess.run(
             [qnt_path, '-m', 'flash', '-p', prompt, '--output-format', 'text'],
-            capture_output=True, text=True, timeout=180, cwd='/Users/aatifquamre/masterbot'
+            capture_output=True, text=True, timeout=180, cwd='/Users/aatifquamre/cipher'
         )
         if result.returncode == 0 and result.stdout.strip():
             text = result.stdout.strip()
@@ -177,7 +177,7 @@ def get_qnt_weekly_brief() -> str:
         result = subprocess.run(
             [qnt_path, '-m', 'flash', '-p',
              'Generate a concise weekly market intelligence summary. Maximum 100 words.'],
-            capture_output=True, text=True, timeout=180, cwd='/Users/aatifquamre/masterbot'
+            capture_output=True, text=True, timeout=180, cwd='/Users/aatifquamre/cipher'
         )
         return result.stdout.strip() or "Empty response"
     except Exception as e:
@@ -187,7 +187,7 @@ def get_m2_resource_report() -> str:
     try:
         M2_IP = os.getenv('M2_TAILSCALE_IP')
         cmd = ['ssh', f"azmatsaif@{M2_IP}", 
-               '/Users/azmatsaif/masterbot/venv/bin/python /Users/azmatsaif/masterbot/qnt/shadow/resource_monitor.py']
+               '/Users/azmatsaif/cipher/venv/bin/python /Users/azmatsaif/cipher/qnt/shadow/resource_monitor.py']
         result = subprocess.run(cmd, capture_output=True, text=True, timeout=30)
         return result.stdout.strip()
     except Exception as e:
@@ -275,9 +275,9 @@ def get_skeptic_summary() -> str:
     """Fetches skeptic agent stats for the report."""
     try:
         result = subprocess.run(
-            ['/Users/aatifquamre/masterbot/venv/bin/python', '-c',
-             'import sys; sys.path.insert(0, "/Users/aatifquamre/masterbot/qnt/agents");'
-             'sys.path.insert(0, "/Users/aatifquamre/masterbot/qnt/memory");'
+            ['/Users/aatifquamre/cipher/venv/bin/python', '-c',
+             'import sys; sys.path.insert(0, "/Users/aatifquamre/cipher/qnt/agents");'
+             'sys.path.insert(0, "/Users/aatifquamre/cipher/qnt/memory");'
              'from trade_gate import get_skeptic_stats;'
              'print(get_skeptic_stats())'],
             capture_output=True, text=True, timeout=15
@@ -303,7 +303,7 @@ def format_telegram_report(current, previous, sentiment, risk, intel, week_start
 
     sent_str = f"Avg: {sentiment.get('avg_sentiment_score', 'N/A')} ({sentiment.get('sentiment_label', 'N/A')})"
 
-    return f"""📈 MasterBot Weekly Report
+    return f"""📈 Cipher Weekly Report
 Week: {week_start} → {week_end}
 ──────────────────────
 
@@ -352,7 +352,7 @@ def save_html_report(metrics, filename):
     path = REPORT_DIR / filename
     html = f"""
     <html><body style='font-family: sans-serif; padding: 20px;'>
-    <h2>MasterBot Weekly Performance</h2>
+    <h2>Cipher Weekly Performance</h2>
     <table border='1' cellpadding='10' style='border-collapse: collapse;'>
     <tr style='background: #eee;'><td>Metric</td><td>Value</td></tr>
     <tr><td>Total Trades</td><td>{metrics['total_trades']}</td></tr>

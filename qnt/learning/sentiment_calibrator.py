@@ -4,7 +4,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 HOME = Path.home()
-BASE_DIR = HOME / 'masterbot'
+BASE_DIR = HOME / 'cipher'
 SCORES_PATH      = BASE_DIR / 'qnt/learning/scores.json'
 WEIGHTS_PATH     = BASE_DIR / 'config/sentiment_weights.json'
 

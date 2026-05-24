@@ -84,10 +84,10 @@ def get_combined_stats():
     return stats
 
 def generate_report():
-    print("Generating MasterBot AGGREGATED Performance Report...")
+    print("Generating Cipher AGGREGATED Performance Report...")
     stats = get_combined_stats()
     date_str = datetime.now().strftime("%Y-%m-%d")
-    title = f"MasterBot Aggregated Report - {date_str}"
+    title = f"Cipher Aggregated Report - {date_str}"
     
     # Content
     content = f"# {title}\n\nGenerated at: {datetime.now().isoformat()}\n\n{stats}\n\n## Bot Status\nMode: MULTI-STRATEGY PAPER TRADING\nStatus: ACTIVE"

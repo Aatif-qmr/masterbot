@@ -177,7 +177,7 @@ def is_onnx_available() -> bool:
 
 if __name__ == "__main__":
     print("=" * 60)
-    print("MasterBot ONNX Sentiment Pipeline Test")
+    print("Cipher ONNX Sentiment Pipeline Test")
     print("=" * 60)
 
     test_titles = [

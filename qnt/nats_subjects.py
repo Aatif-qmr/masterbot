@@ -1,4 +1,4 @@
-# /Users/aatifquamre/masterbot/qnt/nats_subjects.py
+# /Users/aatifquamre/cipher/qnt/nats_subjects.py
 
 SUBJECTS = {
     # M2 publishes → M1 subscribes

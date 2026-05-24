@@ -8,14 +8,14 @@ set -a
 source $BASE_DIR/.env
 set +a
 
-MASTERBOT_M1="$BASE_DIR"
-MASTERBOT_M2="/Users/azmatsaif/masterbot"
-OUTPUT="$MASTERBOT_M1/qnt/QNT.md"
+CIPHER_M1="$BASE_DIR"
+CIPHER_M2="/Users/azmatsaif/cipher"
+OUTPUT="$CIPHER_M1/qnt/QNT.md"
 
 echo "Generating QNT.md context..." 
 
 cat > "$OUTPUT" << 'CONTEXT_EOF'
-# QNT — MasterBot Intelligence System
+# QNT — Cipher Intelligence System
 CONTEXT_EOF
 
 # Append dynamic content using echo/cat commands
@@ -26,13 +26,13 @@ cat >> "$OUTPUT" << EOF
 
 ## Identity
 - Name: qnt
-- Role: Intelligence brain for MasterBot trading system
+- Role: Intelligence brain for Cipher trading system
 - Version: 1.0.0
 - Generated: $(date -u +"%Y-%m-%dT%H:%M:%SZ")
 - Model routing: Task-aware (LITE/FLASH/PRO tiers)
 
 ## Mission
-I am the AI brain of MasterBot. I know everything
+I am the AI brain of Cipher. I know everything
 about this project. I can answer questions, diagnose
 issues, fix problems, research strategies, and
 update the system. I act as architect and operator.
@@ -53,7 +53,7 @@ cat >> "$OUTPUT" << EOF
 
 ### M2 — Intelligence Node (On Demand)
 - User: azmatsaif  
-- Path: /Users/azmatsaif/masterbot/
+- Path: /Users/azmatsaif/cipher/
 - Role: ML training, Hyperopt, sentiment pipeline
 - Tailscale IP: ${M2_TAILSCALE_IP}
 - SSH from M1: ssh azmatsaif@${M2_TAILSCALE_IP}

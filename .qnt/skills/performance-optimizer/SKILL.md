@@ -1,6 +1,6 @@
 ---
 name: performance-optimizer
-description: Optimize MasterBot trading performance and execution efficiency.
+description: Optimize Cipher trading performance and execution efficiency.
 ---
 
 # Performance Optimizer Skill

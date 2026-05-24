@@ -1,6 +1,6 @@
 #!/bin/bash
 BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-# Masterbot Weekly Backup (R2 + GitHub)
+# Cipher Weekly Backup (R2 + GitHub)
 
 BASE_DIR="$BASE_DIR"
 DATE=$(date +%Y%m%d)

@@ -3,18 +3,18 @@
 # Runs Saturday 10pm on M2
 # Research -> Generate -> Backtest -> Escalate Deploy
 
-LOG=/Users/azmatsaif/masterbot/logs/strategy_scan.log
-RESEARCH_DIR=/Users/azmatsaif/masterbot/strategies/research/
-PATH=$PATH:/Users/azmatsaif/masterbot/qnt/bin
+LOG=/Users/azmatsaif/cipher/logs/strategy_scan.log
+RESEARCH_DIR=/Users/azmatsaif/cipher/strategies/research/
+PATH=$PATH:/Users/azmatsaif/cipher/qnt/bin
 
 echo "[$(date)] Autonomous strategy loop started" >> $LOG
 
 set -a
-source /Users/azmatsaif/masterbot/.env
+source /Users/azmatsaif/cipher/.env
 set +a
 
 mkdir -p $RESEARCH_DIR
-cd /Users/azmatsaif/masterbot
+cd /Users/azmatsaif/cipher
 
 # 1. Research
 OUTPUT=$(qnt -p \

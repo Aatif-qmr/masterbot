@@ -6,8 +6,18 @@
         "-y",
         "mcp-server-sqlite",
         "--db",
-        "/Users/aatifquamre/masterbot/user_data/tradesv3.sqlite"
+        "/Users/aatifquamre/cipher/user_data/tradesv3.sqlite"
       ]
+    },
+    "mistral": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "mistral-mcp"
+      ],
+      "env": {
+        "MISTRAL_API_KEY": "buk3FCIeMTkBXiweHG6xuRmcQ0VeeczB"
+      }
     }
   }
 }

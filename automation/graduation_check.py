@@ -16,7 +16,7 @@ from pathlib import Path
 import requests
 from dotenv import load_dotenv
 
-BASE_DIR = Path.home() / 'masterbot'
+BASE_DIR = Path.home() / 'cipher'
 load_dotenv(BASE_DIR / '.env')
 
 TELEGRAM_TOKEN  = os.getenv('QNT_TELEGRAM_TOKEN')

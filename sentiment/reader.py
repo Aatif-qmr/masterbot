@@ -9,7 +9,7 @@ def get_current_sentiment() -> dict:
     """
     # Detect BASE_DIR automatically
     home = os.path.expanduser("~")
-    base_dir = os.path.join(home, "masterbot")
+    base_dir = os.path.join(home, "cipher")
     path = os.path.join(base_dir, 'sentiment/scores/current_score.json')
     
     fallback = {
@@ -60,7 +60,7 @@ def get_current_sentiment() -> dict:
 def get_funding_rate() -> float:
     """Returns normalized funding rate component (-1 to 1). 0.0 if unavailable."""
     home = os.path.expanduser("~")
-    path = os.path.join(home, "masterbot", "sentiment/scores/current_score.json")
+    path = os.path.join(home, "cipher", "sentiment/scores/current_score.json")
     try:
         with open(path) as f:
             data = json.load(f)

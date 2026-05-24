@@ -16,7 +16,7 @@ check_internet() {
 
 # Sync memory file to M2
 sync_to_m2() {
-  scp "$MEMORY_FILE" "azmatsaif@${M2_TAILSCALE_IP}:/Users/azmatsaif/masterbot/qnt/memory/qnt_memory.json" 2>/dev/null
+  scp "$MEMORY_FILE" "azmatsaif@${M2_TAILSCALE_IP}:/Users/azmatsaif/cipher/qnt/memory/qnt_memory.json" 2>/dev/null
   return $?
 }
 

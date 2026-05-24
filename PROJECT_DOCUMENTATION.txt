@@ -1,5 +1,5 @@
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-          MASTERBOT + QNT SYSTEM: MASTER DOCUMENTATION
+          CIPHER + QNT SYSTEM: MASTER DOCUMENTATION
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Distributed Intelligence-First Trading Architecture
 Version: 1.0.0
@@ -10,7 +10,7 @@ Network: Tailscale Encrypted Mesh
 
 1. EXECUTIVE OVERVIEW
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-The MasterBot system is a distributed algorithmic trading cluster managed by 
+The Cipher system is a distributed algorithmic trading cluster managed by 
 QNT, an autonomous intelligence layer. It operates a $50,000 USDT paper 
 trading portfolio across five distinct market regimes.
 
@@ -26,7 +26,7 @@ The system is split across two physical machines connected via Tailscale.
 [M1] EXECUTION NODE (MacBook Air M1)
 - IP: 100.90.68.42
 - Role: Real-time bot execution, risk gating, and UI hosting.
-- Path: /Users/aatifquamre/masterbot/
+- Path: /Users/aatifquamre/cipher/
 - Core Components: 
     * 5 Freqtrade instances supervised by 'supervisord'.
     * Ports: 8080 (MR), 8081 (TF), 8082 (Scalp), 8083 (Swing), 8084 (Daily).
@@ -36,7 +36,7 @@ The system is split across two physical machines connected via Tailscale.
 [M2] INTELLIGENCE NODE (MacBook Air M2)
 - IP: 100.74.110.36
 - Role: Computationally intensive tasks (ML Training, Hyperopt, NLP).
-- Path: /Users/azmatsaif/masterbot/
+- Path: /Users/azmatsaif/cipher/
 - Core Components:
     * FreqAI acceleration (XGBoost/LightGBM).
     * ChromaDB (The Vault) for semantic search/memory.
@@ -130,7 +130,7 @@ M2 (INTELLIGENCE) CRONTAB:
 2. VERIFICATION: Every change must be validated with a test command.
 3. CREDENTIALS: Never print or commit .env, API keys, or secrets.
 4. PATHS: Always use absolute paths or dynamic home-dir resolution.
-5. VENV: Always use '/Users/aatifquamre/masterbot/venv/bin/python'.
+5. VENV: Always use '/Users/aatifquamre/cipher/venv/bin/python'.
 6. SPAM: Respect alert cooldowns and file-locking protocols.
 
 8. RECOVERY & TROUBLESHOOTING
@@ -141,5 +141,5 @@ M2 (INTELLIGENCE) CRONTAB:
 - Database Lock: Delete `.shm` and `.wal` files in `user_data/` if SQLite hangs.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-                     MASTERBOT: ARCHITECTED FOR AUTONOMY
+                     CIPHER: ARCHITECTED FOR AUTONOMY
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

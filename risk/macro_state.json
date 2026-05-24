@@ -1,9 +1,9 @@
 {
-  "timestamp": "2026-05-23T20:30:08.759167+00:00Z",
+  "timestamp": "2026-05-24T01:30:09.960876+00:00Z",
   "dxy_24h_change": 0.1311,
-  "btc_funding_rate": 6.07e-05,
-  "btc_open_interest": 104419.653,
+  "btc_funding_rate": 0.0001,
+  "btc_open_interest": 102943.147,
   "status": "HEALTHY",
   "source": "M2",
-  "published_at": "2026-05-23T20:30:09.917844Z"
+  "published_at": "2026-05-24T01:30:10.847919Z"
 }

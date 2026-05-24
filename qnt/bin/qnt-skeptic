@@ -1,10 +1,10 @@
 #!/bin/bash
 # qnt-skeptic — Control and monitor Adversarial Skeptic Agent
 set -a
-source /Users/aatifquamre/masterbot/.env
+source /Users/aatifquamre/cipher/.env
 set +a
 
-BASE_DIR="/Users/aatifquamre/masterbot"
+BASE_DIR="/Users/aatifquamre/cipher"
 SUBCMD=${1:-stats}
 
 case $SUBCMD in

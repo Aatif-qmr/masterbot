@@ -6,7 +6,7 @@ from datetime import datetime, timezone, timedelta
 from pathlib import Path
 
 HOME = Path.home()
-BASE_DIR = HOME / 'masterbot'
+BASE_DIR = HOME / 'cipher'
 DEFAULT_OUTPUT_DIR = BASE_DIR / 'thesis'
 
 sys.path.insert(0, str(BASE_DIR))

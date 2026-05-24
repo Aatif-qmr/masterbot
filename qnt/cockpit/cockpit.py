@@ -7,8 +7,8 @@ import requests
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
 
-# Add MasterBot paths
-BASE_DIR = '/Users/aatifquamre/masterbot'
+# Add Cipher paths
+BASE_DIR = '/Users/aatifquamre/cipher'
 sys.path.insert(0, os.path.join(BASE_DIR, 'qnt/memory'))
 sys.path.insert(0, os.path.join(BASE_DIR, 'qnt/bridge'))
 sys.path.insert(0, os.path.join(BASE_DIR, 'qnt/shield'))
@@ -124,7 +124,7 @@ class ShieldPanel(DashboardPanel):
     def update_content(self) -> None:
         try:
             # Check for drawdown in risk state
-            b_out, _, _ = run_on_m1("cat /Users/aatifquamre/masterbot/risk/balance_state.json")
+            b_out, _, _ = run_on_m1("cat /Users/aatifquamre/cipher/risk/balance_state.json")
             b_state = json.loads(b_out)
             
             # Heuristic for audit status (we can't run the full audit script every 15s)
@@ -149,14 +149,14 @@ class IntegratedLogPanel(DashboardPanel):
             log_files = ["mean_reversion", "trend_follow", "scalp", "swing", "daily"]
             all_lines = []
             for lf in log_files:
-                out, _, _ = run_on_m1(f"tail -n 2 /Users/aatifquamre/masterbot/logs/{lf}.stderr.log")
+                out, _, _ = run_on_m1(f"tail -n 2 /Users/aatifquamre/cipher/logs/{lf}.stderr.log")
                 if out:
                     for line in out.splitlines():
                         if "ERROR" in line or "WARNING" in line:
                             all_lines.append(f"[{lf.upper()}] {line}")
             
             if not all_lines:
-                out, _, _ = run_on_m1("tail -n 10 /Users/aatifquamre/masterbot/logs/freqtrade.log")
+                out, _, _ = run_on_m1("tail -n 10 /Users/aatifquamre/cipher/logs/freqtrade.log")
                 all_lines = out.splitlines() if out else ["No logs found."]
 
             content = Text()

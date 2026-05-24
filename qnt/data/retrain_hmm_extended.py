@@ -9,7 +9,7 @@ from pathlib import Path
 from datetime import datetime, timezone
 
 HOME = Path.home()
-BASE_DIR = HOME / 'masterbot'
+BASE_DIR = HOME / 'cipher'
 DATA_DIR = BASE_DIR / 'user_data/data/binance'
 MODEL_OUT = BASE_DIR / 'qnt/oracle/hmm_model.pkl'
 sys.path.insert(0, str(BASE_DIR))

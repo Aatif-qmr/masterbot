@@ -309,7 +309,7 @@ def check_m2_shadow_health() -> dict:
     try:
         result = subprocess.run([
             "ssh", f"{m2_user}@{m2_ip}",
-            f"/Users/{m2_user}/masterbot/venv/bin/python", f"/Users/{m2_user}/masterbot/qnt/shadow/resource_monitor.py"
+            f"/Users/{m2_user}/cipher/venv/bin/python", f"/Users/{m2_user}/cipher/qnt/shadow/resource_monitor.py"
         ], capture_output=True, text=True, timeout=30)
         
         if result.returncode != 0:

@@ -9,7 +9,7 @@ from pathlib import Path
 from datetime import datetime, timedelta
 
 # Configuration
-STATE_FILE = Path("/Users/azmatsaif/masterbot/qnt/oracle/order_flow_state.json")
+STATE_FILE = Path("/Users/azmatsaif/cipher/qnt/oracle/order_flow_state.json")
 BINANCE_LIQ_URL = "https://fapi.binance.com/futures/data/topLongShortAccountRatio"
 
 def fetch_binance_liquidation_ratio(symbol="BTCUSDT"):

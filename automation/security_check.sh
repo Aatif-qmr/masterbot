@@ -1,6 +1,6 @@
 #!/bin/bash
 BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-# MasterBot Security Audit Script
+# Cipher Security Audit Script
 
 BASE_DIR="$BASE_DIR"
 cd "$BASE_DIR"

@@ -13,7 +13,7 @@ COMMAND=${1:-feargreed}
 URL=${2:-""}
 M2_IP=${M2_TAILSCALE_IP}
 M2_USER="azmatsaif"
-M2_SCRIPT="/Users/azmatsaif/masterbot/qnt/browser_fetch.js"
+M2_SCRIPT="/Users/azmatsaif/cipher/qnt/browser_fetch.js"
 OUTPUT_SYNC="$BASE_DIR/qnt/browser_output/"
 
 mkdir -p "$OUTPUT_SYNC"
@@ -29,7 +29,7 @@ if [ $? -eq 0 ]; then
   
   # Sync any saved files from M2 to M1
   scp -r \
-    ${M2_USER}@${M2_IP}:/Users/azmatsaif/masterbot/qnt/browser_output/ \
+    ${M2_USER}@${M2_IP}:/Users/azmatsaif/cipher/qnt/browser_output/ \
     ${OUTPUT_SYNC} \
     2>/dev/null
     
