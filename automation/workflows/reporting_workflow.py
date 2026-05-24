@@ -1,8 +1,9 @@
 import os
-import sqlite3
 import json
 import requests
-import pandas as pd
+import psycopg2
+import psycopg2.extras
+import polars as pl
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from dotenv import load_dotenv
@@ -13,14 +14,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 load_dotenv(BASE_DIR / '.env')
 
 # Configuration
-DB_FILES = [
-    str(BASE_DIR / 'user_data' / 'micro.sqlite'),
-    str(BASE_DIR / 'user_data' / 'scalp.sqlite'),
-    str(BASE_DIR / 'user_data' / 'mean_reversion.sqlite'),
-    str(BASE_DIR / 'user_data' / 'trend_follow.sqlite'),
-    str(BASE_DIR / 'user_data' / 'daily.sqlite'),
-    str(BASE_DIR / 'user_data' / 'swing.sqlite')
-]
+DB_NAMES = {
+    "micro": "masterbot_micro",
+    "scalp": "masterbot_scalp",
+    "mean_reversion": "masterbot_mean_reversion",
+    "trend_follow": "masterbot_trend_follow",
+    "daily": "masterbot_daily",
+    "swing": "masterbot_swing",
+    "bear_scalp": "masterbot_bear_scalp",
+    "hyperliquid": "masterbot_hyperliquid"
+}
 SENTIMENT_PATH = str(BASE_DIR / 'sentiment' / 'scores' / 'history.csv')
 TELEGRAM_TOKEN = os.getenv('QNT_TELEGRAM_TOKEN')
 TELEGRAM_CHAT_ID = os.getenv('QNT_TELEGRAM_CHAT_ID')
@@ -35,22 +38,18 @@ def gather_data():
     closed_trades_list = []
     by_strategy = {}
 
-    for db_path in DB_FILES:
-        if not os.path.exists(db_path):
-            continue
-
+    for strat, db_name in DB_NAMES.items():
         try:
-            conn = sqlite3.connect(db_path)
-            conn.row_factory = sqlite3.Row
-            cursor = conn.cursor()
+            conn = psycopg2.connect(f"postgresql://aatifquamre:dummy@localhost/{db_name}")
+            cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
-            cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='trades'")
-            if not cursor.fetchone():
+            cursor.execute("SELECT EXISTS (SELECT FROM information_schema.tables WHERE table_name = 'trades')")
+            if not cursor.fetchone()[0]:
                 conn.close()
                 continue
 
             # Open trades
-            cursor.execute("SELECT pair, strategy, open_date FROM trades WHERE is_open = 1")
+            cursor.execute("SELECT pair, strategy, open_date FROM trades WHERE is_open = true")
             for row in cursor.fetchall():
                 open_trades_list.append({
                     "pair": row["pair"],
@@ -59,45 +58,48 @@ def gather_data():
                 })
 
             # Closed trades metrics
-            cursor.execute("SELECT COUNT(*), SUM(close_profit_abs), SUM(close_profit) FROM trades WHERE is_open = 0")
+            cursor.execute("SELECT COUNT(*), SUM(close_profit_abs), SUM(close_profit) FROM trades WHERE is_open = false")
             count, profit_abs, profit_ratio = cursor.fetchone()
             if count:
                 total_trades += count
-                total_profit_abs += (profit_abs if profit_abs else 0.0)
-                total_profit_ratio += (profit_ratio if profit_ratio else 0.0)
+                total_profit_abs += (float(profit_abs) if profit_abs else 0.0)
+                total_profit_ratio += (float(profit_ratio) if profit_ratio else 0.0)
 
             # Strategy breakdown
-            cursor.execute("SELECT strategy, COUNT(*) as count, SUM(close_profit_abs) as profit FROM trades WHERE is_open = 0 GROUP BY strategy")
+            cursor.execute("SELECT strategy, COUNT(*) as count, SUM(close_profit_abs) as profit FROM trades WHERE is_open = false GROUP BY strategy")
             for row in cursor.fetchall():
                 s = row['strategy']
                 if s not in by_strategy:
                     by_strategy[s] = {"trades": 0, "profit": 0.0}
                 by_strategy[s]["trades"] += row['count']
-                by_strategy[s]["profit"] += row['profit']
+                by_strategy[s]["profit"] += float(row['profit']) if row['profit'] else 0.0
 
             # Last 3 closed from this DB
-            cursor.execute("SELECT pair, strategy, close_profit, close_date FROM trades WHERE is_open = 0 ORDER BY close_date DESC LIMIT 3")
+            cursor.execute("SELECT pair, strategy, close_profit, close_date FROM trades WHERE is_open = false ORDER BY close_date DESC LIMIT 3")
             for row in cursor.fetchall():
                 closed_trades_list.append({
                     "pair": row["pair"],
                     "strategy": row["strategy"],
-                    "close_profit": row["close_profit"],
+                    "close_profit": float(row["close_profit"]) if row["close_profit"] else 0.0,
                     "close_date": row["close_date"]
                 })
 
             conn.close()
         except Exception as e:
-            print(f"Error reading database {db_path}: {e}")
+            print(f"Error reading database {db_name}: {e}")
 
-    # Process sentiment average over last 7 days
+    # Process sentiment average over last 7 days using Polars
     sentiment_data = "N/A"
     if os.path.exists(SENTIMENT_PATH):
         try:
-            df = pd.read_csv(SENTIMENT_PATH)
-            df['timestamp'] = pd.to_datetime(df['timestamp'], utc=True).dt.tz_localize(None)
-            last_week = df[df['timestamp'] >= (datetime.now() - timedelta(days=7))]
-            if not last_week.empty:
-                avg = last_week['score'].mean()
+            df = pl.read_csv(SENTIMENT_PATH)
+            df = df.with_columns(
+                pl.col("timestamp").str.slice(0, 19).str.to_datetime()
+            )
+            cutoff = datetime.now() - timedelta(days=7)
+            last_week = df.filter(pl.col("timestamp") >= cutoff)
+            if not last_week.is_empty():
+                avg = last_week["score"].mean()
                 sentiment_data = f"{avg:.3f} ({'BULLISH' if avg > 0.3 else 'BEARISH' if avg < -0.3 else 'NEUTRAL'})"
         except Exception as e:
             print(f"Error reading sentiment history: {e}")
