@@ -10,9 +10,8 @@ from qdrant_client import QdrantClient
 from qdrant_client.models import Distance, VectorParams, PointStruct
 from sentence_transformers import SentenceTransformer
 
-HOME = Path.home()
-BASE_DIR = HOME / 'cipher'
-sys.path.insert(0, str(BASE_DIR / 'qnt/memory'))
+_BASE = Path(__file__).resolve().parent.parent.parent
+sys.path.insert(0, str(_BASE / 'qnt/memory'))
 
 try:
     from memory_manager import log_action
@@ -20,7 +19,7 @@ except Exception:
     def log_action(action, msg):
         pass
 
-QDRANT_PATH = str(BASE_DIR / 'qnt/vault/qdrant_storage')
+QDRANT_PATH = str(_BASE / 'qnt/vault/qdrant_storage')
 COLLECTION_NAME = "trade_lessons"
 EMBEDDING_MODEL = "all-MiniLM-L6-v2"
 VECTOR_SIZE = 384

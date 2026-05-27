@@ -24,8 +24,8 @@ This guide provides comprehensive documentation for developers contributing to t
 │                     Cipher System                        │
 ├─────────────────────────────────────────────────────────────┤
 │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐      │
-│  │   Freqtrade  │  │    QNT CLI   │  │  Sentiment   │      │
-│  │   Core       │  │  (Orchestrator)│  │  Pipeline    │      │
+│  │   Freqtrade  │  │ Cipher Agent │  │  Sentiment   │      │
+│  │   Core       │  │ (Pydantic AI)│  │  Pipeline    │      │
 │  └──────┬───────┘  └──────┬───────┘  └──────┬───────┘      │
 │         │                 │                 │               │
 │  ┌──────▼───────┐  ┌──────▼───────┐  ┌──────▼───────┐      │
@@ -61,11 +61,8 @@ This guide provides comprehensive documentation for developers contributing to t
 ### Prerequisites
 
 ```bash
-# Python 3.11+
+# Python 3.12+
 python3 --version
-
-# Node.js 18+ (for QNT CLI)
-node --version
 
 # Git
 git --version
@@ -81,18 +78,14 @@ sqlite3 --version
 git clone https://github.com/aatifqmr/cipher.git
 cd cipher
 
-# Create virtual environment
-python3 -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+# Install uv (if not already installed)
+curl -LsSf https://astral.sh/uv/install.sh | sh
 
-# Install core dependencies
-pip install -r requirements.txt
+# Install freqtrade from local submodule (editable)
+uv pip install -e ./freqtrade
 
-# Install development dependencies
-pip install pytest pytest-cov black flake8 mypy
-
-# Install QNT CLI (if available)
-cd qnt && npm install && cd ..
+# Install cipher + dev dependencies (creates venv automatically)
+uv sync --extra dev
 
 # Copy environment template
 cp .env.example .env

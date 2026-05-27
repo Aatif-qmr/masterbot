@@ -7,12 +7,11 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 # Machine-agnostic path setup
-HOME = Path.home()
-BASE_DIR = HOME / 'cipher'
-load_dotenv(BASE_DIR / '.env')
+_BASE = Path(__file__).resolve().parent.parent.parent
+load_dotenv(_BASE / '.env')
 
-MACRO_STATE_FILE = BASE_DIR / 'risk/macro_state.json'
-MACRO_HISTORY_FILE = BASE_DIR / 'risk/macro_history.json'
+MACRO_STATE_FILE = _BASE / 'risk/macro_state.json'
+MACRO_HISTORY_FILE = _BASE / 'risk/macro_history.json'
 
 def fetch_dxy_change():
     """Fetches DXY daily percentage change from Yahoo Finance."""
@@ -88,7 +87,7 @@ def main():
     # Publish to NATS
     try:
         import sys
-        sys.path.insert(0, str(BASE_DIR / 'qnt'))
+        sys.path.insert(0, str(_BASE / 'qnt'))
         from nats_publisher import publish_sync
         from nats_subjects import SUBJECTS
         publish_sync(SUBJECTS['MACRO'], macro_state)

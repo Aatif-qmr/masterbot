@@ -7,7 +7,10 @@ DATE=$(date +%Y%m%d)
 
 # 1. Cloud Backup (R2 + Google Drive via rclone)
 echo "Backing up to Cloudflare R2 and Google Drive..."
-$BASE_DIR/qnt/bin/qnt-backup run
+$BASE_DIR/venv/bin/python -c "
+import sys; sys.path.insert(0, '$BASE_DIR/qnt/backup')
+from r2_backup import run_full_backup; run_full_backup()
+"
 
 # 2. GitHub Backup (Strategies, Configs)
 echo "Backing up to GitHub..."

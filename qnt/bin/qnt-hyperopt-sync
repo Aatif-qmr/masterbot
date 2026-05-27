@@ -1,6 +1,0 @@
-#!/bin/bash
-BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-# qnt-hyperopt-sync
-# Synchronizes hyperopt results with strategy files
-
-$BASE_DIR/qnt/bin/qnt-python $BASE_DIR/qnt/src/hyperopt_sync.py "$@"

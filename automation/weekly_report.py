@@ -12,13 +12,33 @@ from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-def get_qnt_path():
-    path = shutil.which('qnt')
-    if path and os.path.exists(path):
-        return path
-    for p in [str(BASE_DIR / 'qnt/bin/qnt'), '/Users/aatifquamre/.nvm/versions/node/v20.20.2/bin/qnt']:
-        if os.path.exists(p): return p
-    return 'qnt'
+def _claude_prompt(prompt: str, max_tokens: int = 200) -> str:
+    """Call Claude API directly for intelligence summaries."""
+    api_key = os.getenv("ANTHROPIC_API_KEY")
+    if not api_key:
+        return "Intelligence unavailable: ANTHROPIC_API_KEY not set."
+    try:
+        import urllib.request
+        import json as _json
+        payload = _json.dumps({
+            "model": "claude-3-5-haiku-latest",
+            "max_tokens": max_tokens,
+            "messages": [{"role": "user", "content": prompt}],
+        }).encode()
+        req = urllib.request.Request(
+            "https://api.anthropic.com/v1/messages",
+            data=payload,
+            headers={
+                "x-api-key": api_key,
+                "anthropic-version": "2023-06-01",
+                "content-type": "application/json",
+            },
+        )
+        with urllib.request.urlopen(req, timeout=30) as resp:
+            data = _json.loads(resp.read())
+            return data["content"][0]["text"].strip()
+    except Exception as e:
+        return f"Intelligence error: {str(e)[:80]}"
 
 load_dotenv(BASE_DIR / '.env')
 
@@ -156,32 +176,19 @@ def get_risk_events():
     return events
 
 def get_qnt_intelligence(current, sentiment):
-    prompt = f"Act as Cipher brain. Analyze: {current['total_profit_usdt']} USDT profit, {current['win_rate_pct']}% win rate. Sentiment: {sentiment.get('avg_sentiment_score', 'N/A')}. Give exactly 2 sentences of tactical advice."
-    qnt_path = get_qnt_path()
-    try:
-        result = subprocess.run(
-            [qnt_path, '-m', 'flash', '-p', prompt, '--output-format', 'text'],
-            capture_output=True, text=True, timeout=180, cwd='/Users/aatifquamre/cipher'
-        )
-        if result.returncode == 0 and result.stdout.strip():
-            text = result.stdout.strip()
-            sentences = text.split('.')
-            return '.'.join(sentences[:2]) + '.'
-    except Exception as e:
-        print(f"QNT intelligence error: {e}")
-    return "Intelligence node busy. Continuing with standard protocols."
+    prompt = (
+        f"Act as Cipher brain. Analyze: {current['total_profit_usdt']} USDT profit, "
+        f"{current['win_rate_pct']}% win rate. "
+        f"Sentiment: {sentiment.get('avg_sentiment_score', 'N/A')}. "
+        f"Give exactly 2 sentences of tactical advice."
+    )
+    return _claude_prompt(prompt, max_tokens=100)
 
 def get_qnt_weekly_brief() -> str:
-    qnt_path = get_qnt_path()
-    try:
-        result = subprocess.run(
-            [qnt_path, '-m', 'flash', '-p',
-             'Generate a concise weekly market intelligence summary. Maximum 100 words.'],
-            capture_output=True, text=True, timeout=180, cwd='/Users/aatifquamre/cipher'
-        )
-        return result.stdout.strip() or "Empty response"
-    except Exception as e:
-        return f"qnt brief error: {str(e)[:80]}"
+    return _claude_prompt(
+        "Generate a concise weekly crypto market intelligence summary. Maximum 100 words.",
+        max_tokens=150,
+    )
 
 def get_m2_resource_report() -> str:
     try:
@@ -275,9 +282,9 @@ def get_skeptic_summary() -> str:
     """Fetches skeptic agent stats for the report."""
     try:
         result = subprocess.run(
-            ['/Users/aatifquamre/cipher/venv/bin/python', '-c',
-             'import sys; sys.path.insert(0, "/Users/aatifquamre/cipher/qnt/agents");'
-             'sys.path.insert(0, "/Users/aatifquamre/cipher/qnt/memory");'
+            [str(BASE_DIR / 'venv/bin/python'), '-c',
+             f'import sys; sys.path.insert(0, "{BASE_DIR}/qnt/agents");'
+             f'sys.path.insert(0, "{BASE_DIR}/qnt/memory");'
              'from trade_gate import get_skeptic_stats;'
              'print(get_skeptic_stats())'],
             capture_output=True, text=True, timeout=15
