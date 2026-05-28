@@ -1,8 +1,7 @@
 import os
 import sys
 import sqlite3
-import psycopg2
-from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
+import psycopg
 from pathlib import Path
 
 # Resolve base directories
@@ -59,8 +58,7 @@ TABLES_TO_MIGRATE = [
 def create_postgres_db(db_name: str):
     """Creates the target PostgreSQL database if it does not exist."""
     print(f"Connecting to default postgres db to ensure '{db_name}' exists...")
-    conn = psycopg2.connect(dbname="postgres", user="aatifquamre", host="localhost")
-    conn.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
+    conn = psycopg.connect(dbname="postgres", user="aatifquamre", host="localhost", autocommit=True)
     cursor = conn.cursor()
     
     cursor.execute("SELECT 1 FROM pg_catalog.pg_database WHERE datname = %s", (db_name,))
@@ -202,7 +200,7 @@ def main():
         # 3. Migrate data
         try:
             sqlite_conn = sqlite3.connect(sqlite_path)
-            pg_conn = psycopg2.connect(db_url)
+            pg_conn = psycopg.connect(db_url)
             
             # Clean tables first
             clean_postgres_tables(pg_conn)

@@ -1,8 +1,8 @@
 import os
 import json
 import requests
-import psycopg2
-import psycopg2.extras
+import psycopg
+from psycopg.rows import dict_row
 import polars as pl
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
@@ -40,8 +40,8 @@ def gather_data():
 
     for strat, db_name in DB_NAMES.items():
         try:
-            conn = psycopg2.connect(f"postgresql://aatifquamre:dummy@localhost/{db_name}")
-            cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+            conn = psycopg.connect(f"postgresql://aatifquamre:dummy@localhost/{db_name}")
+            cursor = conn.cursor(row_factory=dict_row)
 
             cursor.execute("SELECT EXISTS (SELECT FROM information_schema.tables WHERE table_name = 'trades')")
             if not cursor.fetchone()[0]:

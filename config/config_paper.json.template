@@ -1,0 +1,148 @@
+{
+    "max_open_trades": 10,
+    "stake_currency": "USDT",
+    "stake_amount": 0.02,
+    "tradable_balance_ratio": 0.9,
+    "timeframes": [
+        "1m",
+        "5m",
+        "15m",
+        "1h",
+        "4h"
+    ],
+    "strategy_path": "strategies/active",
+    "strategy_list": [
+        "MeanReversionV1",
+        "TrendFollowV1",
+        "SwingV1",
+        "MicroScalpV1"
+    ],
+    "dry_run": true,
+    "dry_run_wallet": 50000,
+    "exchange": {
+        "name": "binance",
+        "key": "",
+        "secret": "",
+        "pair_whitelist": [
+            "BTC/USDT",
+            "ETH/USDT",
+            "SOL/USDT",
+            "BNB/USDT",
+            "XRP/USDT"
+        ],
+        "pair_blacklist": []
+    },
+    "pairlists": [
+        {
+            "method": "StaticPairList"
+        }
+    ],
+    "telegram": {
+        "enabled": false,
+        "token": "${QNT_TELEGRAM_TOKEN}",
+        "chat_id": "${QNT_TELEGRAM_CHAT_ID}",
+        "allow_commands": true,
+        "commands": {
+            "/status": "Show current status",
+            "/profit": "Show profit",
+            "/balance": "Show balance",
+            "/trades": "Show open trades",
+            "/stopentry": "Stop entering new trades",
+            "/forceexit": "Force exit a trade",
+            "/reload_config": "Reload configuration"
+        }
+    },
+    "webhook": {
+        "enabled": true,
+        "url": "http://127.0.0.1:8443/ft_alert",
+        "webhookbuy": {
+            "type": "buy",
+            "pair": "{pair}",
+            "limit": "{limit}",
+            "amount": "{amount}",
+            "message": "🟢 <b>BUY</b> | {pair}\nRate: {limit}\nAmount: {amount}"
+        },
+        "webhookbuycancel": {
+            "type": "buy_cancel",
+            "pair": "{pair}",
+            "limit": "{limit}",
+            "amount": "{amount}",
+            "message": "❌ <b>BUY CANCELED</b> | {pair}\nRate: {limit}\nAmount: {amount}"
+        },
+        "webhooksell": {
+            "type": "sell",
+            "pair": "{pair}",
+            "limit": "{limit}",
+            "amount": "{amount}",
+            "profit_ratio": "{profit_ratio}",
+            "message": "🔴 <b>SELL</b> | {pair}\nRate: {limit}\nAmount: {amount}\nProfit: {profit_amount} ({profit_ratio})"
+        },
+        "webhooksellcancel": {
+            "type": "sell_cancel",
+            "pair": "{pair}",
+            "limit": "{limit}",
+            "amount": "{amount}",
+            "message": "❌ <b>SELL CANCELED</b> | {pair}\nRate: {limit}\nAmount: {amount}"
+        },
+        "webhookstatus": {
+            "type": "status",
+            "status": "{status}",
+            "message": "ℹ️ <b>STATUS</b>\n{status}"
+        }
+    },
+    "api_server": {
+        "enabled": true,
+        "listen_ip_address": "127.0.0.1",
+        "listen_port": 8080,
+        "verbosity": "error",
+        "enable_openapi": false,
+        "jwt_secret_key": "${FT_JWT_SECRET_KEY}",
+        "CORS_origins": [
+            "http://100.74.110.36:8080",
+            "http://shahids-macbook-air:8080"
+        ],
+        "username": "${FREQTRADE_UI_USERNAME}",
+        "password": "${FREQTRADE_UI_PASSWORD}"
+    },
+    "protections": [
+        {
+            "method": "MaxDrawdown",
+            "lookback_period_candles": 48,
+            "trade_limit": 20,
+            "stop_duration_candles": 4,
+            "max_allowed_drawdown": 0.2,
+            "drawdown_source": "account"
+        }
+    ],
+    "bot_name": "cipher",
+    "initial_state": "running",
+    "cancel_open_orders_on_exit": false,
+    "force_entry_enable": false,
+    "internals": {
+        "process_throttle_secs": 5
+    },
+    "entry_pricing": {
+        "price_side": "same",
+        "use_order_book": true,
+        "order_book_top": 1,
+        "check_depth_of_market": {
+            "enabled": false,
+            "bids_to_ask_delta": 1
+        }
+    },
+    "exit_pricing": {
+        "price_side": "same",
+        "use_order_book": true,
+        "order_book_top": 1
+    },
+    "order_types": {
+        "entry": "limit",
+        "exit": "limit",
+        "emergency_exit": "market",
+        "force_entry": "market",
+        "force_exit": "market",
+        "stoploss": "market",
+        "stoploss_on_exchange": false,
+        "stoploss_on_exchange_interval": 60
+    }
+}

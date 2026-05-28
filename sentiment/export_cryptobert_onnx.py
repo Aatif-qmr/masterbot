@@ -66,16 +66,15 @@ def export_cryptobert_onnx(
         model.save_pretrained(str(output_dir))
         tokenizer.save_pretrained(str(output_dir))
 
-        # Perform INT8 dynamic quantization to reduce size and speed up inference
-        print("Quantizing ONNX model to INT8...")
-        from onnxruntime.quantization import quantize_dynamic, QuantType
+        # ARM64-optimized INT8 dynamic quantization via ORTQuantizer
+        print("Quantizing ONNX model to INT8 (ARM64)...")
+        from optimum.onnxruntime import ORTQuantizer
+        from optimum.onnxruntime.configuration import AutoQuantizationConfig
         fp32_path = output_dir / "model.onnx"
-        quant_path = output_dir / "model.quant.onnx"
-        quantize_dynamic(
-            str(fp32_path),
-            str(quant_path),
-            weight_type=QuantType.QInt8
-        )
+        quantizer = ORTQuantizer.from_pretrained(str(output_dir))
+        qconfig = AutoQuantizationConfig.arm64(is_static=False, per_channel=False)
+        quantizer.quantize(save_dir=str(output_dir), quantization_config=qconfig)
+        quant_path = output_dir / "model_quantized.onnx"
         if quant_path.exists():
             os.replace(quant_path, fp32_path)
 
@@ -147,15 +146,14 @@ def _manual_export(
 
     print(f"✓ ONNX model saved to: {onnx_path}")
 
-    # Perform INT8 dynamic quantization to reduce size and speed up inference
-    print("Quantizing ONNX model to INT8...")
-    from onnxruntime.quantization import quantize_dynamic, QuantType
-    quant_path = output_dir / "model.quant.onnx"
-    quantize_dynamic(
-        str(onnx_path),
-        str(quant_path),
-        weight_type=QuantType.QInt8
-    )
+    # ARM64-optimized INT8 dynamic quantization via ORTQuantizer
+    print("Quantizing ONNX model to INT8 (ARM64)...")
+    from optimum.onnxruntime import ORTQuantizer
+    from optimum.onnxruntime.configuration import AutoQuantizationConfig
+    quantizer = ORTQuantizer.from_pretrained(str(output_dir))
+    qconfig = AutoQuantizationConfig.arm64(is_static=False, per_channel=False)
+    quantizer.quantize(save_dir=str(output_dir), quantization_config=qconfig)
+    quant_path = output_dir / "model_quantized.onnx"
     if quant_path.exists():
         os.replace(quant_path, onnx_path)
     print("✓ Quantized ONNX model verification passed")

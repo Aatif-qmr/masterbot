@@ -154,7 +154,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "risk-checks-rs"
+name = "rust-engine"
 version = "1.0.0"
 dependencies = [
  "pyo3",

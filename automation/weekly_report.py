@@ -2,7 +2,7 @@ import os
 import json
 import sqlite3
 import requests
-import pandas as pd
+import polars as pl
 import subprocess
 import shutil
 from datetime import datetime, timedelta, timezone
@@ -139,18 +139,19 @@ def calculate_metrics(trades: list) -> dict:
 def get_sentiment_correlation():
     if not os.path.exists(SENTIMENT_PATH): return None
     try:
-        df = pd.read_csv(SENTIMENT_PATH)
-        df['timestamp'] = pd.to_datetime(df['timestamp'])
-        last_week = df[df['timestamp'] >= (datetime.now() - timedelta(days=7))]
-        if last_week.empty: return None
-        
-        avg = last_week['score'].mean() # Fixed column name from final_score to score
+        df = pl.read_csv(SENTIMENT_PATH)
+        df = df.with_columns(pl.col("timestamp").str.to_datetime(strict=False))
+        cutoff = datetime.now() - timedelta(days=7)
+        last_week = df.filter(pl.col("timestamp") >= cutoff)
+        if last_week.is_empty(): return None
+
+        avg = last_week["score"].mean()
         return {
             "avg_sentiment_score": round(avg, 3),
             "sentiment_label": "BULLISH" if avg > 0.3 else "BEARISH" if avg < -0.3 else "NEUTRAL",
-            "days_bullish": len(last_week[last_week['score'] > 0.3]),
-            "days_bearish": len(last_week[last_week['score'] < -0.3]),
-            "days_neutral": len(last_week[(last_week['score'] >= -0.3) & (last_week['score'] <= 0.3)])
+            "days_bullish": last_week.filter(pl.col("score") > 0.3).height,
+            "days_bearish": last_week.filter(pl.col("score") < -0.3).height,
+            "days_neutral": last_week.filter((pl.col("score") >= -0.3) & (pl.col("score") <= 0.3)).height,
         }
     except Exception as e:
         print(f"Sentiment error: {e}")

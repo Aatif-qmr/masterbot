@@ -1,9 +1,8 @@
 import os
-import sqlite3
 import json
 import requests
-import subprocess
-import pandas as pd
+import duckdb
+import polars as pl
 from datetime import datetime, timedelta, timezone
 from tenacity import retry, stop_after_attempt, wait_exponential
 
@@ -36,55 +35,59 @@ def gather_data():
     total_trades = 0
     total_profit_abs = 0.0
     open_trades_list = []
-    closed_trades_list = []
     by_strategy = {}
-    
-    for db_path in DB_FILES:
-        if not os.path.exists(db_path): continue
-            
+
+    con = duckdb.connect()
+    for i, db_path in enumerate(DB_FILES):
+        if not os.path.exists(db_path):
+            continue
+        alias = f"d{i}"
         try:
-            conn = sqlite3.connect(db_path)
-            conn.row_factory = sqlite3.Row
-            cursor = conn.cursor()
-            
-            cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='trades'")
-            if not cursor.fetchone():
-                conn.close()
-                continue
+            con.execute(f"ATTACH '{db_path}' AS {alias} (TYPE SQLITE)")
 
             # Open trades
-            cursor.execute("SELECT pair, strategy, open_date FROM trades WHERE is_open = 1")
-            for row in cursor.fetchall():
-                open_trades_list.append(f"{row['pair']} ({row['strategy']})")
+            for pair, strategy in con.execute(
+                f"SELECT pair, strategy FROM {alias}.trades WHERE is_open = 1"
+            ).fetchall():
+                open_trades_list.append(f"{pair} ({strategy})")
 
             # Closed trades summary
-            cursor.execute("SELECT COUNT(*), SUM(close_profit_abs) FROM trades WHERE is_open = 0")
-            count, profit_abs = cursor.fetchone()
-            if count:
-                total_trades += count
-                total_profit_abs += (profit_abs if profit_abs else 0.0)
-            
-            # Strategy Breakdown
-            cursor.execute("SELECT strategy, COUNT(*) as count, SUM(close_profit_abs) as profit FROM trades WHERE is_open = 0 GROUP BY strategy")
-            for row in cursor.fetchall():
-                s = row['strategy']
-                if s not in by_strategy: by_strategy[s] = {"trades": 0, "profit": 0.0}
-                by_strategy[s]["trades"] += row['count']
-                by_strategy[s]["profit"] += row['profit']
+            row = con.execute(
+                f"SELECT COUNT(*), SUM(close_profit_abs) FROM {alias}.trades WHERE is_open = 0"
+            ).fetchone()
+            if row and row[0]:
+                total_trades += row[0]
+                total_profit_abs += (row[1] or 0.0)
 
-            conn.close()
+            # Strategy breakdown
+            for s, count, profit in con.execute(
+                f"SELECT strategy, COUNT(*), SUM(close_profit_abs) FROM {alias}.trades"
+                f" WHERE is_open = 0 GROUP BY strategy"
+            ).fetchall():
+                if s not in by_strategy:
+                    by_strategy[s] = {"trades": 0, "profit": 0.0}
+                by_strategy[s]["trades"] += count
+                by_strategy[s]["profit"] += (profit or 0.0)
+
+            con.execute(f"DETACH {alias}")
         except Exception as e:
             print(f"Error reading {db_path}: {e}")
+            try:
+                con.execute(f"DETACH {alias}")
+            except Exception:
+                pass
+    con.close()
 
-    # Sentiment
+    # Sentiment with polars
     sentiment_data = "N/A"
     if os.path.exists(SENTIMENT_PATH):
         try:
-            df = pd.read_csv(SENTIMENT_PATH)
-            df['timestamp'] = pd.to_datetime(df['timestamp'], utc=True).dt.tz_localize(None)
-            last_week = df[df['timestamp'] >= (datetime.now() - timedelta(days=7))]
-            if not last_week.empty:
-                avg = last_week['score'].mean()
+            df = pl.read_csv(SENTIMENT_PATH)
+            df = df.with_columns(pl.col("timestamp").str.to_datetime(strict=False))
+            cutoff = datetime.now() - timedelta(days=7)
+            last_week = df.filter(pl.col("timestamp") >= cutoff)
+            if not last_week.is_empty():
+                avg = last_week["score"].mean()
                 sentiment_data = f"{avg:.3f} ({'BULLISH' if avg > 0.3 else 'BEARISH' if avg < -0.3 else 'NEUTRAL'})"
         except Exception as e:
             print(f"Sentiment reading error: {e}")
@@ -179,25 +182,23 @@ def generate_quant_report(data: dict) -> str:
     return report
 
 def notify(analysis, data):
-    """Generates the Google Doc and sends Telegram notification."""
+    """Prints report locally and sends Telegram notification."""
     date_str = datetime.now().strftime("%Y-%m-%d")
     title = f"Cipher Intelligence Report - {date_str}"
-    
-    # 1. Google Doc via qnt CLI
-    report_content = f"# {title}\n\nGenerated at: {data['timestamp']}\n\n## Analysis\n{analysis}\n\n## Raw Stats Summary\n{json.dumps(data['summary'], indent=2)}"
-    doc_prompt = f"Create a Google Doc in folder '{REPORTS_FOLDER_ID}' with title '{title}' and this content: {report_content}. Then email a link to this doc to {DEST_EMAIL}."
-    
-    print("Syncing with Google Workspace...")
-    try:
-        subprocess.run(['qnt', '-p', doc_prompt], check=True)
-    except Exception as e:
-        print(f"Google Workspace sync failed: {e}. Proceeding with Telegram.")
+    report_content = (
+        f"# {title}\n\nGenerated at: {data['timestamp']}\n\n"
+        f"## Analysis\n{analysis}\n\n"
+        f"## Raw Stats Summary\n{json.dumps(data['summary'], indent=2)}"
+    )
+    print(report_content)
 
-    # 2. Telegram
     if TELEGRAM_TOKEN and TELEGRAM_CHAT_ID:
-        short_analysis = analysis[:3500] # Telegram limit is 4096
-        msg = f"🧠 *Cipher Intelligence Brief - {date_str}*\n\n{short_analysis}\n\n_Full report synced to Cipher_Vault_"
-        requests.post(f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage", data={'chat_id': TELEGRAM_CHAT_ID, 'text': msg, 'parse_mode': 'Markdown'})
+        short_analysis = analysis[:3500]
+        msg = f"🧠 *Cipher Intelligence Brief - {date_str}*\n\n{short_analysis}\n\n_Full report in Cipher logs_"
+        requests.post(
+            f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage",
+            data={'chat_id': TELEGRAM_CHAT_ID, 'text': msg, 'parse_mode': 'Markdown'},
+        )
 
 if __name__ == "__main__":
     print("Cipher Intelligent Reporter starting...")

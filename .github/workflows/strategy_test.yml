@@ -12,30 +12,38 @@ on:
 jobs:
   backtest:
     runs-on: ubuntu-latest
-    
+
+    strategy:
+      matrix:
+        python-version: ['3.12', '3.14']
+
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
-      
-      - name: Set up Python
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
-      
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install uv
+        run: pip install uv
+
       - name: Install dependencies
-        run: |
-          pip install freqtrade pandas numpy
-          pip install pandas-ta xgboost
-      
+        run: uv sync --frozen
+
       - name: Find changed strategies
         id: changed
         run: |
-          CHANGED=$(git diff --name-only HEAD~1 HEAD \
+          git fetch origin main --depth=1
+          CHANGED=$(git diff --name-only origin/main HEAD \
             | grep 'strategies/active/.*\.py' \
-            | head -3)
+            | head -3 || true)
           echo "strategies=$CHANGED" >> $GITHUB_OUTPUT
           echo "Changed strategies: $CHANGED"
-      
+
       - name: Download minimal test data
         run: |
           freqtrade download-data \
@@ -45,25 +53,24 @@ jobs:
             --datadir /tmp/testdata \
             --exchange binance \
             2>/dev/null || true
-      
+
       - name: Run backtest validation
         run: |
           python3 << 'PYEOF'
           import subprocess, json, sys
-          
+
           strategies = """${{ steps.changed.outputs.strategies }}""".strip()
           if not strategies:
               print("No strategy files changed")
               sys.exit(0)
-          
+
           failed = []
           for strat_path in strategies.split('\n'):
               if not strat_path:
                   continue
               strat_name = strat_path.split('/')[-1].replace('.py','')
               print(f"Testing: {strat_name}")
-              
-              # Run minimal backtest
+
               result = subprocess.run([
                   'freqtrade', 'backtesting',
                   '--strategy', strat_name,
@@ -72,22 +79,21 @@ jobs:
                   '--timeframe', '1h',
                   '--datadir', '/tmp/testdata',
                   '--export', 'none',
-              ], capture_output=True, text=True,
-                 timeout=120)
-              
+              ], capture_output=True, text=True, timeout=120)
+
               if result.returncode != 0:
                   print(f"FAIL: {strat_name} backtest error")
                   print(result.stderr[-500:])
                   failed.append(strat_name)
               else:
                   print(f"PASS: {strat_name} loaded OK")
-          
+
           if failed:
               print(f"\nFailed strategies: {failed}")
               sys.exit(1)
           print("\nAll strategy tests passed")
           PYEOF
-      
+
       - name: Comment on PR
         if: github.event_name == 'pull_request'
         uses: actions/github-script@v7

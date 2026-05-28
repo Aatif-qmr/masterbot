@@ -1,11 +1,11 @@
 [package]
-name = "risk-checks-rs"
+name = "rust-engine"
 version = "1.0.0"
 edition = "2021"
-description = "Rust-backed risk check arithmetic for Cipher — replaces Cython risk_checks.pyx"
+description = "Vectorized pattern-matching engine for VectorVaultV1 — parallel Euclidean nearest-neighbor"
 
 [lib]
-name = "risk_checks"
+name = "rust_engine"
 crate-type = ["cdylib"]
 
 [dependencies]

@@ -1,4 +1,5 @@
 use pyo3::prelude::*;
+use rayon::prelude::*;
 
 // ──────────────────────────────────────────────────────────────
 // Core risk arithmetic — zero-allocation hot-path functions.
@@ -62,18 +63,6 @@ fn count_consecutive_losses(profits: Vec<f64>) -> i32 {
 // version, leveraging Rust's thread-safety for cluster-wide
 // risk aggregation.
 // ──────────────────────────────────────────────────────────────
-
-/// Kelly-lite stake multiplier calculation.
-/// Formula: clamp(1.0 + (win_rate - 0.50) * 2.0, floor, ceiling)
-///
-/// This replaces the pure-Python version in stake_sizer.py for
-/// the arithmetic core, keeping I/O (SQLite reads) in Python.
-#[pyfunction]
-#[inline]
-fn compute_stake_multiplier(win_rate: f64, floor: f64, ceiling: f64) -> f64 {
-    let raw = 1.0 + (win_rate - 0.50) * 2.0;
-    raw.clamp(floor, ceiling)
-}
 
 /// Batch drawdown computation for multiple balances.
 /// Useful for computing drawdowns across all 6 bot instances
@@ -162,6 +151,21 @@ fn compute_sharpe_ratio(returns: Vec<f64>, risk_free_rate: Option<f64>) -> f64 {
     excess / std_dev
 }
 
+/// Batch Kelly multiplier: multiplier = clamp(1.0 + (win_rate - 0.50) * 2.0, floor, ceiling).
+/// Uses rayon for parallel execution across all strategies in one call.
+#[pyfunction]
+#[pyo3(signature = (win_rates, floor=0.5, ceiling=2.0))]
+fn kelly_batch(win_rates: Vec<f64>, floor: f64, ceiling: f64) -> PyResult<Vec<f64>> {
+    let results: Vec<f64> = win_rates
+        .par_iter()
+        .map(|&wr| {
+            let raw = 1.0 + (wr - 0.50) * 2.0;
+            raw.max(floor).min(ceiling)
+        })
+        .collect();
+    Ok(results)
+}
+
 /// Returns version information for the Rust risk_checks module.
 #[pyfunction]
 fn version() -> String {
@@ -185,10 +189,10 @@ fn risk_checks(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(count_consecutive_losses, m)?)?;
 
     // Extended functions (new Rust-only capabilities)
-    m.add_function(wrap_pyfunction!(compute_stake_multiplier, m)?)?;
     m.add_function(wrap_pyfunction!(batch_compute_drawdowns, m)?)?;
     m.add_function(wrap_pyfunction!(max_drawdown_from_series, m)?)?;
     m.add_function(wrap_pyfunction!(compute_sharpe_ratio, m)?)?;
+    m.add_function(wrap_pyfunction!(kelly_batch, m)?)?;
     m.add_function(wrap_pyfunction!(version, m)?)?;
 
     Ok(())
@@ -237,16 +241,6 @@ mod tests {
         assert_eq!(count_consecutive_losses(vec![-0.02, 0.03, -0.015]), 1);
         assert_eq!(count_consecutive_losses(vec![0.01, -0.02, -0.03]), 0);
         assert_eq!(count_consecutive_losses(vec![]), 0);
-    }
-
-    #[test]
-    fn test_stake_multiplier() {
-        // 50% WR -> 1.0x
-        assert!((compute_stake_multiplier(0.50, 0.5, 2.0) - 1.0).abs() < 0.01);
-        // 75% WR -> 1.5x
-        assert!((compute_stake_multiplier(0.75, 0.5, 2.0) - 1.5).abs() < 0.01);
-        // 25% WR -> 0.5x (clamped to floor)
-        assert!((compute_stake_multiplier(0.25, 0.5, 2.0) - 0.5).abs() < 0.01);
     }
 
     #[test]

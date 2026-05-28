@@ -10,7 +10,7 @@ from datetime import datetime, timedelta
 import sys
 import os
 from dotenv import load_dotenv
-import pandas as pd
+import polars as pl
 
 # Detect BASE_DIR
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -68,12 +68,15 @@ def get_market_context_at_open(trade: dict) -> dict:
     try:
         sentiment_csv = BASE_DIR / 'sentiment/scores/history.csv'
         if sentiment_csv.exists():
-            hist = pd.read_csv(sentiment_csv)
-            hist['timestamp'] = pd.to_datetime(hist['timestamp'], utc=True).dt.tz_localize(None)
-            open_dt = pd.to_datetime(trade['open_date'], utc=True).tz_localize(None)
-            closest = hist.iloc[(hist['timestamp'] - open_dt).abs().argsort()[:1]]
-            if not closest.empty:
-                context["sentiment_score"] = f"{closest.iloc[0]['score']:.4f}"
+            hist = pl.read_csv(sentiment_csv)
+            hist = hist.with_columns(pl.col("timestamp").str.to_datetime(strict=False))
+            open_dt = datetime.fromisoformat(
+                trade['open_date'].replace("Z", "+00:00")
+            ).replace(tzinfo=None)
+            diffs = (hist["timestamp"] - open_dt).abs()
+            idx = diffs.arg_min()
+            if idx is not None:
+                context["sentiment_score"] = f"{hist['score'][idx]:.4f}"
     except Exception as e:
         print(f"Error fetching sentiment at open: {e}")
         
@@ -81,11 +84,15 @@ def get_market_context_at_open(trade: dict) -> dict:
     try:
         feather_path = BASE_DIR / "user_data/data/binance/BTC_USDT-1h.feather"
         if feather_path.exists():
-            df = pd.read_feather(feather_path)
-            df['date'] = pd.to_datetime(df['date'], utc=True).dt.tz_localize(None)
-            open_dt = pd.to_datetime(trade['open_date'], utc=True).tz_localize(None)
-            df_at_open = df[df['date'] <= open_dt].tail(200)
-            
+            df = pl.read_ipc(feather_path)
+            open_dt = datetime.fromisoformat(
+                trade['open_date'].replace("Z", "+00:00")
+            ).replace(tzinfo=None)
+            # Strip timezone if present so comparison is naive
+            if df["date"].dtype in (pl.Datetime("us", "UTC"), pl.Datetime("ms", "UTC")):
+                df = df.with_columns(pl.col("date").dt.replace_time_zone(None))
+            df_at_open = df.filter(pl.col("date") <= open_dt).tail(200).to_pandas()
+
             reg_info = detect_regime_full(df_at_open)
             context["regime"] = reg_info.get("current_regime", "RANGING")
             context["regime_confidence"] = reg_info.get("confidence", 0.5)
