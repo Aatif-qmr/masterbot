@@ -13,6 +13,8 @@ Usage:
   python qnt/agent.py shadow promote <strategy>
   python qnt/agent.py vault-stats
   python qnt/agent.py journal "note text"
+  python qnt/agent.py significance ScalpV1
+  python qnt/agent.py significance MeanReversionV1 --source live --n 5000
 """
 
 import os
@@ -317,6 +319,101 @@ def vault_stats():
     from qnt.tools.vault import get_vault_stats
 
     console.print_json(data=get_vault_stats())
+
+
+@app.command()
+def significance(
+    strategy: str = typer.Argument(..., help="Strategy class name, e.g. ScalpV1"),
+    n: int = typer.Option(2000, "--n", "-n", help="Bootstrap simulations"),
+    source: str = typer.Option(
+        "backtest",
+        "--source",
+        "-s",
+        help="Trade source: 'backtest' (default) or 'live'",
+    ),
+    seed: int = typer.Option(42, "--seed", help="Random seed for reproducibility"),
+):
+    """
+    Bootstrap significance test — answers: does this strategy have real edge?
+
+    Runs H₀: returns are due to chance. p < 0.05 means edge is real at 95% confidence.
+
+    Examples:
+      python qnt/agent.py significance ScalpV1
+      python qnt/agent.py significance MeanReversionV1 --source live --n 5000
+    """
+    from qnt.tools.significance import load_trades, run_significance_test
+
+    prefer = "live" if source == "live" else "backtest"
+
+    with console.status(f"Loading trades for [bold]{strategy}[/bold] ({prefer})…"):
+        try:
+            trades, meta = load_trades(strategy, prefer=prefer)
+        except (FileNotFoundError, ValueError) as exc:
+            console.print(f"[red]Error:[/red] {exc}")
+            raise typer.Exit(1)
+
+    n_trades = len(trades)
+    if n_trades == 0:
+        console.print(f"[yellow]No closed trades found for {strategy}.[/yellow]")
+        raise typer.Exit(1)
+
+    console.print(
+        f"Loaded [bold]{n_trades}[/bold] trades from [cyan]{meta['source']}[/cyan] "
+        f"({meta.get('zip_file') or meta.get('db_file', '?')})"
+    )
+
+    if n_trades < 30:
+        console.print(
+            f"[yellow]⚠ Only {n_trades} trades — results unreliable (need 30+). "
+            f"Run a longer backtest for meaningful p-values.[/yellow]"
+        )
+
+    with console.status(f"Running {n:,} bootstrap simulations…"):
+        try:
+            result = run_significance_test(trades, n_simulations=n, random_seed=seed)
+        except ValueError as exc:
+            console.print(f"[red]Error:[/red] {exc}")
+            raise typer.Exit(1)
+
+    # ── Output table ──────────────────────────────────────────────────────────
+    verdict_color = (
+        "green" if result["significant_1pct"]
+        else "yellow" if result["significant_5pct"]
+        else "bright_yellow" if result["p_value"] < 0.10
+        else "red"
+    )
+
+    t = Table(
+        title=f"Significance Test — {strategy}",
+        show_header=False,
+        border_style="blue",
+        padding=(0, 1),
+    )
+    t.add_column("Metric", style="bold", width=26)
+    t.add_column("Value")
+
+    t.add_row("Strategy", strategy)
+    t.add_row("Source", f"{meta['source']} ({meta.get('zip_file') or meta.get('db_file', '?')})")
+    if meta.get("backtest_start"):
+        t.add_row("Backtest period", f"{meta['backtest_start']}  →  {meta['backtest_end']}")
+    t.add_row("─" * 24, "─" * 18)
+    t.add_row("Trades analysed", str(result["n_trades"]))
+    t.add_row("Mean return / trade", f"{result['observed_mean']:+.4f}  ({result['observed_mean']*100:+.2f}%)")
+    t.add_row("Win rate", f"{result['win_rate']:.1%}")
+    t.add_row("Avg win", f"{result['avg_win']:+.4f}  ({result['avg_win']*100:+.2f}%)")
+    t.add_row("Avg loss", f"{result['avg_loss']:.4f}  ({result['avg_loss']*100:.2f}%)")
+    t.add_row("Expectancy", f"{result['expectancy']:+.4f}")
+    t.add_row("Profit factor", f"{result['profit_factor']:.2f}")
+    t.add_row("SQN", f"{result['sqn']:.2f}")
+    t.add_row("─" * 24, "─" * 18)
+    t.add_row("Simulations", f"{result['n_simulations']:,}")
+    t.add_row("Null dist. 5–95%", f"{result['null_p5']:+.4f}  to  {result['null_p95']:+.4f}")
+    t.add_row("p-value", f"{result['p_value']:.4f}")
+    t.add_row("─" * 24, "─" * 18)
+    t.add_row("Verdict", f"[{verdict_color}]{result['verdict']}[/{verdict_color}]")
+
+    console.print(t)
 
 
 if __name__ == "__main__":
