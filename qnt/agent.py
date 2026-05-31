@@ -15,6 +15,8 @@ Usage:
   python qnt/agent.py journal "note text"
   python qnt/agent.py significance ScalpV1
   python qnt/agent.py significance MeanReversionV1 --source live --n 5000
+  python qnt/agent.py montecarlo SwingV1
+  python qnt/agent.py montecarlo MeanReversionV1 --n 2000 --ruin 0.15
 """
 
 import os
@@ -414,6 +416,96 @@ def significance(
     t.add_row("Verdict", f"[{verdict_color}]{result['verdict']}[/{verdict_color}]")
 
     console.print(t)
+
+
+@app.command()
+def montecarlo(
+    strategy: str = typer.Argument(..., help="Strategy class name, e.g. SwingV1"),
+    n: int = typer.Option(1000, "--n", "-n", help="Simulations per mode"),
+    source: str = typer.Option("backtest", "--source", "-s", help="'backtest' or 'live'"),
+    ruin: float = typer.Option(0.20, "--ruin", help="Drawdown fraction that counts as ruin"),
+    seed: int = typer.Option(42, "--seed", help="Random seed"),
+    mode: str = typer.Option("both", "--mode", help="'shuffle', 'resample', or 'both'"),
+):
+    """
+    Monte Carlo stress test — shows distribution of outcomes, not just one backtest path.
+
+    shuffle  — randomises trade order (timing-robustness test).
+    resample — samples with replacement (path-robustness test).
+
+    Key question: what is P(drawdown > ruin_threshold)?
+    """
+    from qnt.tools.montecarlo import run_monte_carlo
+    from qnt.tools.significance import load_trades
+
+    prefer = "live" if source == "live" else "backtest"
+    with console.status(f"Loading trades for [bold]{strategy}[/bold]…"):
+        try:
+            trades, meta = load_trades(strategy, prefer=prefer)
+        except (FileNotFoundError, ValueError) as exc:
+            console.print(f"[red]Error:[/red] {exc}")
+            raise typer.Exit(1)
+
+    n_trades = len(trades)
+    if n_trades < 10:
+        console.print(f"[red]Only {n_trades} trades — need at least 10.[/red]")
+        raise typer.Exit(1)
+
+    console.print(
+        f"Loaded [bold]{n_trades}[/bold] trades from [cyan]{meta['source']}[/cyan]. "
+        f"Running {n:,} × {mode} simulation(s)…"
+    )
+
+    with console.status(f"Simulating {n:,} paths…"):
+        result = run_monte_carlo(trades, n_simulations=n, ruin_threshold=ruin, random_seed=seed, mode=mode)
+
+    # ── Summary table ─────────────────────────────────────────────────────────
+    obs_ret = result["observed_return"]
+    obs_dd = result["observed_drawdown"]
+
+    t = Table(title=f"Monte Carlo — {strategy} ({n:,} sims)", show_header=True, border_style="blue")
+    t.add_column("Metric", style="bold", width=28)
+    t.add_column("Observed", justify="right")
+    if "shuffle" in result:
+        t.add_column("Shuffle P10/P50/P90", justify="right")
+    if "resample" in result:
+        t.add_column("Resample P10/P50/P90", justify="right")
+
+    def _fmt_pct(v: float) -> str:
+        return f"{v:+.1%}"
+
+    def _pcts(d: dict, key: str) -> str:
+        return f"{_fmt_pct(d[key+'_p10'])} / {_fmt_pct(d[key+'_p50'])} / {_fmt_pct(d[key+'_p90'])}"
+
+    row = ["Final return", _fmt_pct(obs_ret)]
+    if "shuffle" in result:
+        row.append(_pcts(result["shuffle"], "return"))
+    if "resample" in result:
+        row.append(_pcts(result["resample"], "return"))
+    t.add_row(*row)
+
+    row = ["Max drawdown", _fmt_pct(obs_dd)]
+    if "shuffle" in result:
+        row.append(_pcts(result["shuffle"], "drawdown"))
+    if "resample" in result:
+        row.append(_pcts(result["resample"], "drawdown"))
+    t.add_row(*row)
+
+    for mname in [k for k in ("shuffle", "resample") if k in result]:
+        rp = result[mname]["ruin_probability"]
+        color = "red" if rp > 0.10 else "yellow" if rp > 0.05 else "green"
+        t.add_row(
+            f"Ruin P (dd>{ruin:.0%})  [{mname}]",
+            "",
+            *([f"[{color}]{rp:.1%}[/{color}]"] * (1 if mode != "both" else 1)),
+        )
+
+    console.print(t)
+
+    if n_trades < 30:
+        console.print(
+            f"[yellow]⚠ {n_trades} trades only — run a longer backtest for reliable distributions.[/yellow]"
+        )
 
 
 if __name__ == "__main__":
