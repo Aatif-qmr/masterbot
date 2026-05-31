@@ -1,0 +1,43 @@
+name: Cipher Continuous Integration
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  ci:
+    name: Run Linting, Formatting, and Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 0
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install uv
+        run: pip install uv
+
+      - name: Install Dependencies
+        run: |
+          uv sync --frozen --all-extras
+
+      - name: Run Ruff Format Check
+        run: |
+          uv run ruff format --check .
+
+      - name: Run Ruff Lint Check
+        run: |
+          uv run ruff check .
+
+      - name: Run Unit Tests
+        run: |
+          uv run pytest risk/test_risk_manager.py sentiment/test_pipeline.py -v
