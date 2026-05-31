@@ -6,7 +6,7 @@ description = "Vectorized pattern-matching engine for VectorVaultV1 — parallel
 
 [lib]
 name = "rust_engine"
-crate-type = ["cdylib"]
+crate-type = ["cdylib", "rlib"]
 
 [dependencies]
 pyo3 = { version = "0.28", features = ["extension-module"] }

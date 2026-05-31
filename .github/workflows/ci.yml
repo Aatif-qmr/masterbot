@@ -13,6 +13,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Set up Python 3.12 (PyO3 link target)
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
       - name: Install Rust stable + clippy
         uses: dtolnay/rust-toolchain@stable
         with:
@@ -31,10 +36,14 @@ jobs:
       - name: Clippy (deny warnings)
         working-directory: rust_engine
         run: cargo clippy -- -D warnings
+        env:
+          PYO3_PYTHON: python3.12
 
       - name: Cargo tests
         working-directory: rust_engine
         run: cargo test --release
+        env:
+          PYO3_PYTHON: python3.12
 
   ci:
     name: Run Linting, Formatting, and Tests
@@ -57,7 +66,7 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          uv sync --frozen --all-extras
+          uv sync --frozen
 
       - name: Run Ruff Format Check
         run: |
