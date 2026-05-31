@@ -41,7 +41,10 @@ jobs:
 
       - name: Cargo tests
         working-directory: rust_engine
-        run: cargo test --release
+        run: |
+          PYLIB=$(python3 -c "import sysconfig; print(sysconfig.get_config_var('LIBDIR'))")
+          PYVER=$(python3 -c "import sys; print(f'{sys.version_info.major}.{sys.version_info.minor}')")
+          RUSTFLAGS="-L ${PYLIB} -lpython${PYVER}" cargo test --release
         env:
           PYO3_PYTHON: python3.12
 
