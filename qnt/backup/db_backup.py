@@ -7,7 +7,7 @@ Creates timestamped backups of SQLite databases before operations
 import os
 import shutil
 import sqlite3
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 # Get base directory from environment or use default
@@ -41,7 +41,7 @@ def create_backup(db_path: Path, purpose: str = "manual") -> Path:
 
     ensure_backup_dir()
 
-    timestamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
+    timestamp = datetime.now(UTC).strftime("%Y%m%d_%H%M%S")
     backup_name = f"{db_path.stem}_{timestamp}_{purpose}.db"
     backup_path = BACKUP_DIR / backup_name
 
@@ -90,7 +90,7 @@ def backup_all_databases(purpose: str = "manual"):
         else:
             print(f"[BACKUP] Skipping (not found): {db_path}")
 
-    print(f"\n[BACKUP] Summary:")
+    print("\n[BACKUP] Summary:")
     print(f"  Successful: {len(successful)}")
     print(f"  Failed: {len(failed)}")
 
@@ -105,7 +105,7 @@ def cleanup_old_backups(days_to_keep: int = 7):
     if not BACKUP_DIR.exists():
         return
 
-    cutoff = datetime.now(timezone.utc).timestamp() - (days_to_keep * 24 * 60 * 60)
+    cutoff = datetime.now(UTC).timestamp() - (days_to_keep * 24 * 60 * 60)
     removed = 0
 
     for backup_file in BACKUP_DIR.glob("*.db"):
@@ -133,7 +133,7 @@ def list_backups(limit: int = 10):
 
     for i, backup in enumerate(backups[:limit]):
         size_kb = backup.stat().st_size / 1024
-        mtime = datetime.fromtimestamp(backup.stat().st_mtime, tz=timezone.utc)
+        mtime = datetime.fromtimestamp(backup.stat().st_mtime, tz=UTC)
         print(f"{i + 1}. {backup.name}")
         print(f"   Created: {mtime.isoformat()}")
         print(f"   Size: {size_kb:.2f} KB")

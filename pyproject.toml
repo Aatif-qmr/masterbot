@@ -103,6 +103,8 @@ select = [
 ]
 ignore = [
     "E501",  # line-length enforced by formatter, not lint
+    "E402",  # module-level import not at top — intentional (sys.path.insert before project imports)
+    "F841",  # local variable assigned but never used — pre-existing in strategy files
 ]
 
 [tool.ruff.lint.isort]

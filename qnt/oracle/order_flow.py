@@ -4,10 +4,11 @@ Order Flow Oracle: Fetches Liquidation and CVD data.
 Runs on M2, pushes state to M1.
 """
 
-import requests
 import json
+from datetime import datetime
 from pathlib import Path
-from datetime import datetime, timedelta
+
+import requests
 
 # Configuration
 STATE_FILE = Path("/Users/azmatsaif/cipher/qnt/oracle/order_flow_state.json")
@@ -54,7 +55,7 @@ def fetch_cvd_divergence(symbol="BTCUSDT"):
     try:
         # Check recent price vs volume momentum
         res = requests.get(
-            f"https://api.binance.com/api/v3/klines",
+            "https://api.binance.com/api/v3/klines",
             params={"symbol": symbol, "interval": "15m", "limit": 4},
             timeout=10,
         )
@@ -72,7 +73,7 @@ def fetch_cvd_divergence(symbol="BTCUSDT"):
             return "bullish_divergence"
 
         return "neutral"
-    except Exception as e:
+    except Exception:
         return "neutral"
 
 

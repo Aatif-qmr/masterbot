@@ -4,19 +4,19 @@ Trains LSTM on HMM-labeled historical returns.
 Saves model to qnt/oracle/lstm_regime_model.pt
 """
 
+import sys
+from pathlib import Path
+
 import numpy as np
 import polars as pl
 import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader, TensorDataset
-from pathlib import Path
-import joblib
-import sys
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(BASE_DIR / "qnt/oracle"))
 
-from hmm_regime import load_hmm_model, _REGIME_LABELS, RegimeLSTM
+from hmm_regime import RegimeLSTM, load_hmm_model
 
 SEQ_LEN = 20
 EPOCHS = 30

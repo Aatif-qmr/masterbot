@@ -73,10 +73,10 @@ def _tool_recall_vault(query: str, n_results: int = 3) -> str:
             else "Vault empty"
         )
     lines = []
-    for i, l in enumerate(lessons):
-        doc = l.get("document", "")
-        meta = l.get("metadata", {})
-        score = l.get("score", 0)
+    for i, lesson in enumerate(lessons):
+        doc = lesson.get("document", "")
+        meta = lesson.get("metadata", {})
+        score = lesson.get("score", 0)
         date = meta.get("timestamp", meta.get("close_date", "unknown"))
         lines.append(f"[{i + 1}] score={score:.3f} date={date}\n{doc}")
     return "\n\n".join(lines)
@@ -84,8 +84,9 @@ def _tool_recall_vault(query: str, n_results: int = 3) -> str:
 
 def _tool_get_macro_headwinds() -> str:
     """Get current macro: DXY 24h change, BTC funding rate, open interest."""
-    from qnt.tools.oracle import get_macro_headwinds as _f
     import json
+
+    from qnt.tools.oracle import get_macro_headwinds as _f
 
     return json.dumps(_f(), indent=2)
 
@@ -99,24 +100,28 @@ def _tool_get_sentiment_summary() -> str:
 
 def _tool_run_risk_check() -> str:
     """Run Shield risk check: drawdown limits, position sizes, circuit breakers."""
-    from qnt.tools.risk import run_risk_check as _f
     import json
+
+    from qnt.tools.risk import run_risk_check as _f
 
     return json.dumps(_f(), indent=2)
 
 
 def _tool_get_pnl_summary(period: str = "daily") -> str:
     """Get P&L summary for a period (daily, weekly, monthly, all)."""
-    from qnt.tools.risk import get_pnl
     import json
+
+    from qnt.tools.risk import get_pnl
 
     return json.dumps(get_pnl(period), indent=2)
 
 
 def _tool_get_system_status() -> str:
     """Get system-wide status: open trades, balance, Freqtrade health."""
-    from qnt.tools.cockpit import get_system_status as _f, get_balance
     import json
+
+    from qnt.tools.cockpit import get_balance
+    from qnt.tools.cockpit import get_system_status as _f
 
     status = _f()
     balance = get_balance()
@@ -132,8 +137,9 @@ def _tool_get_shadow_hyperopt_status() -> str:
 
 def _tool_get_vault_stats() -> str:
     """Return Vault collection statistics: entry count and storage path."""
-    from qnt.tools.vault import get_vault_stats as _f
     import json
+
+    from qnt.tools.vault import get_vault_stats as _f
 
     return json.dumps(_f(), indent=2)
 
@@ -193,10 +199,10 @@ def recall(
     if not lessons or (len(lessons) == 1 and "error" in lessons[0]):
         console.print("[yellow]No matching lessons found.[/yellow]")
         return
-    for i, l in enumerate(lessons):
-        doc = l.get("document", "")
-        meta = l.get("metadata", {})
-        score = l.get("score", 0)
+    for i, lesson in enumerate(lessons):
+        doc = lesson.get("document", "")
+        meta = lesson.get("metadata", {})
+        score = lesson.get("score", 0)
         date = meta.get("timestamp", meta.get("close_date", "unknown"))
         console.print(Panel(doc, title=f"[{i + 1}] score={score:.3f}  {date}", border_style="cyan"))
 
@@ -283,7 +289,7 @@ def shadow(
     strategy: str = typer.Argument(None, help="Strategy name (for promote)"),
 ):
     """Control shadow hyperopt on M2."""
-    from qnt.tools.hyperopt import get_shadow_status, get_shadow_report, control_shadow
+    from qnt.tools.hyperopt import control_shadow, get_shadow_report, get_shadow_status
 
     if action == "status":
         console.print(get_shadow_status())

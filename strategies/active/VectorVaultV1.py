@@ -1,10 +1,9 @@
 import logging
 import sys
-from pathlib import Path
 from functools import reduce
+from pathlib import Path
 
 import numpy as np
-import pandas as pd
 import ta
 from pandas import DataFrame
 

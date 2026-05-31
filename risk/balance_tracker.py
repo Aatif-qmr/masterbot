@@ -1,9 +1,10 @@
 import json
 import os
-import requests
-from datetime import datetime, timezone, timedelta
-from dotenv import load_dotenv
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
+
+import requests
+from dotenv import load_dotenv
 
 BASE_DIR = Path.home() / "cipher"
 load_dotenv(BASE_DIR / ".env")
@@ -15,7 +16,7 @@ PASSWORD = os.getenv("API_PASSWORD")
 
 
 def update_balance_state(current_balance: float):
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
     today = now.strftime("%Y-%m-%d")
     # ISO week Monday
     monday = (now - timedelta(days=now.weekday())).strftime("%Y-%m-%d")
@@ -30,7 +31,7 @@ def update_balance_state(current_balance: float):
     }
 
     if os.path.exists(STATE_FILE):
-        with open(STATE_FILE, "r") as f:
+        with open(STATE_FILE) as f:
             old_state = json.load(f)
 
         # Keep old start_of_day if same day

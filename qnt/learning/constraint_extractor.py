@@ -2,7 +2,7 @@
 import json
 import sys
 from collections import defaultdict
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 HOME = Path.home()
@@ -26,7 +26,7 @@ def _sentiment_bucket(score: float) -> str:
 
 def _load_vault_losses() -> list:
     try:
-        from vault import _get_client, COLLECTION_NAME
+        from vault import COLLECTION_NAME, _get_client
 
         client = _get_client()
         # Scroll all entries
@@ -128,7 +128,7 @@ def run() -> dict:
                     )
 
     output = {
-        "updated_at": datetime.now(timezone.utc).isoformat(),
+        "updated_at": datetime.now(UTC).isoformat(),
         "constraints": constraints,
     }
 

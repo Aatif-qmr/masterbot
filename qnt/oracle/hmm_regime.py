@@ -1,4 +1,3 @@
-import json
 import joblib
 import numpy as np
 import polars as pl
@@ -7,9 +6,9 @@ try:
     import pandas as pd
 except ImportError:
     pd = None
-from pathlib import Path
-from datetime import datetime, timedelta
 import os
+from pathlib import Path
+
 from dotenv import load_dotenv
 
 # Machine-agnostic path setup
@@ -43,14 +42,14 @@ def load_hmm_model():
             return None
     try:
         return joblib.load(local_path)
-    except Exception as e:
+    except Exception:
         # Fallback to pickle if joblib fails (since the other machine might use pickle)
         import pickle
 
         try:
             with open(local_path, "rb") as f:
                 return pickle.load(f)
-        except Exception as e:
+        except Exception:
             return None
 
 
@@ -174,7 +173,7 @@ def detect_regime_full(dataframe, pair: str = "BTC/USDT") -> dict:
 
 
 try:
-    import torch
+    import torch  # noqa: F401
     import torch.nn as nn
 
     class RegimeLSTM(nn.Module):

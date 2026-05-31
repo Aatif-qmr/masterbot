@@ -1,8 +1,9 @@
 import os
-import sys
 import sqlite3
-import psycopg
+import sys
 from pathlib import Path
+
+import psycopg
 
 # Resolve base directories
 BASE_DIR = Path(__file__).resolve().parent.parent

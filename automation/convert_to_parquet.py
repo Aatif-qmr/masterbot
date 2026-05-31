@@ -1,8 +1,10 @@
-import os, json
+import json
+import os
+from pathlib import Path
+
 import pandas as pd
 import pyarrow as pa
 import pyarrow.parquet as pq
-from pathlib import Path
 
 BASE_DIR = Path("/Users/azmatsaif/cipher")
 DATA_DIR = BASE_DIR / "user_data/data/binance"

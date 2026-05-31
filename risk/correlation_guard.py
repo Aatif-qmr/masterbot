@@ -6,9 +6,8 @@
 import sqlite3
 import time
 from collections import Counter
-from pathlib import Path
-
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 

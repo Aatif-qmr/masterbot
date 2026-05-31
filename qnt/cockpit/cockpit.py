@@ -1,11 +1,11 @@
-import os
-import sys
-import time
 import json
+import os
 import subprocess
-import requests
-from datetime import datetime, timezone, timedelta
+import sys
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
+
+import requests
 
 # Add Cipher paths
 BASE_DIR = str(Path(__file__).resolve().parent.parent.parent)
@@ -14,24 +14,19 @@ sys.path.insert(0, os.path.join(BASE_DIR, "qnt/bridge"))
 sys.path.insert(0, os.path.join(BASE_DIR, "qnt/shield"))
 sys.path.insert(0, os.path.join(BASE_DIR, "qnt/oracle"))
 
-from device_router import DEVICE_CONTEXT, call_freqtrade_api, run_on_m1
-from memory_manager import load_memory
+from device_router import run_on_m1
 from oracle_sentiment import get_current_sentiment
-from oracle_calendar import get_weekly_calendar, calculate_risk_level
-
-from textual.app import App, ComposeResult
-from textual.containers import Container, Grid, Horizontal, Vertical
-from textual.widgets import Header, Footer, Static, Label, ProgressBar
-from textual.reactive import reactive
+from requests.auth import HTTPBasicAuth
 from rich.panel import Panel
 from rich.table import Table
 from rich.text import Text
-from rich.progress import BarColumn, Progress
-from requests.auth import HTTPBasicAuth
+from textual.app import App, ComposeResult
+from textual.containers import Grid, Horizontal, Vertical
+from textual.widgets import Footer, Header, Static
 
 
 def get_ist_now():
-    return datetime.now(timezone.utc) + timedelta(hours=5, minutes=30)
+    return datetime.now(UTC) + timedelta(hours=5, minutes=30)
 
 
 class DashboardPanel(Static):
@@ -94,7 +89,7 @@ class GlobalStatusPanel(DashboardPanel):
                         table.add_row(inst["name"], status_str, pnl_str)
                     else:
                         table.add_row(inst["name"], "[red]OFFLINE[/]", "-")
-                except Exception as e:
+                except Exception:
                     table.add_row(inst["name"], "[red]OFFLINE[/]", "-")
 
             if total_bal == 0:
@@ -149,8 +144,8 @@ class MarketOraclePanel(DashboardPanel):
                 ("ACTIVE", "green"),
             )
             self.update(Panel(content, title="MARKET ORACLE", border_style="cyan"))
-        except Exception as e:
-            self.update(Panel(f"⚠️ Oracle offline", title="MARKET ORACLE", border_style="red"))
+        except Exception:
+            self.update(Panel("⚠️ Oracle offline", title="MARKET ORACLE", border_style="red"))
 
 
 class ShieldPanel(DashboardPanel):
@@ -176,8 +171,8 @@ class ShieldPanel(DashboardPanel):
                 ("NONE REQUIRED", "green"),
             )
             self.update(Panel(content, title="QNT SHIELD", border_style="magenta"))
-        except Exception as e:
-            self.update(Panel(f"⚠️ Shield error", title="QNT SHIELD", border_style="red"))
+        except Exception:
+            self.update(Panel("⚠️ Shield error", title="QNT SHIELD", border_style="red"))
 
 
 class IntegratedLogPanel(DashboardPanel):
@@ -213,7 +208,7 @@ class IntegratedLogPanel(DashboardPanel):
                 content.append(line + "\n", style=style)
 
             self.update(Panel(content, title="INTEGRATED LOG FEED", border_style="dim"))
-        except Exception as e:
+        except Exception:
             self.update(Panel("Logs unavailable", title="INTEGRATED LOG FEED", border_style="red"))
 
 

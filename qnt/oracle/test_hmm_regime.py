@@ -1,9 +1,10 @@
 # qnt/oracle/test_hmm_regime.py
+import sys
 import unittest
+from pathlib import Path
+
 import numpy as np
 import polars as pl
-import sys
-from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 

@@ -1,7 +1,8 @@
+import json
 import os
 import subprocess
-import json
 from pathlib import Path
+
 from dotenv import load_dotenv
 
 # Load env from root

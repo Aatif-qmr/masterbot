@@ -1,12 +1,12 @@
-import os
+import functools
 import json
 import logging
-import pandas as pd
-import numpy as np
-from pathlib import Path
-from datetime import datetime, timezone
+import os
 import sys
-import functools
+from datetime import UTC, datetime
+from pathlib import Path
+
+import pandas as pd
 
 # Add base dir to path
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -74,7 +74,7 @@ def apply_allocation(weights, regime=None):
     state_path = BASE_DIR / "risk/balance_state.json"
     try:
         if state_path.exists():
-            with open(state_path, "r") as f:
+            with open(state_path) as f:
                 state = json.load(f)
         else:
             state = {}
@@ -83,7 +83,7 @@ def apply_allocation(weights, regime=None):
             regime = get_hmm_regime()
 
         state["strategy_allocation_weights"] = weights
-        state["last_allocation_update"] = datetime.now(timezone.utc).isoformat()
+        state["last_allocation_update"] = datetime.now(UTC).isoformat()
         state["current_regime_hmm"] = regime
 
         # Update actual stake amounts based on a total budget (e.g. $50k)

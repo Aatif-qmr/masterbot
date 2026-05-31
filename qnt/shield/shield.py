@@ -1,12 +1,14 @@
-import os
-import sys
 import json
+import os
 import sqlite3
+import sys
+from datetime import UTC, datetime, timedelta
+from pathlib import Path
+
 import pandas as pd
 import requests
-from datetime import datetime, timezone, timedelta
-from requests.auth import HTTPBasicAuth
 from dotenv import load_dotenv
+from requests.auth import HTTPBasicAuth
 
 # Add paths
 BASE_DIR = str(Path(__file__).resolve().parent.parent.parent)
@@ -15,10 +17,8 @@ sys.path.insert(0, os.path.join(BASE_DIR, "qnt/memory"))
 sys.path.insert(0, os.path.join(BASE_DIR, "qnt/bridge"))
 sys.path.insert(0, os.path.join(BASE_DIR, "qnt/oracle"))
 
-from device_router import call_freqtrade_api, get_current_device
 from memory_manager import load_memory, log_action
-from qnt_notifier import send_notify, send_escalation
-from autonomy_router import classify, handle, AutonomyLevel
+from qnt_notifier import send_escalation, send_notify
 
 try:
     from oracle_calendar import calculate_risk_level
@@ -34,7 +34,7 @@ BALANCE_STATE_PATH = os.path.join(BASE_DIR, "risk/balance_state.json")
 
 
 def get_ist_now():
-    return datetime.now(timezone.utc) + timedelta(hours=5, minutes=30)
+    return datetime.now(UTC) + timedelta(hours=5, minutes=30)
 
 
 def get_db_path():
@@ -50,7 +50,7 @@ def get_db_path():
                 conn.close()
                 return path
             conn.close()
-        except Exception as e:
+        except Exception:
             continue
     return DB_PATH  # Default
 
@@ -71,7 +71,7 @@ def call_freqtrade_api_all(endpoint, method="GET", data=None):
                 res = requests.post(url, auth=HTTPBasicAuth(FT_USER, FT_PASS), json=data, timeout=5)
             if res.status_code == 200:
                 results.append(res.json())
-        except Exception as e:
+        except Exception:
             continue
     return results
 
@@ -94,7 +94,7 @@ def get_pnl(period="daily"):
             return f"💰 QNT P&L Report — {period.upper()}\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nNo closed trades in this period (Database empty)."
 
         conn = sqlite3.connect(active_db)
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
 
         if period == "daily":
             start_date = (now - timedelta(days=1)).strftime("%Y-%m-%d %H:%M:%S")
@@ -117,10 +117,10 @@ def get_pnl(period="daily"):
             return f"💰 QNT P&L Report — {period.upper()}\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nNo closed trades in this period."
 
         try:
-            with open(BALANCE_STATE_PATH, "r") as f:
+            with open(BALANCE_STATE_PATH) as f:
                 b_state = json.load(f)
                 starting_balance = b_state.get("start_of_day", 50000.0)
-        except Exception as e:
+        except Exception:
             starting_balance = 50000.0
 
         total_profit_usdt = df["profit_abs"].sum()
@@ -248,7 +248,7 @@ def risk_check(silent=False):
     timestamp = now.strftime("%H:%M IST")
 
     try:
-        with open(BALANCE_STATE_PATH, "r") as f:
+        with open(BALANCE_STATE_PATH) as f:
             b_state = json.load(f)
 
         all_balance = call_freqtrade_api_all("balance")
@@ -311,10 +311,10 @@ def risk_check(silent=False):
 
         pairs = [t["pair"] for status in all_status for t in status]
         if "BTC/USDT" in pairs and "ETH/USDT" in pairs:
-            results.append(f"⚠️ Correlation:       BTC+ETH: YES")
+            results.append("⚠️ Correlation:       BTC+ETH: YES")
             warnings += 1
         else:
-            results.append(f"✅ Correlation:       BTC+ETH: NO")
+            results.append("✅ Correlation:       BTC+ETH: NO")
 
         active_db = get_db_path()
         consec_losses = 0
@@ -330,7 +330,7 @@ def risk_check(silent=False):
                     consec_losses += 1
                 else:
                     break
-        except Exception as e:
+        except Exception:
             pass
 
         if consec_losses >= 5:
@@ -349,12 +349,12 @@ def risk_check(silent=False):
                 break
 
         if total_open > 0 and not stops_active:
-            results.append(f"❌ Stop Losses:       MISSING")
+            results.append("❌ Stop Losses:       MISSING")
             fails += 1
         else:
             results.append(f"✅ Stop Losses:       {total_open}/{total_open} active")
 
-        today_str = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+        today_str = datetime.now(UTC).strftime("%Y-%m-%d")
         risk = calculate_risk_level(today_str)
         mem = load_memory()
         is_adjusted = mem.get("risk_adjustment_active", False)
@@ -369,7 +369,7 @@ def risk_check(silent=False):
 
         # Macro Context
         try:
-            with open(os.path.join(BASE_DIR, "risk/macro_state.json"), "r") as f:
+            with open(os.path.join(BASE_DIR, "risk/macro_state.json")) as f:
                 ms = json.load(f)
             dxy = ms.get("dxy_24h_change", 0.0)
             thresh = float(os.getenv("DXY_THRESHOLD_PCT", "1.0"))
@@ -378,8 +378,8 @@ def risk_check(silent=False):
                 fails += 1
             else:
                 results.append(f"✅ Macro Headwinds:  DXY {dxy:+.2f}%")
-        except Exception as e:
-            results.append(f"⚠️ Macro Context:    STALE/MISSING")
+        except Exception:
+            results.append("⚠️ Macro Context:    STALE/MISSING")
             warnings += 1
 
         overall = "🟢 ALL CLEAR"
@@ -398,12 +398,12 @@ def risk_check(silent=False):
             should_alert = True
             if last_alert:
                 last_alert_dt = datetime.fromisoformat(last_alert.replace("Z", "+00:00"))
-                if (datetime.now(timezone.utc) - last_alert_dt).total_seconds() < 3600:
+                if (datetime.now(UTC) - last_alert_dt).total_seconds() < 3600:
                     should_alert = False
 
             if should_alert:
                 send_notify("Risk Audit Failure", "\n".join(output), level="CRITICAL")
-                mem["shield_last_alert_time"] = datetime.now(timezone.utc).isoformat() + "Z"
+                mem["shield_last_alert_time"] = datetime.now(UTC).isoformat() + "Z"
                 from memory_manager import save_memory
 
                 save_memory(mem)
@@ -438,7 +438,7 @@ def get_balance():
         used_pct = (used / total * 100) if total > 0 else 0
 
         try:
-            with open(BALANCE_STATE_PATH, "r") as f:
+            with open(BALANCE_STATE_PATH) as f:
                 b_state = json.load(f)
             start_of_day = b_state.get("start_of_day", total)
             start_of_week = b_state.get("start_of_week", total)
@@ -480,7 +480,7 @@ def autonomous_shield_check():
     audit_text = risk_check(silent=True)  # Don't alert from risk_check itself
 
     try:
-        with open(BALANCE_STATE_PATH, "r") as f:
+        with open(BALANCE_STATE_PATH) as f:
             b_state = json.load(f)
         all_balance = call_freqtrade_api_all("balance")
         current_bal = sum([b.get("total", 0) for b in all_balance])
@@ -499,7 +499,7 @@ def autonomous_shield_check():
             should_escalate = True
             if last_alert:
                 last_alert_dt = datetime.fromisoformat(last_alert.replace("Z", "+00:00"))
-                if (datetime.now(timezone.utc) - last_alert_dt).total_seconds() < 3600:
+                if (datetime.now(UTC) - last_alert_dt).total_seconds() < 3600:
                     should_escalate = False
 
             if should_escalate:
@@ -514,7 +514,7 @@ def autonomous_shield_check():
                     recommendation="Option 2 — Stop new entries to prevent further drawdown while maintaining current hedges.",
                     context=audit_text,
                 )
-                mem["shield_last_escalation_time"] = datetime.now(timezone.utc).isoformat() + "Z"
+                mem["shield_last_escalation_time"] = datetime.now(UTC).isoformat() + "Z"
                 from memory_manager import save_memory
 
                 save_memory(mem)

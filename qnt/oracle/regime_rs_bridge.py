@@ -3,7 +3,6 @@ Drop-in bridge: tries Rust LSTM inference first, falls back to Python/torch.
 Import detect_regime_full from here instead of hmm_regime for zero-torch operation.
 """
 
-import numpy as np
 import polars as pl
 
 try:

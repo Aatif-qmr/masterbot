@@ -1,26 +1,20 @@
-import os
-import json
-import time
-import requests
-import sys
 import subprocess
+import sys
+import time
+from datetime import UTC, datetime
 from pathlib import Path
-from datetime import datetime, timezone
-from dotenv import load_dotenv
+
+import requests
 
 # Add memory dir to path for imports
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(BASE_DIR / "qnt/memory"))
-from memory_manager import load_memory, save_memory, log_action
 from enhanced_bot import (
-    TOKEN,
-    CHAT_ID,
     API_URL,
-    send_telegram_message,
+    CHAT_ID,
     send_main_menu,
-    execute_command_raw,
-    KEYBOARDS,
 )
+from memory_manager import load_memory, log_action, save_memory
 
 
 def handle_command(text):
@@ -123,7 +117,6 @@ def process_update(update):
 
     # Parse as reply to escalation (import parse_reply locally to avoid circular dependency)
     try:
-        from enhanced_bot import EMOJI
 
         parsed = {"type": "custom", "value": text}  # Simplified parsing
 
@@ -146,7 +139,7 @@ def process_update(update):
             data["pending_replies"] = []
 
         entry = {
-            "timestamp": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+            "timestamp": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
             "raw_text": text,
             "parsed": parsed,
             "responded_to": escalation_ts,
@@ -177,11 +170,11 @@ def process_update(update):
                 f"{API_URL}/sendMessage",
                 json={"chat_id": CHAT_ID, "text": ack_text, "parse_mode": "HTML"},
             )
-        except Exception as e:
+        except Exception:
             pass
 
         log_action(
-            f"telegram_reply_received", f"User replied: {text} to escalation {escalation_ts}"
+            "telegram_reply_received", f"User replied: {text} to escalation {escalation_ts}"
         )
     except Exception as e:
         print(f"Error processing reply: {e}")
@@ -197,7 +190,7 @@ def main():
         updates = res.json().get("result", [])
         if updates:
             offset = updates[-1]["update_id"] + 1
-    except Exception as e:
+    except Exception:
         pass
 
     while True:

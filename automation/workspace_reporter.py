@@ -1,8 +1,8 @@
 import os
-import json
-import duckdb
 from datetime import datetime
 from pathlib import Path
+
+import duckdb
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 

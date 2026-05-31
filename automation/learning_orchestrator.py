@@ -1,10 +1,10 @@
 # automation/learning_orchestrator.py
-import sys
-import json
 import os
-import requests
-from datetime import datetime, timezone
+import sys
+from datetime import UTC, datetime
 from pathlib import Path
+
+import requests
 
 HOME = Path.home()
 BASE_DIR = HOME / "cipher"
@@ -37,7 +37,7 @@ def _send_telegram(text: str):
 
 
 def _log(msg: str):
-    ts = datetime.now(timezone.utc).isoformat()
+    ts = datetime.now(UTC).isoformat()
     line = f"[{ts}] {msg}"
     print(line)
     LOG_PATH.parent.mkdir(parents=True, exist_ok=True)
@@ -46,7 +46,7 @@ def _log(msg: str):
 
 
 def run():
-    start = datetime.now(timezone.utc)
+    start = datetime.now(UTC)
     _log("=== Learning cycle started ===")
     results = {}
 
@@ -78,7 +78,7 @@ def run():
 
         new_weights = run_sentiment()
         results["sentiment_weights"] = new_weights
-        _log(f"Sentiment calibrator: weights updated")
+        _log("Sentiment calibrator: weights updated")
     except Exception as e:
         _log(f"Sentiment calibrator FAILED: {e}")
         results["sentiment_weights"] = {}
@@ -95,7 +95,7 @@ def run():
         _log(f"Constraint extractor FAILED: {e}")
         results["constraint_rules"] = 0
 
-    elapsed = (datetime.now(timezone.utc) - start).seconds
+    elapsed = (datetime.now(UTC) - start).seconds
 
     # Build Telegram summary
     scores = results.get("scores", {})

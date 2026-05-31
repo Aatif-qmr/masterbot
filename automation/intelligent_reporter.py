@@ -1,12 +1,11 @@
-import os
 import json
-import requests
+import os
+from datetime import datetime, timedelta
+from pathlib import Path
+
 import duckdb
 import polars as pl
-from datetime import datetime, timedelta, timezone
-from tenacity import retry, stop_after_attempt, wait_exponential
-
-from pathlib import Path
+import requests
 from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -159,11 +158,11 @@ def generate_quant_report(data: dict) -> str:
     # Directive 2 based on sentiment
     if sentiment_score > 0.3:
         directives.append(
-            f"Execute full size entries on TrendFollowV1 and DailyTrendV1. Ranging strategies should run with a 0.5x Kelly multiplier."
+            "Execute full size entries on TrendFollowV1 and DailyTrendV1. Ranging strategies should run with a 0.5x Kelly multiplier."
         )
     elif sentiment_score < -0.3:
         directives.append(
-            f"Trigger safe-mode circuit breakers on MeanReversionV1 and SwingV1. Ensure BearScalpV1 is fully online to capture downside velocity."
+            "Trigger safe-mode circuit breakers on MeanReversionV1 and SwingV1. Ensure BearScalpV1 is fully online to capture downside velocity."
         )
     else:
         directives.append(
@@ -178,7 +177,7 @@ def generate_quant_report(data: dict) -> str:
         )
     else:
         directives.append(
-            f"Monitor cluster health and ensure Tailscale link connectivity to M1/M2 remains stable for automated SCP model updates."
+            "Monitor cluster health and ensure Tailscale link connectivity to M1/M2 remains stable for automated SCP model updates."
         )
 
     report = f"""### Senior Quant Executive Assessment

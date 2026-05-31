@@ -1,9 +1,9 @@
-import logging
 import json
+import logging
 import sys
-import os
+from datetime import datetime, timedelta
 from pathlib import Path
-from datetime import datetime, timezone, timedelta
+
 from pandas import DataFrame
 
 # Resolve project root from this file's location (works on any machine)
@@ -11,16 +11,16 @@ _BASE = Path(__file__).resolve().parent.parent.parent
 if str(_BASE) not in sys.path:
     sys.path.insert(0, str(_BASE))
 
-from freqtrade.strategy import IStrategy, IntParameter, DecimalParameter, merge_informative_pair
 from freqtrade.persistence import Trade
-import pandas as pd
-from risk.risk_manager import run_all_checks
-from risk.stake_sizer import get_stake_multiplier
-from risk.correlation_guard import is_blocked as corr_blocked
-from sentiment.reader import get_current_sentiment, get_sentiment_signal, get_funding_rate
+from freqtrade.strategy import IntParameter, IStrategy, merge_informative_pair
+
+from indicators.macro_merge import merge_macro_data
 from qnt.oracle.hmm_regime import detect_regime, get_regime_for_strategy
 from qnt.thesis.thesis_reader import read_thesis
-from indicators.macro_merge import merge_macro_data
+from risk.correlation_guard import is_blocked as corr_blocked
+from risk.risk_manager import run_all_checks
+from risk.stake_sizer import get_stake_multiplier
+from sentiment.reader import get_current_sentiment, get_funding_rate, get_sentiment_signal
 
 logger = logging.getLogger(__name__)
 
@@ -65,7 +65,7 @@ class ScalpV1(IStrategy):
             path = path1 if path1.exists() else path2
 
             if path.exists():
-                with open(path, "r") as f:
+                with open(path) as f:
                     params = json.load(f)
 
                 strat_name = self.__class__.__name__
@@ -94,9 +94,8 @@ class ScalpV1(IStrategy):
         # Load dynamic parameters first
         self.load_dynamic_params()
 
-        import polars as pl
-        from qnt.polars_ohlcv import pandas_to_polars, ohlcv_to_pandas
-        from qnt.polars_indicators import add_rsi, add_bollinger_bands, add_sma, add_ema
+        from qnt.polars_indicators import add_bollinger_bands, add_ema, add_rsi, add_sma
+        from qnt.polars_ohlcv import ohlcv_to_pandas, pandas_to_polars
 
         # Convert to Polars
         df_pl = pandas_to_polars(dataframe)
@@ -330,8 +329,8 @@ class ScalpV1(IStrategy):
                 import sys
 
                 sys.path.insert(0, str(_BASE / "qnt/agents"))
-                from trade_gate import evaluate_trade
                 from strategist import summarize_signal
+                from trade_gate import evaluate_trade
 
                 # Get analyzed dataframe
                 dataframe, _ = self.dp.get_analyzed_dataframe(pair, self.timeframe)

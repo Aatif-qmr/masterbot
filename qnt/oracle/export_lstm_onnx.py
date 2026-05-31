@@ -17,17 +17,15 @@ Benefits:
     - Compatible with Rust (ort crate), C++ (ONNX Runtime C++ API), and Mojo
 """
 
-import sys
 import os
+import sys
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(BASE_DIR / "qnt/oracle"))
 
-import torch
-import torch.nn as nn
 import numpy as np
-
+import torch
 from hmm_regime import RegimeLSTM
 
 
@@ -94,7 +92,7 @@ def export_to_onnx(
     pt_size = os.path.getsize(pt_path) / 1024
     onnx_size = os.path.getsize(onnx_path) / 1024
 
-    print(f"✓ ONNX export successful!")
+    print("✓ ONNX export successful!")
     print(f"  PyTorch model: {pt_size:.1f} KB")
     print(f"  ONNX model:    {onnx_size:.1f} KB")
     print(f"  Output:        {onnx_path}")

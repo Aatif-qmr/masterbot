@@ -1,11 +1,11 @@
-import os
 import json
-import time
-import requests
-from datetime import datetime, timezone
-import feedparser
+import os
 import warnings
-from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type
+from datetime import UTC, datetime
+
+import feedparser
+import requests
+from tenacity import retry, retry_if_exception_type, stop_after_attempt, wait_exponential
 
 warnings.filterwarnings("ignore")  # ignore transformer warnings
 
@@ -252,7 +252,7 @@ def run_pipeline():
 
     result = {
         "score": round(final_score, 4),
-        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "timestamp": datetime.now(UTC).isoformat(),
         "sources_used": list(scores.keys()),
         "component_scores": scores,
         "weights": active_weights,

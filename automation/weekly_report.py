@@ -1,13 +1,11 @@
 import os
-import json
 import sqlite3
-import requests
-import polars as pl
 import subprocess
-import shutil
-from datetime import datetime, timedelta, timezone
-
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
+
+import polars as pl
+import requests
 from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -19,8 +17,8 @@ def _claude_prompt(prompt: str, max_tokens: int = 200) -> str:
     if not api_key:
         return "Intelligence unavailable: ANTHROPIC_API_KEY not set."
     try:
-        import urllib.request
         import json as _json
+        import urllib.request
 
         payload = _json.dumps(
             {
@@ -68,7 +66,7 @@ RISK_LOG = str(BASE_DIR / "logs/risk_manager.log")
 def get_weekly_trades(db_paths: list, days_ago_start=7, days_ago_end=0) -> list:
     all_trades = []
 
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
     start_date = (now - timedelta(days=days_ago_start)).strftime("%Y-%m-%d %H:%M:%S")
     end_date = (now - timedelta(days=days_ago_end)).strftime("%Y-%m-%d %H:%M:%S")
 
@@ -193,7 +191,7 @@ def get_risk_events():
     one_week_ago = now - timedelta(days=7)
 
     try:
-        with open(RISK_LOG, "r") as f:
+        with open(RISK_LOG) as f:
             for line in f:
                 line_upper = line.upper()
                 if "WARNING" in line_upper and "DRAWDOWN" in line_upper:
@@ -246,7 +244,7 @@ def get_strategy_win_rate_trend(db_paths: list, weeks: int = 4) -> dict:
     Result: {strategy: [wr_oldest, ..., wr_last_week, wr_this_week]}
     Each value is a float 0-100 or None if no trades that week.
     """
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
     trend = {}
 
     for db_path in db_paths:
@@ -290,7 +288,7 @@ def format_trend_table(trend: dict, weeks: int = 4) -> str:
     if not trend:
         return "No trade history yet."
 
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
     headers = []
     for w in range(weeks, -1, -1):
         label = "Now" if w == 0 else f"W-{w}"
@@ -424,7 +422,7 @@ def save_html_report(metrics, filename):
 
 
 if __name__ == "__main__":
-    today = datetime.now(timezone.utc)
+    today = datetime.now(UTC)
     week_start, week_end = (
         (today - timedelta(days=7)).strftime("%Y-%m-%d"),
         today.strftime("%Y-%m-%d"),

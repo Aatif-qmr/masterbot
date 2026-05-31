@@ -1,14 +1,11 @@
-import os
+# Add memory dir to path for imports
+import pathlib as _pl
 import sys
-import time
 from enum import IntEnum
 
-# Add memory dir to path for imports
-import os as _os, pathlib as _pl
-
 sys.path.insert(0, str(_pl.Path(__file__).resolve().parent))
-from memory_manager import log_action, log_decision, update_decision_outcome
-from qnt_notifier import send_notify, send_escalation, get_pending_reply, parse_reply
+from memory_manager import log_action
+from qnt_notifier import get_pending_reply, parse_reply, send_escalation, send_notify
 
 
 class AutonomyLevel(IntEnum):
@@ -110,14 +107,14 @@ def handle(
 
         if not msg_id:
             # Fallback if Telegram fails
-            log_action(f"escalation_failed", f"Could not send Telegram for {situation_type}")
+            log_action("escalation_failed", f"Could not send Telegram for {situation_type}")
             return None
 
         # Wait for reply (blocking call)
         reply_text = get_pending_reply(timeout_minutes=30)
 
         if not reply_text:
-            log_action(f"escalation_timeout", f"No reply for {situation_type} after 30m")
+            log_action("escalation_timeout", f"No reply for {situation_type} after 30m")
             return None
 
         parsed = parse_reply(reply_text, len(escalation_options) if escalation_options else 2)

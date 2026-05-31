@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-import os
 import glob
+import os
 
 QNT_MD_PATH = "QNT.md"
 STRATEGIES_DIR = "strategies/active"
@@ -21,7 +21,7 @@ def update_qnt_brain():
     strategies = get_active_strategies()
     scripts = get_automation_scripts()
 
-    with open(QNT_MD_PATH, "r") as f:
+    with open(QNT_MD_PATH) as f:
         content = f.read()
 
     # Simple replacement for dynamic sections (could be more robust with regex)

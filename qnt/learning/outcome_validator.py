@@ -1,9 +1,9 @@
 # qnt/learning/outcome_validator.py
+import csv
+import glob
 import json
 import sqlite3
-import glob
-import csv
-from datetime import datetime, timezone, timedelta
+from datetime import UTC, datetime
 from pathlib import Path
 
 HOME = Path.home()
@@ -59,7 +59,7 @@ def _load_closed_trades() -> list:
             conn.close()
             for r in rows:
                 try:
-                    open_dt = datetime.fromisoformat(r[2]).replace(tzinfo=timezone.utc)
+                    open_dt = datetime.fromisoformat(r[2]).replace(tzinfo=UTC)
                     trades.append(
                         {"pair": r[0], "strategy": r[1], "open_dt": open_dt, "profit": float(r[4])}
                     )
@@ -194,7 +194,7 @@ def run() -> dict:
     sentiment_rows = _load_sentiment_history()
 
     scores = {
-        "updated_at": datetime.now(timezone.utc).isoformat(),
+        "updated_at": datetime.now(UTC).isoformat(),
         "trade_count": len(trades),
         "thesis_accuracy": _score_thesis_accuracy(trades, sentiment_rows),
         "regime_accuracy": _score_regime_accuracy(trades),

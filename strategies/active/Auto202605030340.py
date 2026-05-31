@@ -1,13 +1,12 @@
-import sys
-import os
 import json
 import logging
-from datetime import datetime, timedelta, timezone
+import sys
+from datetime import datetime, timedelta
 from pathlib import Path
-from pandas import DataFrame
 
-from freqtrade.strategy import IStrategy
 from freqtrade.persistence import Trade
+from freqtrade.strategy import IStrategy
+from pandas import DataFrame
 
 # Resolve project root from this file's location (works on any machine)
 _BASE = Path(__file__).resolve().parent.parent.parent
@@ -15,7 +14,7 @@ if str(_BASE) not in sys.path:
     sys.path.insert(0, str(_BASE))
 
 from risk.risk_manager import run_all_checks
-from sentiment.reader import get_current_sentiment, get_sentiment_signal
+from sentiment.reader import get_sentiment_signal
 
 logger = logging.getLogger(__name__)
 
@@ -48,9 +47,8 @@ class Auto202605030340(IStrategy):
         """
         Calculate indicators using polars.
         """
-        import polars as pl
-        from qnt.polars_ohlcv import pandas_to_polars, ohlcv_to_pandas
         from qnt.polars_indicators import add_rsi
+        from qnt.polars_ohlcv import ohlcv_to_pandas, pandas_to_polars
 
         df_pl = pandas_to_polars(dataframe)
 

@@ -1,13 +1,14 @@
-import os
 import json
-import requests
-import psycopg
-from psycopg.rows import dict_row
-import polars as pl
-from datetime import datetime, timedelta, timezone
+import os
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
+
+import polars as pl
+import psycopg
+import requests
 from dotenv import load_dotenv
-from prefect import task, flow
+from prefect import flow, task
+from psycopg.rows import dict_row
 
 # Load environment variables dynamically
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -229,7 +230,7 @@ def generate_aggregated_report(data: dict) -> str:
     """Generates the aggregated stats report from gathered data."""
     summary = data["summary"]
 
-    stats_md = f"### Overall Summary\n"
+    stats_md = "### Overall Summary\n"
     stats_md += f"- Total Closed Trades: {summary['total_trades']}\n"
     stats_md += f"- Total Cumulative Profit: {summary['total_profit_ratio']:.2%}\n\n"
 
@@ -240,7 +241,7 @@ def generate_aggregated_report(data: dict) -> str:
     else:
         stats_md += "- No active trades found.\n"
 
-    stats_md += f"\n### 🔴 Last Closed Trades\n"
+    stats_md += "\n### 🔴 Last Closed Trades\n"
     if summary["closed_trades"]:
         for t in summary["closed_trades"][:5]:
             stats_md += (
@@ -298,7 +299,7 @@ def save_report_locally(date_str: str, quant_report: str, aggregated_report: str
 
     report_payload = {
         "date": date_str,
-        "generated_at": datetime.now(timezone.utc).isoformat(),
+        "generated_at": datetime.now(UTC).isoformat(),
         "quant_report": quant_report,
         "aggregated_report": aggregated_report,
         "raw_summary": raw_data["summary"]["by_strategy"],

@@ -1,4 +1,5 @@
 import os
+
 import ccxt
 from dotenv import load_dotenv
 

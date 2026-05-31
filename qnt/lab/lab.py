@@ -1,25 +1,24 @@
 import os
-import sys
-import subprocess
-import json
-import time
 import re
 import sqlite3
-import pandas as pd
-from datetime import datetime, timezone
+import subprocess
+import sys
+import time
+from datetime import datetime
 
 # Add paths
 from pathlib import Path as _Path
+
+import pandas as pd
 
 BASE_DIR = str(_Path(__file__).resolve().parent.parent.parent)
 sys.path.insert(0, os.path.join(BASE_DIR, "qnt/memory"))
 sys.path.insert(0, os.path.join(BASE_DIR, "qnt/bridge"))
 sys.path.insert(0, os.path.join(BASE_DIR, "qnt/shield"))
 
-from device_router import run_on_m1, run_on_m2, get_current_device
-from memory_manager import log_action, log_decision
-from qnt_notifier import send_notify, send_escalation, get_pending_reply, parse_reply
-from autonomy_router import handle
+from device_router import get_current_device, run_on_m1, run_on_m2
+from memory_manager import log_action
+from qnt_notifier import send_escalation, send_notify
 
 DEVICE = get_current_device()
 M2_PATH = "/Users/azmatsaif/cipher"  # remote machine
@@ -111,7 +110,7 @@ def run_backtest(strategy_name, timerange="20240101-20260101", timeframe=None):
 
     # Auto-detect timeframe if not provided
     if not timeframe and os.path.exists(strat_file):
-        with open(strat_file, "r") as f:
+        with open(strat_file) as f:
             content = f.read()
             match = re.search(r"timeframe\s*=\s*['\"]([^'\"]+)['\"]", content)
             if match:
@@ -178,7 +177,7 @@ def run_backtest(strategy_name, timerange="20240101-20260101", timeframe=None):
             if re.search(r"Sharpe ratio.*?([\d.-]+)", stdout)
             else 0
         )
-    except Exception as e:
+    except Exception:
         metrics = {"error": "Could not parse all metrics"}
 
     # Pass/Fail Criteria
@@ -228,7 +227,7 @@ def evolve_strategy(strategy_name, lookback_trades=20):
         query = f"SELECT * FROM trades WHERE strategy='{strategy_name}' AND is_open=0 ORDER BY close_date DESC LIMIT {lookback_trades}"
         df = pd.read_sql_query(query, conn)
         conn.close()
-    except Exception as e:
+    except Exception:
         return None
 
     if df.empty or len(df[df["profit_ratio"] < 0]) < 3:
@@ -248,7 +247,7 @@ def evolve_strategy(strategy_name, lookback_trades=20):
     if not os.path.exists(strat_file):
         return None
 
-    with open(strat_file, "r") as f:
+    with open(strat_file) as f:
         original_code = f.read()
 
     prompt = f"""Read this existing Freqtrade strategy:
@@ -351,10 +350,9 @@ def deploy_strategy(strategy_file, force=False):
     subprocess.run(["cp", strategy_file, target_path])
 
     # Reload bot
-    from bridge import bot_status
 
     run_on_m1(
-        f'curl -s -X POST -u "$FREQTRADE_UI_USERNAME:$FREQTRADE_UI_PASSWORD" http://100.90.68.42:8080/api/v1/reload_config'
+        'curl -s -X POST -u "$FREQTRADE_UI_USERNAME:$FREQTRADE_UI_PASSWORD" http://100.90.68.42:8080/api/v1/reload_config'
     )
 
     send_notify(

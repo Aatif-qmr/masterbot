@@ -1,10 +1,11 @@
 import os
-import subprocess
 import socket
-import requests
+import subprocess
 import sys
-from requests.auth import HTTPBasicAuth
+
+import requests
 from dotenv import load_dotenv
+from requests.auth import HTTPBasicAuth
 
 # --- CONFIGURATION ---
 M1_USER = "aatifquamre"
@@ -68,13 +69,13 @@ def run_on_m1(command, capture=True):
     if DEVICE_CONTEXT["device"] == "M1":
         # Local execution
         proc = subprocess.run(command, shell=True, capture_output=capture, text=True)
-        log_action(f"run_on_m1_local", f"Cmd: {command[:50]}... | Exit: {proc.returncode}")
+        log_action("run_on_m1_local", f"Cmd: {command[:50]}... | Exit: {proc.returncode}")
         return proc.stdout, proc.stderr, proc.returncode
     else:
         # Remote execution via SSH
         ssh_cmd = f"ssh {M1_USER}@{M1_IP} '{command}'"
         proc = subprocess.run(ssh_cmd, shell=True, capture_output=capture, text=True)
-        log_action(f"run_on_m1_remote", f"Cmd: {command[:50]}... | Exit: {proc.returncode}")
+        log_action("run_on_m1_remote", f"Cmd: {command[:50]}... | Exit: {proc.returncode}")
         return proc.stdout, proc.stderr, proc.returncode
 
 
@@ -91,13 +92,13 @@ def run_on_m2(command, capture=True):
     if DEVICE_CONTEXT["device"] == "M2":
         # Local execution
         proc = subprocess.run(command, shell=True, capture_output=capture, text=True)
-        log_action(f"run_on_m2_local", f"Cmd: {command[:50]}... | Exit: {proc.returncode}")
+        log_action("run_on_m2_local", f"Cmd: {command[:50]}... | Exit: {proc.returncode}")
         return proc.stdout, proc.stderr, proc.returncode
     else:
         # Remote execution via SSH
         ssh_cmd = f"ssh {M2_USER}@{M2_IP} '{command}'"
         proc = subprocess.run(ssh_cmd, shell=True, capture_output=capture, text=True)
-        log_action(f"run_on_m2_remote", f"Cmd: {command[:50]}... | Exit: {proc.returncode}")
+        log_action("run_on_m2_remote", f"Cmd: {command[:50]}... | Exit: {proc.returncode}")
         return proc.stdout, proc.stderr, proc.returncode
 
 

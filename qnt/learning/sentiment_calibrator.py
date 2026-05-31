@@ -1,6 +1,6 @@
 # qnt/learning/sentiment_calibrator.py
 import json
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 HOME = Path.home()
@@ -32,7 +32,7 @@ def _load_current_weights() -> dict:
 
 def _save_weights(weights: dict):
     WEIGHTS_PATH.parent.mkdir(parents=True, exist_ok=True)
-    out = {"updated_at": datetime.now(timezone.utc).isoformat(), "weights": weights}
+    out = {"updated_at": datetime.now(UTC).isoformat(), "weights": weights}
     WEIGHTS_PATH.write_text(json.dumps(out, indent=2))
 
 

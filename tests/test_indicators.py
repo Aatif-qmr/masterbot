@@ -24,6 +24,7 @@ def test_merge_macro_data_no_file(tmp_path, monkeypatch):
 
 def test_merge_macro_data_with_file(tmp_path, monkeypatch):
     import json
+
     import indicators.macro_merge as mm
 
     macro_file = tmp_path / "macro_history.json"

@@ -5,24 +5,23 @@ Runs Out-of-Sample Validation: Trains on Days 1-5, Tests on Day 6.
 Enforces max 5% drawdown and auto-promotes successful configurations.
 """
 
-import subprocess
-import json
-import time
-import sys
-import os
-import shutil
-from pathlib import Path
-from datetime import datetime, timedelta
-
 # Force unbuffered output
 import functools
+import json
+import os
+import shutil
+import subprocess
+import sys
+import time
+from datetime import datetime, timedelta
+from pathlib import Path
 
 print = functools.partial(print, flush=True)
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(BASE_DIR))
 
-from qnt.shadow.resource_monitor import should_allow_optimization, get_resource_snapshot, save_state
+from qnt.shadow.resource_monitor import save_state, should_allow_optimization
 from risk.risk_manager import send_telegram_alert  # Reuse existing notifier
 
 STRATEGIES = [
@@ -152,7 +151,7 @@ def run_shadow_hyperopt(strategy: str) -> dict | None:
         if "Best Sharpe" in line or "Sharpe Ratio" in line:
             try:
                 best_sharpe = float(line.split(":")[-1].strip())
-            except:
+            except Exception:
                 pass
 
     # ---------------------------------------------------------
@@ -280,7 +279,7 @@ def check_improvement(result: dict) -> bool:
     try:
         with open(baseline_file) as f:
             baselines = json.load(f)
-    except:
+    except Exception:
         baselines = {}
 
     current = baselines.get(strategy, {}).get("sharpe")

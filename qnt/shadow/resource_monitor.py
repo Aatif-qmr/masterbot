@@ -1,10 +1,11 @@
-import psutil
 import json
-import time
-import subprocess
 import os
-from datetime import datetime, timezone, timedelta
+import subprocess
+import time
+from datetime import UTC, datetime
 from pathlib import Path
+
+import psutil
 
 # Path setup for M2 environment
 HOME = Path.home()
@@ -70,7 +71,7 @@ def get_resource_snapshot():
             continue
 
     return {
-        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "timestamp": datetime.now(UTC).isoformat(),
         "ram": {
             "total_gb": round(ram.total / (1024**3), 2),
             "used_gb": round(ram.used / (1024**3), 2),
@@ -96,7 +97,7 @@ def save_state():
     history = []
     if MONITOR_FILE.exists():
         try:
-            with open(MONITOR_FILE, "r") as f:
+            with open(MONITOR_FILE) as f:
                 history = json.load(f)
         except Exception:
             pass
@@ -143,9 +144,9 @@ def monitor_continuously(interval=30):
             history = []
             if MONITOR_FILE.exists():
                 try:
-                    with open(MONITOR_FILE, "r") as f:
+                    with open(MONITOR_FILE) as f:
                         history = json.load(f)
-                except Exception as e:
+                except Exception:
                     pass
 
             history.append(snapshot)
@@ -186,7 +187,7 @@ def get_daily_report():
         return "No resource data found."
 
     try:
-        with open(MONITOR_FILE, "r") as f:
+        with open(MONITOR_FILE) as f:
             history = json.load(f)
 
         if not history:
@@ -211,7 +212,7 @@ def get_daily_report():
         report = f"""
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 M2 RESOURCE DAILY REPORT
-Generated: {datetime.now(timezone.utc).isoformat()}
+Generated: {datetime.now(UTC).isoformat()}
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 AVG RAM USAGE: {avg_ram:.1f}%
 PEAK RAM USAGE: {peak_ram:.1f}% at {peak_time}

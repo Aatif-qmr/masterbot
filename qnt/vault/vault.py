@@ -3,11 +3,11 @@ import hashlib
 import os
 import sys
 import time
+from datetime import UTC, datetime
 from pathlib import Path
-from datetime import datetime, timezone
 
 from qdrant_client import QdrantClient
-from qdrant_client.models import Distance, VectorParams, PointStruct
+from qdrant_client.models import Distance, PointStruct, VectorParams
 from sentence_transformers import SentenceTransformer
 
 _BASE = Path(__file__).resolve().parent.parent.parent
@@ -126,7 +126,7 @@ def add_trade_memory(trade_dict: dict, analysis: str) -> bool:
         "pair": trade_dict.get("pair", ""),
         "strategy": trade_dict.get("strategy", ""),
         "type": "trade_postmortem",
-        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "timestamp": datetime.now(UTC).isoformat(),
     }
     return store_lesson(lesson_id, text, metadata)
 

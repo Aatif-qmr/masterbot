@@ -1,9 +1,9 @@
-import pandas as pd
-import talib.abstract as ta
 import logging
+import sys
 from datetime import datetime
 from pathlib import Path
-import sys
+
+import pandas as pd
 
 logger = logging.getLogger(__name__)
 
@@ -12,13 +12,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 if str(BASE_DIR) not in sys.path:
     sys.path.insert(0, str(BASE_DIR))
 
-from risk.risk_manager import run_all_checks
-from qnt.oracle.sentiment_gate import get_sentiment_score
-from qnt.oracle.hmm_regime import detect_regime, get_regime_for_strategy
-from qnt.thesis.thesis_reader import read_thesis
-
 from freqtrade.strategy import IStrategy, informative
-from freqtrade.persistence import Trade
+
+from qnt.oracle.hmm_regime import detect_regime, get_regime_for_strategy
+from qnt.oracle.sentiment_gate import get_sentiment_score
+from qnt.thesis.thesis_reader import read_thesis
+from risk.risk_manager import run_all_checks
 
 
 class MicroScalpV1(IStrategy):
@@ -35,8 +34,9 @@ class MicroScalpV1(IStrategy):
     @informative("15m")
     def populate_indicators(self, dataframe: pd.DataFrame, metadata: dict) -> pd.DataFrame:
         import polars as pl
-        from qnt.polars_ohlcv import pandas_to_polars, ohlcv_to_pandas
-        from qnt.polars_indicators import add_rsi, add_bollinger_bands, add_ema
+
+        from qnt.polars_indicators import add_bollinger_bands, add_ema, add_rsi
+        from qnt.polars_ohlcv import ohlcv_to_pandas, pandas_to_polars
 
         # Convert Pandas to Polars
         df_pl = pandas_to_polars(dataframe)
@@ -194,8 +194,8 @@ class MicroScalpV1(IStrategy):
             import sys
 
             sys.path.insert(0, str(BASE_DIR / "qnt/agents"))
-            from trade_gate import evaluate_trade
             from strategist import summarize_signal
+            from trade_gate import evaluate_trade
 
             # Get analyzed dataframe
             dataframe, _ = self.dp.get_analyzed_dataframe(pair, self.timeframe)

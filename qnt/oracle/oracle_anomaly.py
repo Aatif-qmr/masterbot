@@ -1,18 +1,18 @@
-import os
-import sys
 import json
+import os
 import sqlite3
-import polars as pl
-from datetime import datetime, timezone, timedelta
+import sys
 
 # Add paths
 from pathlib import Path as _Path
 
+import polars as pl
+
 BASE_DIR = str(_Path(__file__).resolve().parent.parent.parent)
 sys.path.insert(0, os.path.join(BASE_DIR, "qnt/memory"))
 
-from memory_manager import load_memory, log_action
-from qnt_notifier import send_notify, send_escalation
+from memory_manager import log_action
+from qnt_notifier import send_escalation, send_notify
 
 DB_PATH = os.path.join(BASE_DIR, "user_data/tradesv3.sqlite")
 SENTIMENT_JSON = os.path.join(BASE_DIR, "sentiment/scores/current_score.json")
@@ -22,7 +22,7 @@ SENTIMENT_CSV = os.path.join(BASE_DIR, "sentiment/scores/history.csv")
 def check_funding_sentiment_divergence():
     """Detect when news/social sentiment disagrees with leverage (funding)."""
     try:
-        with open(SENTIMENT_JSON, "r") as f:
+        with open(SENTIMENT_JSON) as f:
             data = json.load(f)
 
         funding = data.get("component_scores", {}).get("funding", 0)
@@ -47,7 +47,7 @@ def check_funding_sentiment_divergence():
                 "reason": "High short leverage despite bullish news (Short Squeeze potential)",
             }
 
-    except Exception as e:
+    except Exception:
         pass
     return {"divergence": False}
 
@@ -55,7 +55,7 @@ def check_funding_sentiment_divergence():
 def check_fear_greed_extreme():
     """Detect contrarian signals from extreme Fear & Greed."""
     try:
-        with open(SENTIMENT_JSON, "r") as f:
+        with open(SENTIMENT_JSON) as f:
             data = json.load(f)
 
         # raw value is normalized in our current pipeline to -1..1
@@ -67,7 +67,7 @@ def check_fear_greed_extreme():
             return {"extreme": True, "type": "EXTREME FEAR", "value": val}
         if val >= 0.7:
             return {"extreme": True, "type": "EXTREME GREED", "value": val}
-    except Exception as e:
+    except Exception:
         pass
     return {"extreme": False}
 
@@ -87,7 +87,7 @@ def check_sentiment_velocity():
                     "magnitude": change,
                     "direction": "up" if current > old else "down",
                 }
-    except Exception as e:
+    except Exception:
         pass
     return {"alert": False}
 
@@ -108,7 +108,7 @@ def check_performance_divergence():
 
         win_rate = (df.get_column("profit_ratio") > 0).sum() / len(df)
 
-        with open(SENTIMENT_JSON, "r") as f:
+        with open(SENTIMENT_JSON) as f:
             sentiment = json.load(f).get("score", 0)
 
         if win_rate < 0.35 and sentiment > 0.2:
@@ -116,7 +116,7 @@ def check_performance_divergence():
                 "divergence": True,
                 "reason": f"Low win rate ({win_rate * 100:.0f}%) despite bullish sentiment",
             }
-    except Exception as e:
+    except Exception:
         pass
     return {"divergence": False}
 

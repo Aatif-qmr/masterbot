@@ -1,20 +1,20 @@
-import os
-import sys
-import sqlite3
 import json
+import os
+import sqlite3
 import subprocess
-import pandas as pd
-from datetime import datetime, timezone
+import sys
+from datetime import UTC, datetime
 from pathlib import Path
+
+import pandas as pd
 
 BASE_DIR = str(Path(__file__).resolve().parent.parent.parent)
 sys.path.insert(0, os.path.join(BASE_DIR, "qnt/memory"))
 sys.path.insert(0, os.path.join(BASE_DIR, "qnt/vault"))
 sys.path.insert(0, os.path.join(BASE_DIR, "qnt/oracle"))
 
-from memory_manager import load_memory, log_action
-from vault import add_trade_memory, add_entry
 from oracle_calendar import calculate_risk_level
+from vault import add_entry, add_trade_memory
 
 
 def get_db_path():
@@ -38,7 +38,7 @@ def get_db_path():
                 conn.close()
                 if count > 0:
                     return p
-            except Exception as e:
+            except Exception:
                 continue
     return paths[0]  # Fallback
 
@@ -78,7 +78,7 @@ def generate_post_mortem(trade_id):
                     trade = trades_df.iloc[0]
                     db_to_use = db
                     break
-            except Exception as e:
+            except Exception:
                 continue
 
         if trade is None:
@@ -104,7 +104,7 @@ def generate_post_mortem(trade_id):
             closest_close = hist.iloc[(hist["timestamp"] - close_dt).abs().argsort()[:1]]
             if not closest_close.empty:
                 sentiment_at_close = f"{closest_close.iloc[0]['score']:.2f}"
-        except Exception as e:
+        except Exception:
             pass
 
         # 2. Calendar Events
@@ -174,7 +174,7 @@ def generate_weekly_post_mortem():
         ]
 
         all_losses = []
-        threshold = (datetime.now(timezone.utc) - pd.Timedelta(days=7)).strftime(
+        threshold = (datetime.now(UTC) - pd.Timedelta(days=7)).strftime(
             "%Y-%m-%d %H:%M:%S"
         )
 
@@ -188,7 +188,7 @@ def generate_weekly_post_mortem():
                 conn.close()
                 if not losses.empty:
                     all_losses.extend(losses["trade_id"].tolist())
-            except Exception as e:
+            except Exception:
                 continue
 
         if not all_losses:
@@ -199,7 +199,7 @@ def generate_weekly_post_mortem():
             reports.append(generate_post_mortem(tid))
 
         summary_prompt = (
-            f"Summarize these weekly trading post-mortems into 3 key lessons:\n\n"
+            "Summarize these weekly trading post-mortems into 3 key lessons:\n\n"
             + "\n".join(reports)
         )
 
@@ -214,7 +214,7 @@ def generate_weekly_post_mortem():
 
         # Store in vault
         metadata = {
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
             "category": "strategy",
             "tags": "weekly,lessons,post-mortem",
         }

@@ -1,10 +1,8 @@
-import os
-import sys
-import json
 import sqlite3
-import pandas as pd
-from datetime import datetime, timezone, timedelta
+import sys
 from pathlib import Path
+
+import pandas as pd
 
 # Machine-agnostic path setup
 HOME = Path.home()
@@ -12,7 +10,6 @@ BASE_DIR = HOME / "cipher"
 sys.path.insert(0, str(BASE_DIR / "qnt/memory"))
 sys.path.insert(0, str(BASE_DIR / "qnt/vault"))
 
-from memory_manager import log_action, load_memory
 from vault import store_lesson
 
 

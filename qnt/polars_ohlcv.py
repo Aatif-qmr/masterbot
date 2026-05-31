@@ -17,7 +17,6 @@ Usage:
 
 from __future__ import annotations
 
-import os
 from pathlib import Path
 
 try:
@@ -35,7 +34,7 @@ def load_ohlcv(
     path: str | Path,
     date_column: str = "date",
     sort: bool = True,
-) -> "pl.DataFrame":
+) -> pl.DataFrame:
     """
     Load OHLCV CSV data into a Polars DataFrame.
 
@@ -81,7 +80,7 @@ def load_ohlcv(
 def load_ohlcv_lazy(
     path: str | Path,
     date_column: str = "date",
-) -> "pl.LazyFrame":
+) -> pl.LazyFrame:
     """
     Load OHLCV data as a Polars LazyFrame for deferred execution.
 
@@ -114,7 +113,7 @@ def load_ohlcv_lazy(
     )
 
 
-def ohlcv_to_pandas(df: "pl.DataFrame") -> "object":
+def ohlcv_to_pandas(df: pl.DataFrame) -> object:
     """
     Convert a Polars DataFrame to a Pandas DataFrame for Freqtrade
     strategy compatibility.
@@ -125,7 +124,7 @@ def ohlcv_to_pandas(df: "pl.DataFrame") -> "object":
     return df.to_pandas()
 
 
-def pandas_to_polars(pdf: "object") -> "pl.DataFrame":
+def pandas_to_polars(pdf: object) -> pl.DataFrame:
     """
     Convert a Pandas DataFrame to a Polars DataFrame.
     Useful for bridging Freqtrade's Pandas-based DataProvider
@@ -139,7 +138,7 @@ def pandas_to_polars(pdf: "object") -> "pl.DataFrame":
 def load_multiple_pairs(
     data_dir: str | Path | None = None,
     pattern: str = "*_USDT_*.csv",
-) -> dict[str, "pl.DataFrame"]:
+) -> dict[str, pl.DataFrame]:
     """
     Load multiple pair CSVs from a directory into a dict.
 
@@ -166,7 +165,6 @@ def memory_comparison(path: str | Path) -> dict:
 
     Returns dict with memory usage in MB for each library.
     """
-    import sys
 
     filepath = Path(path)
     if not filepath.is_absolute():

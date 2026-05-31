@@ -1,10 +1,12 @@
 import unittest
+from datetime import UTC
+
 from risk.risk_manager import (
-    check_daily_drawdown,
-    check_weekly_drawdown,
-    check_position_size,
-    check_order_rate,
     check_consecutive_losses,
+    check_daily_drawdown,
+    check_order_rate,
+    check_position_size,
+    check_weekly_drawdown,
     run_all_checks,
 )
 
@@ -82,10 +84,10 @@ class TestRiskManager(unittest.TestCase):
         self.assertTrue(check_consecutive_losses(recent_trades))
 
     def test_consecutive_losses_allows_after_cooldown(self):
-        from datetime import datetime, timezone, timedelta
+        from datetime import datetime, timedelta
 
         # 3 losses, but the last one was 61 minutes ago
-        last_loss_time = datetime.now(timezone.utc) - timedelta(minutes=61)
+        last_loss_time = datetime.now(UTC) - timedelta(minutes=61)
         recent_trades = [
             {"profit_ratio": -0.02, "close_date": last_loss_time.isoformat()},
             {"profit_ratio": -0.03},
@@ -94,10 +96,10 @@ class TestRiskManager(unittest.TestCase):
         self.assertTrue(check_consecutive_losses(recent_trades))
 
     def test_consecutive_losses_blocks_within_cooldown(self):
-        from datetime import datetime, timezone, timedelta
+        from datetime import datetime, timedelta
 
         # 3 losses, last one was 30 minutes ago
-        last_loss_time = datetime.now(timezone.utc) - timedelta(minutes=30)
+        last_loss_time = datetime.now(UTC) - timedelta(minutes=30)
         recent_trades = [
             {"profit_ratio": -0.02, "close_date": last_loss_time.isoformat()},
             {"profit_ratio": -0.03},

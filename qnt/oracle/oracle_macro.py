@@ -1,9 +1,10 @@
-import os
 import json
+import os
+from datetime import UTC, datetime
+from pathlib import Path
+
 import requests
 import yfinance as yf
-from datetime import datetime, timezone, timedelta
-from pathlib import Path
 from dotenv import load_dotenv
 
 # Machine-agnostic path setup
@@ -57,7 +58,7 @@ def main():
     funding_rate, open_interest = fetch_binance_macro()
 
     macro_state = {
-        "timestamp": datetime.now(timezone.utc).isoformat() + "Z",
+        "timestamp": datetime.now(UTC).isoformat() + "Z",
         "dxy_24h_change": dxy_change,
         "btc_funding_rate": funding_rate,
         "btc_open_interest": open_interest,
@@ -71,9 +72,9 @@ def main():
     history = []
     if MACRO_HISTORY_FILE.exists():
         try:
-            with open(MACRO_HISTORY_FILE, "r") as f:
+            with open(MACRO_HISTORY_FILE) as f:
                 history = json.load(f)
-        except Exception as e:
+        except Exception:
             history = []
 
     history.append(macro_state)

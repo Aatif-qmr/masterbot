@@ -1,16 +1,17 @@
+import json
 import os
 import sys
-import json
-import polars as pl
-from datetime import datetime, timezone, timedelta
+from datetime import datetime
 
 # Add paths
 from pathlib import Path as _Path
 
+import polars as pl
+
 BASE_DIR = str(_Path(__file__).resolve().parent.parent.parent)
 sys.path.insert(0, os.path.join(BASE_DIR, "qnt/memory"))
 
-from memory_manager import load_memory, log_action
+from memory_manager import log_action
 from qnt_notifier import send_notify
 
 SENTIMENT_JSON = os.path.join(BASE_DIR, "sentiment/scores/current_score.json")
@@ -20,9 +21,9 @@ SENTIMENT_CSV = os.path.join(BASE_DIR, "sentiment/scores/history.csv")
 def get_current_sentiment():
     """Read current score and breakdown."""
     try:
-        with open(SENTIMENT_JSON, "r") as f:
+        with open(SENTIMENT_JSON) as f:
             return json.load(f)
-    except Exception as e:
+    except Exception:
         return None
 
 
@@ -78,7 +79,7 @@ def explain_sentiment():
                 trend_str = "IMPROVING"
             elif diff < -0.2:
                 trend_str = "DECLINING"
-    except Exception as e:
+    except Exception:
         pass
 
     now = datetime.now().strftime("%Y-%m-%d %H:%M")
@@ -130,7 +131,7 @@ def detect_sentiment_shift():
                     "old": round(old_score, 3),
                     "new": round(score, 3),
                 }
-    except Exception as e:
+    except Exception:
         pass
 
     return {"shifted": False}

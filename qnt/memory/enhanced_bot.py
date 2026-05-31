@@ -9,15 +9,15 @@ Features:
 - Better message formatting with HTML/Markdown
 """
 
-import os
 import json
-import time
-import requests
+import os
 import subprocess
-from datetime import datetime, timezone, timedelta
+import time
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
+
+import requests
 from dotenv import load_dotenv
-from typing import Optional, Dict, List, Any
 
 # --- CONFIGURATION ---
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -107,7 +107,7 @@ KEYBOARDS = {
 
 def get_current_time_ist() -> str:
     """Get current time in IST (UTC+5:30)."""
-    now_utc = datetime.now(timezone.utc)
+    now_utc = datetime.now(UTC)
     now_ist = now_utc + timedelta(hours=5, minutes=30)
     return now_ist.strftime("%H:%M IST %d-%b")
 
@@ -162,11 +162,11 @@ def send_imessage(phone_number: str, message: str) -> bool:
 
 def send_telegram_message(
     text: str,
-    chat_id: Optional[str] = None,
+    chat_id: str | None = None,
     parse_mode: str = "HTML",
-    reply_markup: Optional[Dict] = None,
+    reply_markup: dict | None = None,
     disable_notification: bool = False,
-) -> Optional[int]:
+) -> int | None:
     """Send message to Telegram with optional inline keyboard."""
     if not TOKEN:
         print("❌ Telegram token missing")
@@ -237,7 +237,7 @@ def send_notify(title: str, message: str, level: str = "INFO", use_imessage: boo
 
 def send_with_keyboard(
     title: str, message: str, keyboard_type: str, level: str = "INFO"
-) -> Optional[int]:
+) -> int | None:
     """Send message with inline keyboard."""
     prefix = EMOJI.get(level, EMOJI["INFO"])
     timestamp = get_current_time_ist()
@@ -259,8 +259,8 @@ def send_with_keyboard(
 
 
 def send_escalation(
-    situation: str, options: List[str], recommendation: str, context: Optional[str] = None
-) -> Optional[int]:
+    situation: str, options: list[str], recommendation: str, context: str | None = None
+) -> int | None:
     """Send escalation with inline keyboard buttons for each option."""
     if not TOKEN or not CHAT_ID:
         return None
@@ -323,7 +323,7 @@ def send_escalation(
                 from memory_manager import log_decision
 
                 log_decision(situation, options, "PENDING", recommendation)
-            except Exception as e:
+            except Exception:
                 pass
 
             return message_id
@@ -429,7 +429,7 @@ def execute_command_raw(command: str) -> str:
         return f"❌ Error: {html.escape(str(e))}"
 
 
-def send_main_menu() -> Optional[int]:
+def send_main_menu() -> int | None:
     """Send the main control menu."""
     text = (
         f"{EMOJI['ROBOT']} <b>Cipher QNT Control Center</b>\n"

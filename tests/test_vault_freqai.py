@@ -16,7 +16,6 @@ from unittest.mock import MagicMock, patch
 import numpy as np
 import pandas as pd
 import pytest
-import ta
 
 # Make cipher importable without installing
 _ROOT = Path(__file__).resolve().parent.parent
@@ -24,7 +23,6 @@ if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
 
 from qnt.freqai.VaultFreqaiModel import VaultFreqaiModel, _VaultEstimator
-
 
 # ── _VaultEstimator unit tests ───────────────────────────────────────────────
 

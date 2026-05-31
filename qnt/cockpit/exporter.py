@@ -1,9 +1,10 @@
-import time
-import requests
 import os
+import time
+
 import psutil
-from prometheus_client import start_http_server, Gauge
+import requests
 from dotenv import load_dotenv
+from prometheus_client import Gauge, start_http_server
 
 # Load configuration
 load_dotenv(os.path.join(os.path.dirname(__file__), "..", "..", ".env"))

@@ -1,9 +1,9 @@
-import logging
 import json
+import logging
 import sys
-import os
+from datetime import datetime, timedelta
 from pathlib import Path
-from datetime import datetime, timezone, timedelta
+
 from pandas import DataFrame
 
 # Resolve project root from this file's location (works on any machine)
@@ -11,15 +11,15 @@ _BASE = Path(__file__).resolve().parent.parent.parent
 if str(_BASE) not in sys.path:
     sys.path.insert(0, str(_BASE))
 
-from freqtrade.strategy import IStrategy
 from freqtrade.persistence import Trade
-import pandas as pd
+from freqtrade.strategy import IStrategy
+
+from indicators.macro_merge import merge_macro_data
+from qnt.oracle.hmm_regime import detect_regime, get_regime_for_strategy
+from qnt.oracle.oracle_calendar import is_safe_to_trade_today
+from qnt.thesis.thesis_reader import read_thesis
 from risk.risk_manager import run_all_checks
 from sentiment.reader import get_current_sentiment
-from qnt.oracle.oracle_calendar import is_safe_to_trade_today
-from qnt.oracle.hmm_regime import detect_regime, get_regime_for_strategy
-from qnt.thesis.thesis_reader import read_thesis
-from indicators.macro_merge import merge_macro_data
 
 logger = logging.getLogger(__name__)
 
@@ -40,9 +40,8 @@ class DailyTrendV1(IStrategy):
     minimal_roi = {"0": 0.08, "7": 0.05, "3": 0.03}
 
     def populate_indicators(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
-        import polars as pl
-        from qnt.polars_ohlcv import pandas_to_polars, ohlcv_to_pandas
         from qnt.polars_indicators import add_ema, add_rsi, add_sma
+        from qnt.polars_ohlcv import ohlcv_to_pandas, pandas_to_polars
 
         df_pl = pandas_to_polars(dataframe)
 

@@ -3,8 +3,9 @@ import json
 import logging
 import os
 import sys
-import nats
 from pathlib import Path
+
+import nats
 from dotenv import load_dotenv
 
 # Suppress NATS library's internal traceback logging — connection failures

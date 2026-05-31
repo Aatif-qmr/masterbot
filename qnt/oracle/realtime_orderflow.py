@@ -10,13 +10,13 @@ Publishes combined payload to NATS at 5Hz.
 import asyncio
 import os
 import sys
+from datetime import UTC, datetime
 from decimal import Decimal
 from pathlib import Path
-from datetime import datetime, timezone
 
+import nats
 import orjson
 import websockets
-import nats
 from dotenv import load_dotenv
 from order_book import OrderBook
 
@@ -69,7 +69,7 @@ class OrderFlowEngine:
                     self.batch_delta += delta
                     self.batch_volume += qty
 
-                    now = datetime.now(timezone.utc).timestamp()
+                    now = datetime.now(UTC).timestamp()
                     if now - self.last_publish_time >= PUBLISH_HZ:
                         await self._publish()
                         self.last_publish_time = now
@@ -135,7 +135,7 @@ class OrderFlowEngine:
             "imbalance": round(self.imbalance, 4),  # new: L2 buy pressure 0-1
             "spread": round(self.spread, 2),  # new: ask - bid in USD
             "mid_price": round(self.mid_price, 2),  # new: (bid+ask)/2
-            "timestamp": datetime.now(timezone.utc).isoformat() + "Z",
+            "timestamp": datetime.now(UTC).isoformat() + "Z",
         }
         try:
             await self.js.publish(SUBJECTS["ORDERFLOW_LIVE"], orjson.dumps(payload))

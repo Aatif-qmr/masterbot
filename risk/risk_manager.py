@@ -1,12 +1,13 @@
-import os
+import fcntl
 import json
 import logging
-import requests
-import time
-import fcntl
+import os
 import threading
-from datetime import datetime, timezone, timedelta
+import time
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
+
+import requests
 from dotenv import load_dotenv
 
 # ── Risk Checks Backend Selection ──────────────────────────
@@ -18,15 +19,23 @@ _BACKEND = "python"  # tracks which implementation is active
 try:
     # Priority 1: Rust module (compiled via maturin develop)
     from risk_checks import (
-        compute_drawdown_pct as _compute_drawdown_pct,
-        compute_position_pct as _compute_position_pct,
-        check_rate_exceeded as _check_rate_exceeded,
-        count_consecutive_losses as _count_consecutive_losses,
         batch_compute_drawdowns as _batch_compute_drawdowns,
+    )
+    from risk_checks import (
+        check_rate_exceeded as _check_rate_exceeded,
+    )
+    from risk_checks import (
+        compute_drawdown_pct as _compute_drawdown_pct,
+    )
+    from risk_checks import (
+        compute_position_pct as _compute_position_pct,
+    )
+    from risk_checks import (
+        count_consecutive_losses as _count_consecutive_losses,
     )
 
     # Verify it's the Rust version (has `version()` function)
-    from risk_checks import version as _rc_version
+    from risk_checks import version as _rc_version  # noqa: F401
 
     _BACKEND = "rust"
 except ImportError:
@@ -36,9 +45,15 @@ except ImportError:
 
         _sys.path.insert(0, str(Path(__file__).parent))
         from risk_checks import (
-            compute_drawdown_pct as _compute_drawdown_pct,
-            compute_position_pct as _compute_position_pct,
             check_rate_exceeded as _check_rate_exceeded,
+        )
+        from risk_checks import (
+            compute_drawdown_pct as _compute_drawdown_pct,
+        )
+        from risk_checks import (
+            compute_position_pct as _compute_position_pct,
+        )
+        from risk_checks import (
             count_consecutive_losses as _count_consecutive_losses,
         )
 
@@ -155,7 +170,7 @@ def _is_alert_allowed() -> bool:
         with open(ts_file, "w") as f:
             f.write(str(time.time()))
         return True
-    except Exception as e:
+    except Exception:
         return True  # If check fails, allow alert to be safe
 
 
@@ -195,7 +210,7 @@ def _get_cluster_balance() -> float:
     # If any API fails, fall back to last seen in state file to prevent false drawdown alerts
     if found < 6:
         try:
-            with open(BASE_DIR / "risk/balance_state.json", "r") as f:
+            with open(BASE_DIR / "risk/balance_state.json") as f:
                 state = json.load(f)
                 return state.get("last_seen_balance", 50000.0)
         except Exception:
@@ -222,7 +237,7 @@ def send_telegram_alert(message: str, level: str = "WARNING") -> bool:
             url, json={"chat_id": TELEGRAM_CHAT_ID, "text": full_message}, timeout=5
         )
         return res.status_code == 200
-    except Exception as e:
+    except Exception:
         return False
 
 
@@ -233,7 +248,7 @@ def check_macro_headwinds() -> bool:
         if not macro_file.exists():
             return True
 
-        with open(macro_file, "r") as f:
+        with open(macro_file) as f:
             state = json.load(f)
 
         dxy_change = state.get("dxy_24h_change", 0.0)
@@ -400,7 +415,7 @@ def _can_log_sentiment_warn() -> bool:
 
                 now = time.time()
                 try:
-                    with open(_SENTIMENT_WARN_FILE, "r") as rf:
+                    with open(_SENTIMENT_WARN_FILE) as rf:
                         content = rf.read().strip()
                     if content and now - float(content) < _SENTIMENT_WARN_INTERVAL:
                         return False
@@ -474,8 +489,8 @@ def check_consecutive_losses(recent_trades: list, max_consecutive: int = 3) -> b
                     pass
             if isinstance(last_loss_time, datetime):
                 if last_loss_time.tzinfo is None:
-                    last_loss_time = last_loss_time.replace(tzinfo=timezone.utc)
-                if (datetime.now(timezone.utc) - last_loss_time) > timedelta(hours=1):
+                    last_loss_time = last_loss_time.replace(tzinfo=UTC)
+                if (datetime.now(UTC) - last_loss_time) > timedelta(hours=1):
                     logging.info(
                         f"Consecutive loss cooldown passed. Last loss was at {last_loss_time}"
                     )
@@ -520,7 +535,7 @@ def run_all_checks(
             start_of_week_balance = start_of_week_balance or state.get(
                 "start_of_week", current_balance
             )
-        except Exception as e:
+        except Exception:
             start_of_day_balance = start_of_day_balance or current_balance
             start_of_week_balance = start_of_week_balance or current_balance
 
@@ -567,5 +582,5 @@ def run_all_checks(
         "safe_to_trade": safe,
         "checks": checks,
         "blocking_reasons": blocking_reasons,
-        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "timestamp": datetime.now(UTC).isoformat(),
     }

@@ -1,11 +1,11 @@
-import os
-import json
-import time
-import socket
 import fcntl
+import json
+import os
+import socket
 import subprocess
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
+
 from dotenv import load_dotenv
 
 # --- CONFIGURATION ---
@@ -55,8 +55,8 @@ MEMORY_FILE = IDENTITY["cipher_path"] / MEMORY_DIR / MEMORY_FILENAME
 def create_initial_memory():
     return {
         "version": "1.0",
-        "created": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
-        "last_updated": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "created": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "last_updated": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "last_sync_m2": None,
         "action_log": [],
         "device_state": {
@@ -79,12 +79,12 @@ def load_memory():
         return create_initial_memory()
 
     try:
-        with open(MEMORY_FILE, "r") as f:
+        with open(MEMORY_FILE) as f:
             fcntl.flock(f, fcntl.LOCK_SH)
             data = json.load(f)
             fcntl.flock(f, fcntl.LOCK_UN)
             return data
-    except (json.JSONDecodeError, IOError):
+    except (OSError, json.JSONDecodeError):
         return create_initial_memory()
 
 
@@ -93,7 +93,7 @@ def save_memory(data):
     # Ensure directory exists
     MEMORY_FILE.parent.mkdir(parents=True, exist_ok=True)
 
-    data["last_updated"] = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    data["last_updated"] = datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
     temp_file = MEMORY_FILE.with_name(f"{MEMORY_FILE.name}.tmp.{os.getpid()}")
 
     with open(temp_file, "w") as f:
@@ -121,7 +121,7 @@ def log_action(action, result, device=None, escalated=False, notify=False):
     data = load_memory()
 
     entry = {
-        "timestamp": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "timestamp": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "device": device,
         "action": action,
         "result": result,
@@ -160,7 +160,7 @@ def log_decision(situation, options, chosen, reasoning, device=None):
     data = load_memory()
 
     entry = {
-        "timestamp": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "timestamp": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "device": device,
         "situation": situation,
         "options_presented": options,
@@ -189,7 +189,7 @@ def update_decision_outcome(timestamp, outcome):
 def get_recent_actions(hours=24, device=None):
     """Filter actions from last N hours."""
     data = load_memory()
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
     threshold = now.timestamp() - (hours * 3600)
 
     recent = []
@@ -212,7 +212,7 @@ def check_connectivity():
         socket.setdefaulttimeout(3)
         socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect(("8.8.8.8", 53))
         return True
-    except socket.error:
+    except OSError:
         return False
 
 

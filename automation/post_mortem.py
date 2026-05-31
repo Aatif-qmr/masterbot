@@ -4,14 +4,14 @@ Automated post-mortem analysis for losing and winning trades.
 Runs every 2 hours via cron. Logs lessons to qnt vault.
 """
 
-import json
-import sqlite3
-from pathlib import Path
-from datetime import datetime, timedelta
-import sys
 import os
-from dotenv import load_dotenv
+import sqlite3
+import sys
+from datetime import datetime, timedelta
+from pathlib import Path
+
 import polars as pl
+from dotenv import load_dotenv
 
 # Detect BASE_DIR
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -21,8 +21,8 @@ sys.path.insert(0, str(BASE_DIR / "qnt/oracle"))
 # Load environment variables
 load_dotenv(BASE_DIR / ".env")
 
-from qnt.vault.vault import store_lesson
 from qnt.oracle.hmm_regime import detect_regime_full
+from qnt.vault.vault import store_lesson
 
 
 def analyze_recent_trades(db_path: str, hours: int = 2) -> list:

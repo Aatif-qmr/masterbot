@@ -2,6 +2,7 @@
 
 import json
 import sys
+from datetime import UTC
 from pathlib import Path
 
 _BASE = Path(__file__).resolve().parent.parent.parent
@@ -55,10 +56,11 @@ def get_current_sentiment() -> dict:
 def get_calendar_risk() -> dict:
     """Get macro calendar risk level for current date."""
     try:
-        from oracle_calendar import calculate_risk_level
-        from datetime import datetime, timezone
+        from datetime import datetime
 
-        return calculate_risk_level(datetime.now(timezone.utc))
+        from oracle_calendar import calculate_risk_level
+
+        return calculate_risk_level(datetime.now(UTC))
     except Exception as e:
         return {"error": str(e), "level": "UNKNOWN"}
 

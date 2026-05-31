@@ -1,19 +1,17 @@
 import os
-import sys
-import json
-import time
 import subprocess
-import requests
-from datetime import datetime, timezone, timedelta
+import sys
+from datetime import UTC, datetime, timedelta
 
 # Add paths
 from pathlib import Path as _Path
 
+import requests
+
 BASE_DIR = str(_Path(__file__).resolve().parent.parent.parent)
 sys.path.insert(0, os.path.join(BASE_DIR, "qnt/memory"))
 
-from memory_manager import load_memory, save_memory, log_action
-from device_router import call_freqtrade_api, run_on_m1
+from memory_manager import load_memory, log_action, save_memory
 
 CACHE_EXPIRY_HOURS = 6
 
@@ -26,7 +24,7 @@ def fetch_calendar():
 
     if last_fetched:
         last_dt = datetime.fromisoformat(last_fetched.replace("Z", "+00:00"))
-        if datetime.now(timezone.utc) - last_dt < timedelta(hours=CACHE_EXPIRY_HOURS):
+        if datetime.now(UTC) - last_dt < timedelta(hours=CACHE_EXPIRY_HOURS):
             return cache.get("events", [])
 
     print("Cache stale or missing. Fetching fresh calendar data...")
@@ -45,7 +43,7 @@ def fetch_calendar():
         files = [f for f in os.listdir(out_dir) if f.startswith("page_www.forexfactory.com")]
         if files:
             latest_file = sorted(files)[-1]
-            with open(os.path.join(out_dir, latest_file), "r") as f:
+            with open(os.path.join(out_dir, latest_file)) as f:
                 content = f.read()
                 events.extend(parse_forexfactory(content))
     except Exception as e:
@@ -73,7 +71,7 @@ def fetch_calendar():
 
     # Update cache
     data["calendar_cache"] = {
-        "last_fetched": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
+        "last_fetched": datetime.now(UTC).isoformat().replace("+00:00", "Z"),
         "events": events,
     }
     save_memory(data)
@@ -91,10 +89,10 @@ def check_calendar_risk_today() -> str:
         return "MEDIUM"
 
     last_dt = datetime.fromisoformat(last_fetched.replace("Z", "+00:00"))
-    if datetime.now(timezone.utc) - last_dt > timedelta(hours=CACHE_EXPIRY_HOURS * 2):
+    if datetime.now(UTC) - last_dt > timedelta(hours=CACHE_EXPIRY_HOURS * 2):
         return "MEDIUM"
 
-    today_str = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    today_str = datetime.now(UTC).strftime("%Y-%m-%d")
     risk = calculate_risk_level(today_str)
     return risk["level"]
 
@@ -138,7 +136,7 @@ def parse_forexfactory(text):
             try:
                 # Placeholder for robust date parsing
                 current_date = datetime.now().strftime("%Y-%m-%d")  # Use current year
-            except Exception as e:
+            except Exception:
                 pass
 
         if "Impact" in line or "High" in line or "Medium" in line:
@@ -222,7 +220,7 @@ def calculate_risk_level(date_str):
 
 def get_weekly_calendar():
     """Return assessments for the next 7 days."""
-    today = datetime.now(timezone.utc).date()
+    today = datetime.now(UTC).date()
     lines = ["📅 QNT Risk Calendar — Next 7 Days", "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"]
 
     high_risk_event = None
@@ -257,7 +255,7 @@ def get_weekly_calendar():
 
 def check_and_act():
     """Hourly check to adjust bot based on imminent risk."""
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
     today_str = now.strftime("%Y-%m-%d")
     risk = calculate_risk_level(today_str)
 
@@ -298,7 +296,7 @@ def check_and_act():
 
     elif adjustment_active:
         restore_at = data.get("risk_restore_at")
-        if restore_at and datetime.now(timezone.utc) > datetime.fromisoformat(restore_at):
+        if restore_at and datetime.now(UTC) > datetime.fromisoformat(restore_at):
             log_action("risk_position_restored", "Event window passed. Restoring sizes.")
             from qnt_notifier import send_notify
 

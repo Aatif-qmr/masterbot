@@ -1,9 +1,9 @@
 import os
-import json
 import time
-import requests
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
+
+import requests
 from dotenv import load_dotenv
 
 # --- CONFIGURATION ---
@@ -30,7 +30,7 @@ def get_current_time_ist():
     # Assuming M1/M2 are in UTC or similar
     from datetime import timedelta
 
-    now_utc = datetime.now(timezone.utc)
+    now_utc = datetime.now(UTC)
     now_ist = now_utc + timedelta(hours=5, minutes=30)
     return now_ist.strftime("%H:%M IST")
 
@@ -141,7 +141,7 @@ def get_pending_reply(timeout_minutes=60):
         updates = res.json().get("result", [])
         if updates:
             last_update_id = updates[-1]["update_id"]
-    except Exception as e:
+    except Exception:
         pass
 
     print(f"Polling for reply (timeout {timeout_minutes}m)...")
@@ -191,7 +191,7 @@ def send_weekly_summary(
         from memory_manager import load_memory
 
         total_logs = len(load_memory().get("action_log", []))
-    except Exception as e:
+    except Exception:
         total_logs = "unknown"
 
     actions_list = "\n".join([f"• {a}" for a in top_actions])
@@ -215,7 +215,7 @@ def send_weekly_summary(
             json={"chat_id": CHAT_ID, "text": text, "parse_mode": "HTML"},
             timeout=10,
         )
-    except Exception as e:
+    except Exception:
         pass
 
 

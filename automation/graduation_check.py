@@ -10,7 +10,7 @@ import json
 import math
 import os
 import sqlite3
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
 import requests
@@ -98,7 +98,7 @@ def _load_trades(strategy: str, days: int) -> list[dict]:
     db = DB_MAP.get(strategy)
     if not db or not db.exists():
         return []
-    cutoff = (datetime.now(timezone.utc) - timedelta(days=days)).strftime("%Y-%m-%d %H:%M:%S")
+    cutoff = (datetime.now(UTC) - timedelta(days=days)).strftime("%Y-%m-%d %H:%M:%S")
     try:
         con = sqlite3.connect(str(db))
         rows = con.execute(
@@ -222,7 +222,7 @@ def _send_telegram(text: str):
 
 
 def run() -> dict:
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
     results = {s: _evaluate(s) for s in THRESHOLDS}
 
     core_strategies = [s for s, r in results.items() if r["core"]]
@@ -253,7 +253,7 @@ def run() -> dict:
     status_icon = "🟢" if graduated else ("🟡" if core_passing else "🔴")
     lines = [
         f"{status_icon} <b>Live Trading Readiness Report</b>",
-        f"━━━━━━━━━━━━━━━━━━━━━━",
+        "━━━━━━━━━━━━━━━━━━━━━━",
         f"<b>Consecutive passing weeks:</b> {weeks_passing}/{REQUIRED_PASSING_WEEKS}",
         "",
     ]

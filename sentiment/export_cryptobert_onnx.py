@@ -80,7 +80,7 @@ def export_cryptobert_onnx(
             os.replace(quant_path, fp32_path)
 
         print(f"✓ Quantized ONNX model saved to: {output_dir}")
-        print(f"  Files:")
+        print("  Files:")
         for f in sorted(output_dir.iterdir()):
             size_kb = f.stat().st_size / 1024
             print(f"    {f.name}: {size_kb:.1f} KB")
@@ -99,7 +99,7 @@ def _manual_export(
 ) -> str:
     """Fallback: export using raw torch.onnx.export if optimum is not installed."""
     import torch
-    from transformers import AutoTokenizer, AutoModelForSequenceClassification
+    from transformers import AutoModelForSequenceClassification, AutoTokenizer
 
     print(f"Loading {model_name}...")
     tokenizer = AutoTokenizer.from_pretrained(model_name)
@@ -185,9 +185,9 @@ def verify_sentiment_output(
             "Ethereum developers announce minor protocol update",
         ]
 
+    import numpy as np
     import onnxruntime as ort
     from transformers import AutoTokenizer
-    import numpy as np
 
     tokenizer = AutoTokenizer.from_pretrained(str(output_dir))
     session = ort.InferenceSession(str(output_dir / "model.onnx"))

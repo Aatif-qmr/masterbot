@@ -30,8 +30,8 @@ def _require_polars():
 
 
 def add_ema(
-    df: "pl.DataFrame", column: str = "close", period: int = 20, alias: str | None = None
-) -> "pl.DataFrame":
+    df: pl.DataFrame, column: str = "close", period: int = 20, alias: str | None = None
+) -> pl.DataFrame:
     """
     Add Exponential Moving Average column.
 
@@ -44,8 +44,8 @@ def add_ema(
 
 
 def add_sma(
-    df: "pl.DataFrame", column: str = "close", period: int = 20, alias: str | None = None
-) -> "pl.DataFrame":
+    df: pl.DataFrame, column: str = "close", period: int = 20, alias: str | None = None
+) -> pl.DataFrame:
     """Add Simple Moving Average column."""
     _require_polars()
     col_alias = alias or f"sma_{period}"
@@ -53,8 +53,8 @@ def add_sma(
 
 
 def add_rsi(
-    df: "pl.DataFrame", column: str = "close", period: int = 14, alias: str = "rsi"
-) -> "pl.DataFrame":
+    df: pl.DataFrame, column: str = "close", period: int = 14, alias: str = "rsi"
+) -> pl.DataFrame:
     """
     Add Relative Strength Index column.
 
@@ -74,12 +74,12 @@ def add_rsi(
 
 
 def add_bollinger_bands(
-    df: "pl.DataFrame",
+    df: pl.DataFrame,
     column: str = "close",
     period: int = 20,
     std_dev: float = 2.0,
     prefix: str = "bb",
-) -> "pl.DataFrame":
+) -> pl.DataFrame:
     """Add Bollinger Bands (upper, middle, lower) columns."""
     _require_polars()
     mid = pl.col(column).rolling_mean(window_size=period)
@@ -95,10 +95,10 @@ def add_bollinger_bands(
 
 
 def add_atr(
-    df: "pl.DataFrame",
+    df: pl.DataFrame,
     period: int = 14,
     alias: str = "atr",
-) -> "pl.DataFrame":
+) -> pl.DataFrame:
     """
     Add Average True Range column.
 
@@ -117,13 +117,13 @@ def add_atr(
 
 
 def add_macd(
-    df: "pl.DataFrame",
+    df: pl.DataFrame,
     column: str = "close",
     fast: int = 12,
     slow: int = 26,
     signal: int = 9,
     prefix: str = "macd",
-) -> "pl.DataFrame":
+) -> pl.DataFrame:
     """Add MACD line, signal line, and histogram columns."""
     _require_polars()
     ema_fast = pl.col(column).ewm_mean(span=fast, ignore_nulls=True)
@@ -140,7 +140,7 @@ def add_macd(
     return df
 
 
-def add_vwap(df: "pl.DataFrame", alias: str = "vwap") -> "pl.DataFrame":
+def add_vwap(df: pl.DataFrame, alias: str = "vwap") -> pl.DataFrame:
     """
     Add Volume-Weighted Average Price (cumulative).
     Requires 'high', 'low', 'close', 'volume' columns.
@@ -153,21 +153,21 @@ def add_vwap(df: "pl.DataFrame", alias: str = "vwap") -> "pl.DataFrame":
 
 
 def add_log_returns(
-    df: "pl.DataFrame", column: str = "close", alias: str = "log_return"
-) -> "pl.DataFrame":
+    df: pl.DataFrame, column: str = "close", alias: str = "log_return"
+) -> pl.DataFrame:
     """Add log returns column: ln(close / prev_close)."""
     _require_polars()
     return df.with_columns((pl.col(column) / pl.col(column).shift(1)).log().alias(alias))
 
 
 def add_all_indicators(
-    df: "pl.DataFrame",
+    df: pl.DataFrame,
     rsi_period: int = 14,
     bb_period: int = 20,
     bb_std: float = 2.0,
     atr_period: int = 14,
     ema_periods: list[int] | None = None,
-) -> "pl.DataFrame":
+) -> pl.DataFrame:
     """
     Convenience function: add all standard indicators in a single pass.
     Polars optimizes the computation graph internally.

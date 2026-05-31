@@ -1,6 +1,9 @@
-import boto3, os, tarfile
+import os
+import tarfile
+from datetime import UTC, datetime
 from pathlib import Path
-from datetime import datetime, timezone
+
+import boto3
 from dotenv import load_dotenv
 
 load_dotenv(Path(__file__).resolve().parent.parent.parent / ".env")
@@ -20,7 +23,7 @@ def upload_to_clouds(filepath, key_prefix=""):
     client = get_r2_client()
     bucket = os.getenv("R2_BUCKET")
     filename = Path(filepath).name
-    timestamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M")
+    timestamp = datetime.now(UTC).strftime("%Y%m%d_%H%M")
     key = f"{key_prefix}/{timestamp}_{filename}"
 
     # 1. R2 Upload

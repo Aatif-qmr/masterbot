@@ -1,10 +1,11 @@
 """Tests for bus/ event channel."""
 
 import asyncio
+
 import pytest
 
-from bus.channel import EventBus, get_bus, reset_bus
-from bus.events import EventType, SignalEvent, RiskAlertEvent
+from bus.channel import EventBus, reset_bus
+from bus.events import EventType, RiskAlertEvent, SignalEvent
 
 
 @pytest.fixture(autouse=True)

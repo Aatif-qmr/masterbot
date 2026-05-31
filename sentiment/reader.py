@@ -1,7 +1,6 @@
 import json
 import os
-import time
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 _SENTIMENT_SCORE = Path(__file__).resolve().parent / "scores/current_score.json"
@@ -25,7 +24,7 @@ def get_current_sentiment() -> dict:
         return fallback
 
     try:
-        with open(path, "r") as f:
+        with open(path) as f:
             data = json.load(f)
 
         ts_str = data.get("timestamp")
@@ -36,7 +35,7 @@ def get_current_sentiment() -> dict:
         if dt.tzinfo is None:
             now = datetime.now()
         else:
-            now = datetime.now(timezone.utc)
+            now = datetime.now(UTC)
 
         age_seconds = (now - dt).total_seconds()
         age_minutes = age_seconds / 60.0
@@ -90,6 +89,6 @@ def get_sentiment_signal(threshold_bearish=-0.3, threshold_bullish=0.3) -> str:
 if __name__ == "__main__":
     sentiment = get_current_sentiment()
     signal = get_sentiment_signal()
-    print(f"--- Sentiment Reader Test ---")
+    print("--- Sentiment Reader Test ---")
     print(f"Raw Data: {sentiment}")
     print(f"Signal:   {signal}")

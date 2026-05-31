@@ -21,8 +21,9 @@ Usage:
 from __future__ import annotations
 
 import os
-import numpy as np
 from pathlib import Path
+
+import numpy as np
 
 HOME = Path.home()
 BASE_DIR = HOME / "cipher"

@@ -1,19 +1,19 @@
 import os
 import sys
 import time
-import json
+from datetime import UTC, datetime, timedelta
+
+# Add Cipher paths
+from pathlib import Path as _Path
+
 import requests
-from datetime import datetime, timezone, timedelta
+from requests.auth import HTTPBasicAuth
+from rich import print
+from rich.columns import Columns
 from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
 from rich.text import Text
-from rich.columns import Columns
-from rich import print
-from requests.auth import HTTPBasicAuth
-
-# Add Cipher paths
-from pathlib import Path as _Path
 
 BASE_DIR = str(_Path(__file__).resolve().parent.parent.parent)
 sys.path.insert(0, os.path.join(BASE_DIR, "qnt/memory"))
@@ -21,15 +21,14 @@ sys.path.insert(0, os.path.join(BASE_DIR, "qnt/bridge"))
 sys.path.insert(0, os.path.join(BASE_DIR, "qnt/shield"))
 sys.path.insert(0, os.path.join(BASE_DIR, "qnt/oracle"))
 
-from device_router import DEVICE_CONTEXT, run_on_m1
+from device_router import run_on_m1
 from oracle_sentiment import get_current_sentiment
-from oracle_calendar import get_weekly_calendar
 
 console = Console()
 
 
 def get_ist_now():
-    return datetime.now(timezone.utc) + timedelta(hours=5, minutes=30)
+    return datetime.now(UTC) + timedelta(hours=5, minutes=30)
 
 
 def get_global_status_panel():
@@ -71,7 +70,7 @@ def get_global_status_panel():
                     )
                     if r_stat.status_code == 200:
                         total_trades += len(r_stat.json())
-            except Exception as e:
+            except Exception:
                 continue
 
         if total_bal == 0:
@@ -86,7 +85,7 @@ def get_global_status_panel():
             (f"{total_trades} active"),
         )
         return Panel(content, title="GLOBAL SYSTEM", border_style="blue", expand=True)
-    except Exception as e:
+    except Exception:
         return Panel(
             "⚠️ Global Status unavailable", title="GLOBAL SYSTEM", border_style="red", expand=True
         )
@@ -110,7 +109,7 @@ def get_market_intel_panel():
             ("🟢 LOW RISK", "green"),
         )
         return Panel(content, title="MARKET ORACLE", border_style="cyan", expand=True)
-    except Exception as e:
+    except Exception:
         return Panel(
             "⚠️ Market Intel unavailable", title="MARKET ORACLE", border_style="red", expand=True
         )
@@ -130,7 +129,7 @@ def get_shield_panel():
             ("0.0%", "green"),
         )
         return Panel(content, title="QNT SHIELD", border_style="magenta", expand=True)
-    except Exception as e:
+    except Exception:
         return Panel("⚠️ Shield unavailable", title="QNT SHIELD", border_style="red", expand=True)
 
 
@@ -150,7 +149,7 @@ def get_trades_panel():
                 )
                 if r.status_code == 200:
                     all_trades.extend(r.json())
-            except Exception as e:
+            except Exception:
                 continue
 
         if not all_trades:
@@ -165,7 +164,7 @@ def get_trades_panel():
             table.add_row(t["pair"], f"[{style}]{pnl:+.2f}%[/]")
 
         return Panel(table, title="GLOBAL TRADES", expand=True)
-    except Exception as e:
+    except Exception:
         return Panel("⚠️ Trades unavailable", title="GLOBAL TRADES", expand=True)
 
 
@@ -174,7 +173,7 @@ def get_logs_panel():
         # Just show main log
         stdout, _, _ = run_on_m1(f"tail -n 8 {os.path.join(BASE_DIR, 'logs/freqtrade.log')}")
         return Panel(stdout or "No logs", title="LIVE LOG FEED", border_style="dim", expand=True)
-    except Exception as e:
+    except Exception:
         return Panel("⚠️ Logs unavailable", title="LIVE LOG FEED", border_style="red", expand=True)
 
 

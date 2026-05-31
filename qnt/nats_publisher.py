@@ -1,8 +1,9 @@
 import asyncio
 import json
 import os
-import nats
 from pathlib import Path
+
+import nats
 from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent

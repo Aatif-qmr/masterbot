@@ -1,9 +1,9 @@
-import os
-import json
-import time
 import glob
-import urllib.request
+import json
+import os
+import time
 import urllib.parse
+import urllib.request
 from pathlib import Path
 
 # --- CONFIGURATION ---
@@ -26,13 +26,13 @@ INFRA_NOISE_PATTERNS = [
 def _is_infra_noise_only(content: str) -> bool:
     """Return True if the log content contains only known infrastructure noise, not code bugs."""
     error_lines = [
-        l
-        for l in content.splitlines()
-        if any(k in l for k in ERROR_KEYWORDS) and "Traceback (most recent call last)" not in l
+        line
+        for line in content.splitlines()
+        if any(k in line for k in ERROR_KEYWORDS) and "Traceback (most recent call last)" not in line
     ]
     if not error_lines:
         return True
-    return all(any(p in l for p in INFRA_NOISE_PATTERNS) for l in error_lines)
+    return all(any(p in line for p in INFRA_NOISE_PATTERNS) for line in error_lines)
 
 
 def get_error_context():
@@ -46,7 +46,7 @@ def get_error_context():
         if os.path.basename(log_path) == "self_healer_run.log":
             continue
         try:
-            with open(log_path, "r") as f:
+            with open(log_path) as f:
                 # Read last 50 lines to catch recent issues
                 lines = f.readlines()[-50:]
                 content = "".join(lines)

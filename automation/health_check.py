@@ -1,11 +1,12 @@
-import os
 import json
+import os
+import shutil
 import sqlite3
 import subprocess
-import requests
-import shutil
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta, timezone
 from pathlib import Path
+
+import requests
 from dotenv import load_dotenv
 
 # Load env dynamically
@@ -45,17 +46,17 @@ def send_telegram_health_report(results: list, timestamp: str):
     )
 
     text = f"{emoji} <b>Health Check Report</b>\n"
-    text += f"━━━━━━━━━━━━━━━━━━━━━━\n"
+    text += "━━━━━━━━━━━━━━━━━━━━━━\n"
     text += f"<b>Summary:</b> {passed}/{len(results)} checks passed\n"
 
     if failed:
-        text += f"\n🔴 <b>Critical Failures:</b>\n"
+        text += "\n🔴 <b>Critical Failures:</b>\n"
         for f in failed:
             if f.get("critical", False):
                 text += f"• {f['name']}: {f['message']}\n"
 
     if warned:
-        text += f"\n⚠️ <b>Warnings:</b>\n"
+        text += "\n⚠️ <b>Warnings:</b>\n"
         for w in warned:
             text += f"• {w['name']}: {w['message']}\n"
 
@@ -173,7 +174,7 @@ def check_freqtrade_apis():
             else:
                 results[port] = f"ERR:{res.status_code}"
                 all_ok = False
-        except Exception as e:
+        except Exception:
             results[port] = "FAIL"
             all_ok = False
 
@@ -202,9 +203,9 @@ def check_sentiment_freshness():
             data = json.load(f)
         dt = datetime.fromisoformat(data["timestamp"])
         if dt.tzinfo is None:
-            dt = dt.replace(tzinfo=timezone(timedelta(hours=5.5))).astimezone(timezone.utc)
+            dt = dt.replace(tzinfo=timezone(timedelta(hours=5.5))).astimezone(UTC)
 
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         age = (now - dt).total_seconds() / 60.0
 
         if age < 35:
@@ -499,11 +500,11 @@ def check_thesis_freshness() -> dict:
             continue
         try:
             import json as _json
-            from datetime import datetime, timezone
+            from datetime import datetime
 
             data = _json.loads(path.read_text())
             ts = datetime.fromisoformat(data["generated_at"])
-            age_h = (datetime.now(timezone.utc) - ts).total_seconds() / 3600
+            age_h = (datetime.now(UTC) - ts).total_seconds() / 3600
             if age_h > 6:
                 stale.append(f"{slug}({age_h:.1f}h)")
         except Exception:
@@ -527,7 +528,7 @@ def check_thesis_freshness() -> dict:
 
 
 def run_all():
-    timestamp = datetime.now(timezone.utc).isoformat()
+    timestamp = datetime.now(UTC).isoformat()
     checks = [
         check_freqtrade_processes,
         check_freqtrade_apis,

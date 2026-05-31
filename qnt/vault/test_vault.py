@@ -1,7 +1,7 @@
 # qnt/vault/test_vault.py
-import unittest
-import tempfile
 import sys
+import tempfile
+import unittest
 from pathlib import Path
 from unittest.mock import patch
 
@@ -32,7 +32,7 @@ class TestVault(unittest.TestCase):
         self._patch.stop()
 
     def test_store_and_recall_lesson(self):
-        from qnt.vault.vault import store_lesson, recall_lessons
+        from qnt.vault.vault import recall_lessons, store_lesson
 
         ok = store_lesson(
             "test_001",

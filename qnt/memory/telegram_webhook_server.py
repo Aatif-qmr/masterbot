@@ -8,16 +8,14 @@ Usage:
     python3 telegram_webhook_server.py --port 8443 --webhook-url https://your-domain.com:8443/webhook
 """
 
-import os
 import json
 import logging
-from http.server import HTTPServer, BaseHTTPRequestHandler
-from datetime import datetime, timezone
-from pathlib import Path
-from dotenv import load_dotenv
 import sys
-import time
 import threading
+import time
+from http.server import BaseHTTPRequestHandler, HTTPServer
+from pathlib import Path
+
 import requests
 
 # Add memory dir to path
@@ -25,12 +23,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(BASE_DIR / "qnt/memory"))
 
 from enhanced_bot import (
-    TOKEN,
-    CHAT_ID,
     API_URL,
+    CHAT_ID,
+    execute_command_raw,
     handle_callback_query,
     send_telegram_message,
-    execute_command_raw,
 )
 
 # Configure logging
@@ -305,7 +302,6 @@ TelegramWebhookHandler.__init__ = patched_init
 
 def run_server(port: int = 8443, cert_file: str = None, key_file: str = None):
     """Run the webhook server."""
-    import requests
 
     server_address = ("", port)
     httpd = HTTPServer(server_address, TelegramWebhookHandler)
@@ -322,7 +318,7 @@ def run_server(port: int = 8443, cert_file: str = None, key_file: str = None):
         protocol = "HTTP"
 
     logger.info(f"Starting Telegram Webhook Server ({protocol}) on port {port}...")
-    logger.info(f"Webhook endpoint: /webhook")
+    logger.info("Webhook endpoint: /webhook")
 
     try:
         httpd.serve_forever()

@@ -1,9 +1,9 @@
-import logging
 import json
+import logging
 import sys
-import os
+from datetime import datetime, timedelta
 from pathlib import Path
-from datetime import datetime, timezone, timedelta
+
 from pandas import DataFrame
 
 # Resolve project root from this file's location (works on any machine)
@@ -11,16 +11,16 @@ _BASE = Path(__file__).resolve().parent.parent.parent
 if str(_BASE) not in sys.path:
     sys.path.insert(0, str(_BASE))
 
-from freqtrade.strategy import IStrategy, merge_informative_pair
 from freqtrade.persistence import Trade
-import pandas as pd
-from risk.risk_manager import run_all_checks
-from risk.stake_sizer import get_stake_multiplier
-from risk.correlation_guard import is_blocked as corr_blocked
-from sentiment.reader import get_current_sentiment, get_funding_rate
+from freqtrade.strategy import IStrategy, merge_informative_pair
+
+from indicators.macro_merge import merge_macro_data
 from qnt.oracle.hmm_regime import detect_regime, get_regime_for_strategy
 from qnt.thesis.thesis_reader import read_thesis
-from indicators.macro_merge import merge_macro_data
+from risk.correlation_guard import is_blocked as corr_blocked
+from risk.risk_manager import run_all_checks
+from risk.stake_sizer import get_stake_multiplier
+from sentiment.reader import get_current_sentiment, get_funding_rate
 
 logger = logging.getLogger(__name__)
 
@@ -57,9 +57,8 @@ class SwingV1(IStrategy):
         return [(pair, "1h") for pair in pairs]
 
     def populate_indicators(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
-        import polars as pl
-        from qnt.polars_ohlcv import pandas_to_polars, ohlcv_to_pandas
         from qnt.polars_indicators import add_ema, add_rsi, add_sma
+        from qnt.polars_ohlcv import ohlcv_to_pandas, pandas_to_polars
 
         df_pl = pandas_to_polars(dataframe)
 

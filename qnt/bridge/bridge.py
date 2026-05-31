@@ -1,35 +1,32 @@
+import json
 import os
 import sys
-import json
 import time
-import requests
-import subprocess
-from datetime import datetime, timezone, timedelta
-from rich.console import Console
-from requests.auth import HTTPBasicAuth
+from datetime import UTC, datetime, timedelta
 
 # Add memory and bridge dirs to path
 from pathlib import Path as _Path
+
+import requests
+from requests.auth import HTTPBasicAuth
+from rich.console import Console
 
 BASE_DIR = str(_Path(__file__).resolve().parent.parent.parent)
 sys.path.insert(0, os.path.join(BASE_DIR, "qnt/memory"))
 sys.path.insert(0, os.path.join(BASE_DIR, "qnt/bridge"))
 
+from autonomy_router import handle
 from device_router import (
     DEVICE_CONTEXT,
     run_on_m1,
-    run_on_m2,
-    call_freqtrade_api,
-    is_other_device_reachable,
 )
-from autonomy_router import handle, AutonomyLevel
-from memory_manager import log_action, load_memory
+from memory_manager import log_action
 
 console = Console()
 
 
 def get_ist_now():
-    return datetime.now(timezone.utc) + timedelta(hours=5, minutes=30)
+    return datetime.now(UTC) + timedelta(hours=5, minutes=30)
 
 
 def call_api_all(endpoint, method="GET", data=None):
@@ -46,7 +43,7 @@ def call_api_all(endpoint, method="GET", data=None):
                 res = requests.post(url, auth=HTTPBasicAuth(FT_USER, FT_PASS), json=data, timeout=5)
             if res.status_code == 200:
                 results.append(res.json())
-        except Exception as e:
+        except Exception:
             continue
     return results
 
@@ -85,7 +82,7 @@ def bot_status():
         try:
             sentiment = json.loads(s_out)
             score = sentiment.get("score", 0)
-        except Exception as e:
+        except Exception:
             score = 0
 
         regime = "NEUTRAL"
@@ -99,7 +96,7 @@ def bot_status():
             b_state = json.loads(b_out)
             daily_pnl = total_balance - b_state.get("start_of_day", total_balance)
             daily_pnl_pct = (daily_pnl / b_state.get("start_of_day", 1)) * 100
-        except Exception as e:
+        except Exception:
             daily_pnl, daily_pnl_pct = 0, 0
 
         # Format output
@@ -108,7 +105,7 @@ def bot_status():
             f"🤖 Cipher Status — {now}",
             "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
             f"Instances: {running_count}/5 RUNNING",
-            f"Mode:      PAPER TRADING (Scaled)",
+            "Mode:      PAPER TRADING (Scaled)",
             f"Balance:   {total_balance:.2f} USDT ({free_balance:.2f} free)",
             f"Trades:    {open_trades_count} open / {max_trades_count} max",
             "",
@@ -131,7 +128,7 @@ def bot_status():
                 "",
                 f"Sentiment:  {score:.3f} ({regime})",
                 f"Daily P&L:  {daily_pnl:+.2f} USDT ({daily_pnl_pct:+.2f}%)",
-                f"Risk:       0% of daily limit used",
+                "Risk:       0% of daily limit used",
                 "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
                 f"Queried from: {DEVICE_CONTEXT['device']}",
             ]
@@ -155,7 +152,6 @@ def bot_start(mode="paper"):
         )
         return "Started all"
 
-    from qnt_notifier import send_notify
 
     handle(
         situation_type="routine_maintenance",
@@ -204,7 +200,7 @@ def killswitch():
                 auth=HTTPBasicAuth(FT_USER, FT_PASS),
                 timeout=5,
             )
-        except Exception as e:
+        except Exception:
             pass
     run_on_m1(
         "/Users/aatifquamre/cipher/venv/bin/supervisorctl -c /Users/aatifquamre/cipher/config/supervisord.conf stop all"

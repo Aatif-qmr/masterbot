@@ -1,5 +1,5 @@
+
 import ccxt
-import json
 
 
 def test_hyperliquid_connection():

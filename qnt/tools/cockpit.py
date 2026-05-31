@@ -1,6 +1,5 @@
 """Cockpit tools: system status, open trades, Freqtrade health."""
 
-import os
 import sys
 from pathlib import Path
 
@@ -41,8 +40,8 @@ def get_balance() -> dict:
 
 def get_open_trades() -> list:
     """Get list of currently open trades from SQLite databases."""
-    import sqlite3
     import glob
+    import sqlite3
 
     db_pattern = str(_BASE / "user_data/*.sqlite")
     trades = []

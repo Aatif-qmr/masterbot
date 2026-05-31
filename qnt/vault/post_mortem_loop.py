@@ -1,23 +1,23 @@
-import os
-import sys
-import sqlite3
 import json
-import subprocess
-import pandas as pd
-from datetime import datetime, timezone, timedelta
-from pathlib import Path
-import time
 import logging
+import os
+import sqlite3
+import subprocess
+import sys
+import time
+from datetime import UTC, datetime
+from pathlib import Path
+
+import pandas as pd
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(BASE_DIR / "qnt/memory"))
 sys.path.insert(0, str(BASE_DIR / "qnt/vault"))
 sys.path.insert(0, str(BASE_DIR / "qnt/oracle"))
 
-from memory_manager import load_memory, save_memory, log_action
-from vault import store_lesson
-from hmm_regime import detect_regime
 import freqtrade.data.history as history
+from hmm_regime import detect_regime
+from vault import store_lesson
 
 logger = logging.getLogger(__name__)
 
@@ -43,7 +43,7 @@ def get_unprocessed_trades():
     """Queries all SQLite instances for new closed trades."""
     processed_ids = []
     if PROCESSED_TRADES_FILE.exists():
-        with open(PROCESSED_TRADES_FILE, "r") as f:
+        with open(PROCESSED_TRADES_FILE) as f:
             processed_ids = json.load(f)
 
     new_trades = []
@@ -87,7 +87,7 @@ def generate_trade_analysis(trade):
         closest = hist.iloc[(hist["timestamp"] - open_dt).abs().argsort()[:1]]
         if not closest.empty:
             sentiment_at_open = f"{closest.iloc[0]['score']:.2f}"
-    except Exception as e:
+    except Exception:
         pass
 
     # 2. HMM Regime at Open
@@ -100,11 +100,11 @@ def generate_trade_analysis(trade):
             datadir=BASE_DIR / "data",  # Assumes synced from M2
         )
         # Filter data up to open_date
-        open_dt_aware = pd.to_datetime(trade["open_date"]).replace(tzinfo=timezone.utc)
+        open_dt_aware = pd.to_datetime(trade["open_date"]).replace(tzinfo=UTC)
         data_at_open = data[data["date"] <= open_dt_aware].tail(200)
         regime_data = detect_regime(data_at_open)
         regime_at_open = f"{regime_data['regime']} (Conf: {regime_data['confidence']:.2f})"
-    except Exception as e:
+    except Exception:
         pass
 
     # 3. Call QNT AI
@@ -163,7 +163,7 @@ def extract_lesson(analysis_text):
                 match = re.search(r"\d+", line)
                 if match:
                     lesson["confidence"] = int(match.group())
-            except Exception as e:
+            except Exception:
                 pass
 
     return lesson
@@ -210,7 +210,7 @@ def generate_negative_constraint(lesson, trade):
         "condition_features": ["sentiment_score", "regime"],
         "avoid_when": {"condition": lesson["condition"], "cause": lesson["cause"]},
         "confidence": lesson["confidence"],
-        "created": datetime.now(timezone.utc).isoformat(),
+        "created": datetime.now(UTC).isoformat(),
         "trade_id": trade["unique_id"],
     }
 
