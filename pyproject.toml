@@ -9,77 +9,77 @@ requires-python = ">=3.12"
 # numpy/pandas lower bounds match freqtrade's pinned versions so uv resolves consistently.
 dependencies = [
     # Data / numerics
-    "numpy>=2.4.4",
-    "pandas>=3.0.2",
-    "polars>=0.20.0",
-    "orjson>=3.9.0",
-    "numba>=0.61.0",
+    "numpy>=2.4.6",
+    "pandas>=3.0.3",
+    "polars>=1.41.2",
+    "orjson>=3.11.9",
+    "numba>=0.65.1",
 
     # ML / modelling
     "scikit-learn>=1.8.0",
-    "xgboost>=3.0.0",
-    "transformers>=5.0.0",
-    "onnxruntime>=1.17.0",
-    "sentence-transformers>=2.7.0",
+    "xgboost>=3.2.0",
+    "transformers>=5.9.0",
+    "onnxruntime>=1.26.0",
+    "sentence-transformers>=5.5.1",
 
     # Vector DB
-    "qdrant-client>=1.9.0",
+    "qdrant-client>=1.18.0",
 
     # Database / storage
-    "duckdb>=1.0.0",
-    "psycopg[c]>=3.1.0",
+    "duckdb>=1.5.3",
+    "psycopg[c]>=3.3.4",
 
     # Workflow orchestration
-    "prefect>=3.0.0",
+    "prefect>=3.7.2",
 
     # Market data / exchange
-    "order-book>=0.6.0",
+    "order-book>=0.6.1",
 
     # Sentiment data sources
-    "praw>=7.8.0",
-    "telethon>=1.43.0",
+    "praw>=7.8.1",
+    "telethon>=1.43.2",
 
     # Automation / monitoring
-    "psutil>=7.0.0",
+    "psutil>=7.2.2",
     "supervisor>=4.3.0",
-    "python-dotenv>=1.0.0",
+    "python-dotenv>=1.2.2",
 
     # AI agent + MCP server
-    "pydantic-ai>=1.0.0",
-    "anthropic>=0.40.0",
-    "mcp>=1.5.0",
+    "pydantic-ai>=1.104.0",
+    "anthropic>=0.105.2",
+    "mcp>=1.27.2",
 
     # Distributed hyperopt
-    "optuna>=4.0.0",
-    "ray[default]>=2.40.0",
+    "optuna>=4.8.0",
+    "ray[default]>=2.55.1",
 
     # CLI / output
     "rich>=15.0.0",
-    "typer>=0.12.0",
-    "requests>=2.33.0",
-    "httpx>=0.28.0",
+    "typer>=0.26.4",
+    "requests>=2.34.2",
+    "httpx>=0.28.1",
 
     # Security floor — pin transitive deps at versions that address known CVEs:
     #   urllib3 <2.7.0: decompression-bomb bypass + sensitive-header forwarding (high)
     #   idna <3.16: encode() bypass of CVE-2024-3651 fix (medium)
     "urllib3>=2.7.0",
-    "idna>=3.16",
+    "idna>=3.17",
 
     # Visualisation
-    "matplotlib>=3.10.0",
-    "plotly>=6.0.0",
+    "matplotlib>=3.10.9",
+    "plotly>=6.7.0",
 ]
 
 [project.optional-dependencies]
 export = [
-    "torch>=2.11.0",
-    "optimum[onnxruntime]>=1.20.0",
+    "torch>=2.12.0",
+    "optimum[onnxruntime]>=2.1.0",
 ]
 dev = [
-    "ruff>=0.4.0",
-    "pytest>=8.0.0",
-    "pytest-cov>=5.0.0",
-    "mypy>=1.10.0",
+    "ruff>=0.15.15",
+    "pytest>=9.0.3",
+    "pytest-cov>=7.1.0",
+    "mypy>=2.1.0",
 ]
 
 [tool.uv]
