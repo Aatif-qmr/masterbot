@@ -69,7 +69,7 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          uv sync --frozen
+          uv sync --frozen --extra dev
 
       - name: Run Ruff Format Check
         run: |
