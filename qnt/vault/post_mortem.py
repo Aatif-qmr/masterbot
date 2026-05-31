@@ -174,9 +174,7 @@ def generate_weekly_post_mortem():
         ]
 
         all_losses = []
-        threshold = (datetime.now(UTC) - pd.Timedelta(days=7)).strftime(
-            "%Y-%m-%d %H:%M:%S"
-        )
+        threshold = (datetime.now(UTC) - pd.Timedelta(days=7)).strftime("%Y-%m-%d %H:%M:%S")
 
         for db in databases:
             if not os.path.exists(db):

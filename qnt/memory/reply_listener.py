@@ -117,7 +117,6 @@ def process_update(update):
 
     # Parse as reply to escalation (import parse_reply locally to avoid circular dependency)
     try:
-
         parsed = {"type": "custom", "value": text}  # Simplified parsing
 
         # Load memory to find what we are responding to
@@ -173,9 +172,7 @@ def process_update(update):
         except Exception:
             pass
 
-        log_action(
-            "telegram_reply_received", f"User replied: {text} to escalation {escalation_ts}"
-        )
+        log_action("telegram_reply_received", f"User replied: {text} to escalation {escalation_ts}")
     except Exception as e:
         print(f"Error processing reply: {e}")
 

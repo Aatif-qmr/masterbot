@@ -28,7 +28,8 @@ def _is_infra_noise_only(content: str) -> bool:
     error_lines = [
         line
         for line in content.splitlines()
-        if any(k in line for k in ERROR_KEYWORDS) and "Traceback (most recent call last)" not in line
+        if any(k in line for k in ERROR_KEYWORDS)
+        and "Traceback (most recent call last)" not in line
     ]
     if not error_lines:
         return True

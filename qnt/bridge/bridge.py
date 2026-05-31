@@ -152,7 +152,6 @@ def bot_start(mode="paper"):
         )
         return "Started all"
 
-
     handle(
         situation_type="routine_maintenance",
         context="Starting all bot instances",
