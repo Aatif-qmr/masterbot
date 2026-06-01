@@ -81,20 +81,29 @@ def _run_single_backtest(
         config_path = str(next((c for c in candidates if c.exists()), candidates[-1]))
 
     cmd = [
-        "freqtrade", "backtesting",
-        "--strategy", strategy,
-        "--strategy-path", str(_STRATEGY_DIR),
-        "--config", config_path,
-        "--timerange", period.replace(":", "-"),
-        "--datadir", str(_DATA_DIR),
-        "--export", "none",
+        "freqtrade",
+        "backtesting",
+        "--strategy",
+        strategy,
+        "--strategy-path",
+        str(_STRATEGY_DIR),
+        "--config",
+        config_path,
+        "--timerange",
+        period.replace(":", "-"),
+        "--datadir",
+        str(_DATA_DIR),
+        "--export",
+        "none",
         "--print-json",
     ] + pair_args
 
     try:
         result = subprocess.run(
             cmd,
-            capture_output=True, text=True, timeout=600,
+            capture_output=True,
+            text=True,
+            timeout=600,
             cwd=str(_BASE),
             env={**os.environ, "PYTHONPATH": str(_BASE)},
         )
@@ -122,6 +131,7 @@ def _run_single_backtest(
 
 def _extract_metrics(strategy: str, data: dict) -> dict[str, Any]:
     """Extract and normalise key metrics from freqtrade JSON output."""
+
     def _f(key: str, default: float = 0.0) -> float:
         val = data.get(key, default)
         try:
@@ -195,9 +205,16 @@ def run_benchmark(
 
     # Normalise all result dicts to the same schema
     schema_keys = [
-        "strategy", "sharpe", "calmar", "max_drawdown_pct",
-        "win_rate_pct", "profit_factor", "total_trades",
-        "trades_per_day", "total_profit_pct", "error",
+        "strategy",
+        "sharpe",
+        "calmar",
+        "max_drawdown_pct",
+        "win_rate_pct",
+        "profit_factor",
+        "total_trades",
+        "trades_per_day",
+        "total_profit_pct",
+        "error",
     ]
     rows = []
     for r in results:

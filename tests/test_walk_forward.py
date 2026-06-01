@@ -36,6 +36,7 @@ def test_purge_gap_between_train_and_test():
     purge = 7
     folds = build_folds("2024-01-01", "2025-01-01", n_folds=4, purge_days=purge)
     from datetime import datetime
+
     fmt = "%Y%m%d"
     for f in folds:
         train_end = datetime.strptime(f.train_end, fmt)
@@ -49,6 +50,7 @@ def test_test_window_non_empty():
 
     folds = build_folds("2024-01-01", "2025-01-01", n_folds=4)
     from datetime import datetime
+
     fmt = "%Y%m%d"
     for f in folds:
         test_start = datetime.strptime(f.test_start, fmt)
@@ -61,12 +63,13 @@ def test_no_overlap_between_test_windows():
 
     folds = build_folds("2024-01-01", "2025-01-01", n_folds=5)
     from datetime import datetime
+
     fmt = "%Y%m%d"
     for i in range(1, len(folds)):
         prev_end = datetime.strptime(folds[i - 1].test_end, fmt)
         curr_start = datetime.strptime(folds[i].test_start, fmt)
         assert curr_start >= prev_end, (
-            f"Fold {i} test start {curr_start} overlaps fold {i-1} test end {prev_end}"
+            f"Fold {i} test start {curr_start} overlaps fold {i - 1} test end {prev_end}"
         )
 
 
@@ -92,6 +95,7 @@ def test_custom_purge_days():
     folds_large = build_folds("2024-01-01", "2025-01-01", n_folds=3, purge_days=14)
     # Larger purge → test windows start later
     from datetime import datetime
+
     fmt = "%Y%m%d"
     for fold_small, fold_large in zip(folds_small, folds_large):
         ts_small = datetime.strptime(fold_small.test_start, fmt)

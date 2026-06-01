@@ -42,6 +42,7 @@ logger = logging.getLogger(__name__)
 @dataclass
 class _OrderState:
     """In-flight DCA state for one open trade."""
+
     trade_id: int
     initial_stake: float
     orders_placed: int = 0
@@ -137,7 +138,7 @@ class DcaExecutor:
             return None
 
         # Calculate next order size: initial_stake × volume_scale^orders_placed
-        next_order_stake = initial_stake * (self.volume_scale ** state.orders_placed)
+        next_order_stake = initial_stake * (self.volume_scale**state.orders_placed)
 
         # Hard cap: total additional DCA stake must not exceed max_dca_multiplier × initial
         max_allowed_additional = initial_stake * self.max_dca_multiplier - state.total_dca_stake
@@ -146,7 +147,9 @@ class DcaExecutor:
         if next_order_stake <= 0:
             logger.info(
                 "DCA cap reached for trade %d: total_dca=%.2f >= %.2f × initial",
-                trade_id, state.total_dca_stake, self.max_dca_multiplier,
+                trade_id,
+                state.total_dca_stake,
+                self.max_dca_multiplier,
             )
             return None
 
@@ -154,7 +157,8 @@ class DcaExecutor:
         if min_stake and next_order_stake < min_stake:
             logger.debug(
                 "DCA stake %.2f below min_stake %.2f — skipping",
-                next_order_stake, min_stake,
+                next_order_stake,
+                min_stake,
             )
             return None
 
@@ -167,8 +171,12 @@ class DcaExecutor:
 
         logger.info(
             "DCA order %d/%d for trade %d: rate=%.4f stake=%.2f (total_dca=%.2f)",
-            state.orders_placed, self.safety_orders, trade_id,
-            current_rate, next_order_stake, state.total_dca_stake,
+            state.orders_placed,
+            self.safety_orders,
+            trade_id,
+            current_rate,
+            next_order_stake,
+            state.total_dca_stake,
         )
         return next_order_stake
 
@@ -193,14 +201,14 @@ class DcaExecutor:
 
 # ── Duck-type helpers (work with real Trade and plain dicts for tests) ────────
 
+
 def _trade_id(trade) -> int:
     tid = getattr(trade, "id", None)
     if tid is None and isinstance(trade, dict):
         tid = trade.get("id")
     if tid is None:
         raise ValueError(
-            "Trade object has no 'id' field. "
-            "Pass a Freqtrade Trade or a dict with 'id' key."
+            "Trade object has no 'id' field. Pass a Freqtrade Trade or a dict with 'id' key."
         )
     return int(tid)
 

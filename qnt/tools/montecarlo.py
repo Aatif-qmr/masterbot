@@ -33,7 +33,7 @@ from typing import Any
 
 import numpy as np
 
-DEFAULT_RUIN = 0.20      # 20 % drawdown triggers ruin
+DEFAULT_RUIN = 0.20  # 20 % drawdown triggers ruin
 MIN_TRADES = 10
 
 
@@ -78,9 +78,7 @@ def run_monte_carlo(
     returns = np.array([float(t["profit_ratio"]) for t in trades], dtype=np.float64)
     n = len(returns)
     if n < MIN_TRADES:
-        raise ValueError(
-            f"Need at least {MIN_TRADES} trades for Monte Carlo; got {n}."
-        )
+        raise ValueError(f"Need at least {MIN_TRADES} trades for Monte Carlo; got {n}.")
 
     rng = np.random.default_rng(random_seed)
     result: dict[str, Any] = {
@@ -90,10 +88,14 @@ def run_monte_carlo(
     }
 
     if mode in ("shuffle", "both"):
-        result["shuffle"] = _run_mode_shuffle(returns, n, n_simulations, starting_balance, ruin_threshold, rng)
+        result["shuffle"] = _run_mode_shuffle(
+            returns, n, n_simulations, starting_balance, ruin_threshold, rng
+        )
 
     if mode in ("resample", "both"):
-        result["resample"] = _run_mode_resample(returns, n, n_simulations, starting_balance, ruin_threshold, rng)
+        result["resample"] = _run_mode_resample(
+            returns, n, n_simulations, starting_balance, ruin_threshold, rng
+        )
 
     return result
 
@@ -110,8 +112,8 @@ def _run_mode_shuffle(
     rng: np.random.Generator,
 ) -> dict[str, Any]:
     """Each row is a random permutation of the original trade sequence."""
-    tile = np.tile(returns, (n_sims, 1))               # (n_sims, n)
-    shuffled = rng.permuted(tile, axis=1)              # permute each row
+    tile = np.tile(returns, (n_sims, 1))  # (n_sims, n)
+    shuffled = rng.permuted(tile, axis=1)  # permute each row
     return _stats(shuffled, n_sims, starting_balance, ruin_threshold)
 
 
@@ -124,8 +126,8 @@ def _run_mode_resample(
     rng: np.random.Generator,
 ) -> dict[str, Any]:
     """Each row is n trades sampled with replacement from the original set."""
-    idx = rng.integers(0, n, size=(n_sims, n))         # (n_sims, n)
-    resampled = returns[idx]                            # (n_sims, n)
+    idx = rng.integers(0, n, size=(n_sims, n))  # (n_sims, n)
+    resampled = returns[idx]  # (n_sims, n)
     return _stats(resampled, n_sims, starting_balance, ruin_threshold)
 
 

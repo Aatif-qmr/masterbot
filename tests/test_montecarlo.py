@@ -89,6 +89,7 @@ def test_observed_metrics_match_historical():
 
     # observed_return: product of (1 + r) - 1
     import math
+
     base = [0.01, -0.005, 0.02, -0.01]
     expected = math.prod(1 + r for r in base * 3) - 1
     assert result["observed_return"] == pytest.approx(expected, rel=1e-6)

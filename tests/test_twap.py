@@ -8,6 +8,7 @@ import pytest
 @pytest.fixture
 def slicer():
     from risk.twap import TwapSlicer
+
     return TwapSlicer(n_slices=4, interval_secs=0)  # interval=0 → no waiting
 
 

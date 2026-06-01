@@ -39,12 +39,13 @@ DEFAULT_MIN_CARRY_PCT: float = 10.0
 @dataclass
 class FundingArbOpportunity:
     """One cross-exchange arb opportunity."""
+
     pair: str
-    long_exchange: str           # buy perpetual here (pay lower funding)
-    short_exchange: str          # sell perpetual here (receive higher funding)
-    long_rate: float             # funding rate per 8h (fraction)
-    short_rate: float            # funding rate per 8h (fraction)
-    spread_8h: float             # short_rate - long_rate (per 8h)
+    long_exchange: str  # buy perpetual here (pay lower funding)
+    short_exchange: str  # sell perpetual here (receive higher funding)
+    long_rate: float  # funding rate per 8h (fraction)
+    short_rate: float  # funding rate per 8h (fraction)
+    spread_8h: float  # short_rate - long_rate (per 8h)
     annualised_carry_pct: float  # spread × 3 × 365 × 100
 
     def __str__(self) -> str:
@@ -136,7 +137,7 @@ def scan_funding_arb(
         # All ordered pairs (long, short)
         items = list(pair_rates.items())
         for i, (ex_a, rate_a) in enumerate(items):
-            for ex_b, rate_b in items[i + 1:]:
+            for ex_b, rate_b in items[i + 1 :]:
                 # long_ex pays lower funding; short_ex receives higher funding
                 if rate_a <= rate_b:
                     long_ex, long_rate = ex_a, rate_a

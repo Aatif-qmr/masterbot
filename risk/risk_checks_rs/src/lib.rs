@@ -70,7 +70,10 @@ fn count_consecutive_losses(profits: Vec<f64>) -> i32 {
 ///
 /// Returns a Vec of drawdown percentages (positive = loss).
 #[pyfunction]
-fn batch_compute_drawdowns(current_balances: Vec<f64>, start_balances: Vec<f64>) -> PyResult<Vec<f64>> {
+fn batch_compute_drawdowns(
+    current_balances: Vec<f64>,
+    start_balances: Vec<f64>,
+) -> PyResult<Vec<f64>> {
     if current_balances.len() != start_balances.len() {
         return Err(pyo3::exceptions::PyValueError::new_err(
             "current_balances and start_balances must have the same length",
@@ -245,11 +248,8 @@ mod tests {
 
     #[test]
     fn test_batch_drawdowns() {
-        let result = batch_compute_drawdowns(
-            vec![48.5, 47.0, 50.0],
-            vec![50.0, 50.0, 50.0],
-        )
-        .unwrap();
+        let result =
+            batch_compute_drawdowns(vec![48.5, 47.0, 50.0], vec![50.0, 50.0, 50.0]).unwrap();
         assert!((result[0] - 3.0).abs() < 0.01);
         assert!((result[1] - 6.0).abs() < 0.01);
         assert!((result[2] - 0.0).abs() < 0.01);

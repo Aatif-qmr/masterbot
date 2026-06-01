@@ -17,7 +17,7 @@ dependencies = [
     # ML / modelling
     "scikit-learn>=1.8.0",
     "xgboost>=3.0.0",
-    "transformers>=5.0.0",
+    "transformers>=4.36.0,<5.0.0",
     "onnxruntime>=1.17.0",
     "sentence-transformers>=2.7.0",
     # Vector DB
@@ -117,6 +117,10 @@ known-first-party = ["qnt", "risk", "sentiment", "strategies", "config", "automa
 [tool.ruff.format]
 quote-style = "double"
 indent-style = "space"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+norecursedirs = ["freqtrade", "automation", ".venv", "node_modules", "__pycache__", ".git", "rust_engine", "risk/risk_checks_rs"]
 
 [dependency-groups]
 dev = [

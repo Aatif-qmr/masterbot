@@ -382,9 +382,12 @@ def significance(
 
     # ── Output table ──────────────────────────────────────────────────────────
     verdict_color = (
-        "green" if result["significant_1pct"]
-        else "yellow" if result["significant_5pct"]
-        else "bright_yellow" if result["p_value"] < 0.10
+        "green"
+        if result["significant_1pct"]
+        else "yellow"
+        if result["significant_5pct"]
+        else "bright_yellow"
+        if result["p_value"] < 0.10
         else "red"
     )
 
@@ -403,10 +406,13 @@ def significance(
         t.add_row("Backtest period", f"{meta['backtest_start']}  →  {meta['backtest_end']}")
     t.add_row("─" * 24, "─" * 18)
     t.add_row("Trades analysed", str(result["n_trades"]))
-    t.add_row("Mean return / trade", f"{result['observed_mean']:+.4f}  ({result['observed_mean']*100:+.2f}%)")
+    t.add_row(
+        "Mean return / trade",
+        f"{result['observed_mean']:+.4f}  ({result['observed_mean'] * 100:+.2f}%)",
+    )
     t.add_row("Win rate", f"{result['win_rate']:.1%}")
-    t.add_row("Avg win", f"{result['avg_win']:+.4f}  ({result['avg_win']*100:+.2f}%)")
-    t.add_row("Avg loss", f"{result['avg_loss']:.4f}  ({result['avg_loss']*100:.2f}%)")
+    t.add_row("Avg win", f"{result['avg_win']:+.4f}  ({result['avg_win'] * 100:+.2f}%)")
+    t.add_row("Avg loss", f"{result['avg_loss']:.4f}  ({result['avg_loss'] * 100:.2f}%)")
     t.add_row("Expectancy", f"{result['expectancy']:+.4f}")
     t.add_row("Profit factor", f"{result['profit_factor']:.2f}")
     t.add_row("SQN", f"{result['sqn']:.2f}")
@@ -459,7 +465,9 @@ def montecarlo(
     )
 
     with console.status(f"Simulating {n:,} paths…"):
-        result = run_monte_carlo(trades, n_simulations=n, ruin_threshold=ruin, random_seed=seed, mode=mode)
+        result = run_monte_carlo(
+            trades, n_simulations=n, ruin_threshold=ruin, random_seed=seed, mode=mode
+        )
 
     # ── Summary table ─────────────────────────────────────────────────────────
     obs_ret = result["observed_return"]
@@ -477,7 +485,7 @@ def montecarlo(
         return f"{v:+.1%}"
 
     def _pcts(d: dict, key: str) -> str:
-        return f"{_fmt_pct(d[key+'_p10'])} / {_fmt_pct(d[key+'_p50'])} / {_fmt_pct(d[key+'_p90'])}"
+        return f"{_fmt_pct(d[key + '_p10'])} / {_fmt_pct(d[key + '_p50'])} / {_fmt_pct(d[key + '_p90'])}"
 
     row = ["Final return", _fmt_pct(obs_ret)]
     if "shuffle" in result:
@@ -513,15 +521,17 @@ def montecarlo(
 @app.command()
 def benchmark(
     period: str = typer.Option(
-        "2024-01-01:2025-01-01", "--period", "-p",
-        help="Date range: YYYY-MM-DD:YYYY-MM-DD"
+        "2024-01-01:2025-01-01", "--period", "-p", help="Date range: YYYY-MM-DD:YYYY-MM-DD"
     ),
     strategy: list[str] = typer.Option(
-        None, "--strategy", "-s",
+        None,
+        "--strategy",
+        "-s",
         help="Strategy to include (repeat for multiple; default: all 8 active strategies)",
     ),
     pair: list[str] = typer.Option(
-        None, "--pair",
+        None,
+        "--pair",
         help="Trading pair (repeat for multiple; default: BTC/USDT)",
     ),
     no_parallel: bool = typer.Option(False, "--no-parallel", help="Disable Ray parallel execution"),
@@ -564,7 +574,9 @@ def benchmark(
         ("Error", "dim red"),
     ]
     for col, style in columns:
-        t.add_column(col, style=style, justify="right" if col not in ("Strategy", "Error") else "left")
+        t.add_column(
+            col, style=style, justify="right" if col not in ("Strategy", "Error") else "left"
+        )
 
     def _fmt(v, fmt=".2f", suffix=""):
         return f"{v:{fmt}}{suffix}" if v is not None else "—"

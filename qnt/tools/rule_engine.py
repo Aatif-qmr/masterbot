@@ -44,18 +44,43 @@ _RULES_DIR = Path(__file__).resolve().parent.parent.parent / "config" / "rules"
 
 # Whitelisted functions callable inside rule conditions
 _SAFE_FUNCS: dict[str, Any] = {
-    "abs": abs, "min": min, "max": max, "round": round, "len": len,
-    "int": int, "float": float, "str": str, "bool": bool,
+    "abs": abs,
+    "min": min,
+    "max": max,
+    "round": round,
+    "len": len,
+    "int": int,
+    "float": float,
+    "str": str,
+    "bool": bool,
 }
 
 # AST node type whitelist — anything not in here raises ValueError
 _ALLOWED_NODES = (
     ast.Expression,
-    ast.BoolOp, ast.And, ast.Or,
-    ast.UnaryOp, ast.Not, ast.USub, ast.UAdd,
-    ast.BinOp, ast.Add, ast.Sub, ast.Mult, ast.Div, ast.Mod, ast.Pow,
+    ast.BoolOp,
+    ast.And,
+    ast.Or,
+    ast.UnaryOp,
+    ast.Not,
+    ast.USub,
+    ast.UAdd,
+    ast.BinOp,
+    ast.Add,
+    ast.Sub,
+    ast.Mult,
+    ast.Div,
+    ast.Mod,
+    ast.Pow,
     ast.Compare,
-    ast.Eq, ast.NotEq, ast.Lt, ast.LtE, ast.Gt, ast.GtE, ast.In, ast.NotIn,
+    ast.Eq,
+    ast.NotEq,
+    ast.Lt,
+    ast.LtE,
+    ast.Gt,
+    ast.GtE,
+    ast.In,
+    ast.NotIn,
     ast.Constant,
     ast.Name,
     ast.Call,
@@ -193,7 +218,9 @@ class RuleEngine:
                     except Exception as exc:
                         logger.error(
                             "Rule '%s' action '%s' failed: %s",
-                            rule.name, action.get("type"), exc,
+                            rule.name,
+                            action.get("type"),
+                            exc,
                         )
                 rule._last_fired = now
 
@@ -208,7 +235,9 @@ class RuleEngine:
             )
             logger.info(
                 "Rule fired: '%s' (dry_run=%s, actions=%d)",
-                rule.name, dry_run, len(actions_taken),
+                rule.name,
+                dry_run,
+                len(actions_taken),
             )
 
         return fired
@@ -226,6 +255,7 @@ class RuleEngine:
 
 
 # ── Condition evaluator (AST whitelist — no eval/exec) ───────────────────────
+
 
 def _eval_condition(expr: str, context: dict[str, Any]) -> bool:
     """
@@ -295,9 +325,12 @@ def _eval_node(node: ast.expr, ctx: dict[str, Any]) -> Any:
         left = _eval_node(node.left, ctx)
         right = _eval_node(node.right, ctx)
         _OPS = {
-            ast.Add: operator.add, ast.Sub: operator.sub,
-            ast.Mult: operator.mul, ast.Div: operator.truediv,
-            ast.Mod: operator.mod, ast.Pow: operator.pow,
+            ast.Add: operator.add,
+            ast.Sub: operator.sub,
+            ast.Mult: operator.mul,
+            ast.Div: operator.truediv,
+            ast.Mod: operator.mod,
+            ast.Pow: operator.pow,
         }
         return _OPS[type(node.op)](left, right)
 
@@ -306,9 +339,12 @@ def _eval_node(node: ast.expr, ctx: dict[str, Any]) -> Any:
         for op, comparator in zip(node.ops, node.comparators):
             right = _eval_node(comparator, ctx)
             _CMP = {
-                ast.Eq: operator.eq, ast.NotEq: operator.ne,
-                ast.Lt: operator.lt, ast.LtE: operator.le,
-                ast.Gt: operator.gt, ast.GtE: operator.ge,
+                ast.Eq: operator.eq,
+                ast.NotEq: operator.ne,
+                ast.Lt: operator.lt,
+                ast.LtE: operator.le,
+                ast.Gt: operator.gt,
+                ast.GtE: operator.ge,
                 ast.In: lambda a, b: a in b,
                 ast.NotIn: lambda a, b: a not in b,
             }
@@ -318,7 +354,12 @@ def _eval_node(node: ast.expr, ctx: dict[str, Any]) -> Any:
         return True
 
     if isinstance(node, ast.Call):
-        func = _SAFE_FUNCS[node.func.id]  # type: ignore[union-attr]
+        # _validate_ast guarantees node.func is ast.Name, but guard defensively
+        if not isinstance(node.func, ast.Name):
+            raise ValueError("Only simple function calls allowed (no attribute access).")
+        func = _SAFE_FUNCS.get(node.func.id)
+        if func is None:
+            raise ValueError(f"Function '{node.func.id}' not in whitelist.")
         args = [_eval_node(a, ctx) for a in node.args]
         return func(*args)
 
@@ -326,6 +367,7 @@ def _eval_node(node: ast.expr, ctx: dict[str, Any]) -> Any:
 
 
 # ── Default action handler ────────────────────────────────────────────────────
+
 
 def _default_action_handler(action: dict[str, Any], context: dict[str, Any]) -> str:
     """
@@ -368,6 +410,7 @@ def _send_notification(message: str) -> None:
     """Send via Telegram if configured; else log."""
     try:
         from automation.notify import send_telegram
+
         send_telegram(message)
     except Exception:
         logger.info("[NOTIFY] %s", message)
@@ -380,6 +423,7 @@ def _set_strategy_param(strategy: str, key: str, value: Any) -> None:
     """Write to config/dynamic_params.json atomically (tmp + rename)."""
     import json
     import os
+
     params_path = Path(__file__).resolve().parent.parent.parent / "config" / "dynamic_params.json"
     with _params_lock:
         try:

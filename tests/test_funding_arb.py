@@ -13,6 +13,7 @@ from qnt.tools.funding_arb import (
 
 # ── FundingArbOpportunity ─────────────────────────────────────────────────────
 
+
 def test_opportunity_str():
     opp = FundingArbOpportunity(
         pair="BTC/USDT:USDT",
@@ -46,6 +47,7 @@ def test_opportunity_annualised_carry():
 
 
 # ── _fetch_funding_rates ──────────────────────────────────────────────────────
+
 
 def _make_ccxt_mock(exchange_id: str, rates: dict[str, float]):
     """Return a mock ccxt module with a pre-configured exchange."""
@@ -87,18 +89,23 @@ def test_fetch_unknown_exchange_returns_empty():
 
 # ── scan_funding_arb ──────────────────────────────────────────────────────────
 
+
 def _patch_fetch(rates_by_exchange: dict[str, dict[str, float]]):
     """Patch _fetch_funding_rates to return static data."""
+
     def _fake_fetch(exchange_id: str, pairs: list[str]) -> dict[str, float]:
         return rates_by_exchange.get(exchange_id, {})
+
     return patch("qnt.tools.funding_arb._fetch_funding_rates", side_effect=_fake_fetch)
 
 
 def test_scan_finds_opportunity():
-    with _patch_fetch({
-        "binance": {"BTC/USDT:USDT": 0.0001},
-        "bybit":   {"BTC/USDT:USDT": 0.0005},
-    }):
+    with _patch_fetch(
+        {
+            "binance": {"BTC/USDT:USDT": 0.0001},
+            "bybit": {"BTC/USDT:USDT": 0.0005},
+        }
+    ):
         opps = scan_funding_arb(
             pairs=["BTC/USDT:USDT"],
             exchanges=["binance", "bybit"],
@@ -106,16 +113,18 @@ def test_scan_finds_opportunity():
         )
     assert len(opps) == 1
     o = opps[0]
-    assert o.long_exchange == "binance"   # lower rate
+    assert o.long_exchange == "binance"  # lower rate
     assert o.short_exchange == "bybit"
     assert o.spread_8h == pytest.approx(0.0004)
 
 
 def test_scan_annualised_carry_calculation():
-    with _patch_fetch({
-        "binance": {"BTC/USDT:USDT": 0.0001},
-        "bybit":   {"BTC/USDT:USDT": 0.0003},
-    }):
+    with _patch_fetch(
+        {
+            "binance": {"BTC/USDT:USDT": 0.0001},
+            "bybit": {"BTC/USDT:USDT": 0.0003},
+        }
+    ):
         opps = scan_funding_arb(
             pairs=["BTC/USDT:USDT"],
             exchanges=["binance", "bybit"],
@@ -126,10 +135,12 @@ def test_scan_annualised_carry_calculation():
 
 
 def test_scan_filters_below_min_carry():
-    with _patch_fetch({
-        "binance": {"BTC/USDT:USDT": 0.0001},
-        "bybit":   {"BTC/USDT:USDT": 0.00011},  # spread 0.00001 → ~0.1% p.a.
-    }):
+    with _patch_fetch(
+        {
+            "binance": {"BTC/USDT:USDT": 0.0001},
+            "bybit": {"BTC/USDT:USDT": 0.00011},  # spread 0.00001 → ~0.1% p.a.
+        }
+    ):
         opps = scan_funding_arb(
             pairs=["BTC/USDT:USDT"],
             exchanges=["binance", "bybit"],
@@ -139,10 +150,12 @@ def test_scan_filters_below_min_carry():
 
 
 def test_scan_sorts_by_carry_desc():
-    with _patch_fetch({
-        "binance": {"BTC/USDT:USDT": 0.0001, "ETH/USDT:USDT": 0.0001},
-        "bybit":   {"BTC/USDT:USDT": 0.0005, "ETH/USDT:USDT": 0.0003},
-    }):
+    with _patch_fetch(
+        {
+            "binance": {"BTC/USDT:USDT": 0.0001, "ETH/USDT:USDT": 0.0001},
+            "bybit": {"BTC/USDT:USDT": 0.0005, "ETH/USDT:USDT": 0.0003},
+        }
+    ):
         opps = scan_funding_arb(
             pairs=["BTC/USDT:USDT", "ETH/USDT:USDT"],
             exchanges=["binance", "bybit"],
@@ -153,10 +166,12 @@ def test_scan_sorts_by_carry_desc():
 
 
 def test_scan_skips_pair_on_single_exchange():
-    with _patch_fetch({
-        "binance": {"BTC/USDT:USDT": 0.0001},
-        "bybit":   {},  # pair not available
-    }):
+    with _patch_fetch(
+        {
+            "binance": {"BTC/USDT:USDT": 0.0001},
+            "bybit": {},  # pair not available
+        }
+    ):
         opps = scan_funding_arb(
             pairs=["BTC/USDT:USDT"],
             exchanges=["binance", "bybit"],
@@ -166,10 +181,12 @@ def test_scan_skips_pair_on_single_exchange():
 
 
 def test_scan_multiple_pairs():
-    with _patch_fetch({
-        "binance": {"BTC/USDT:USDT": 0.0001, "ETH/USDT:USDT": 0.0002},
-        "bybit":   {"BTC/USDT:USDT": 0.0004, "ETH/USDT:USDT": 0.0006},
-    }):
+    with _patch_fetch(
+        {
+            "binance": {"BTC/USDT:USDT": 0.0001, "ETH/USDT:USDT": 0.0002},
+            "bybit": {"BTC/USDT:USDT": 0.0004, "ETH/USDT:USDT": 0.0006},
+        }
+    ):
         opps = scan_funding_arb(
             pairs=["BTC/USDT:USDT", "ETH/USDT:USDT"],
             exchanges=["binance", "bybit"],
@@ -182,11 +199,14 @@ def test_scan_multiple_pairs():
 
 # ── funding_arb_report ────────────────────────────────────────────────────────
 
+
 def test_report_structure():
-    with _patch_fetch({
-        "binance": {"BTC/USDT:USDT": 0.0001},
-        "bybit":   {"BTC/USDT:USDT": 0.0005},
-    }):
+    with _patch_fetch(
+        {
+            "binance": {"BTC/USDT:USDT": 0.0001},
+            "bybit": {"BTC/USDT:USDT": 0.0005},
+        }
+    ):
         report = funding_arb_report(
             pairs=["BTC/USDT:USDT"],
             exchanges=["binance", "bybit"],
@@ -202,10 +222,12 @@ def test_report_structure():
 
 
 def test_report_top_n_limit():
-    with _patch_fetch({
-        "binance": {"BTC/USDT:USDT": 0.0001, "ETH/USDT:USDT": 0.0001, "SOL/USDT:USDT": 0.0001},
-        "bybit":   {"BTC/USDT:USDT": 0.0005, "ETH/USDT:USDT": 0.0004, "SOL/USDT:USDT": 0.0003},
-    }):
+    with _patch_fetch(
+        {
+            "binance": {"BTC/USDT:USDT": 0.0001, "ETH/USDT:USDT": 0.0001, "SOL/USDT:USDT": 0.0001},
+            "bybit": {"BTC/USDT:USDT": 0.0005, "ETH/USDT:USDT": 0.0004, "SOL/USDT:USDT": 0.0003},
+        }
+    ):
         report = funding_arb_report(
             pairs=["BTC/USDT:USDT", "ETH/USDT:USDT", "SOL/USDT:USDT"],
             exchanges=["binance", "bybit"],

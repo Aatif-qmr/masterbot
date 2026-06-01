@@ -150,20 +150,22 @@ class EventStore:
                 side=side, price=rate, qty=amount, source="confirm_trade_entry",
             )
         """
-        self._write({
-            "ts": (ts or datetime.now(UTC)).isoformat(),
-            "event_type": event_type,
-            "strategy": strategy,
-            "pair": pair,
-            "side": side,
-            "price": float(price),
-            "qty": float(qty),
-            "reason": reason,
-            "source": source,
-            "profit_ratio": float(profit_ratio),
-            "profit_abs": float(profit_abs),
-            "metadata_json": json.dumps(metadata or {}),
-        })
+        self._write(
+            {
+                "ts": (ts or datetime.now(UTC)).isoformat(),
+                "event_type": event_type,
+                "strategy": strategy,
+                "pair": pair,
+                "side": side,
+                "price": float(price),
+                "qty": float(qty),
+                "reason": reason,
+                "source": source,
+                "profit_ratio": float(profit_ratio),
+                "profit_abs": float(profit_abs),
+                "metadata_json": json.dumps(metadata or {}),
+            }
+        )
 
     # ── Read API ──────────────────────────────────────────────────────────────
 
@@ -210,7 +212,8 @@ class EventStore:
 
     def count(self) -> int:
         with self._lock:
-            return self._conn.execute("SELECT COUNT(*) FROM events").fetchone()[0]
+            row = self._conn.execute("SELECT COUNT(*) FROM events").fetchone()
+            return int(row[0]) if row else 0
 
     # ── Integrity audit ───────────────────────────────────────────────────────
 
@@ -235,10 +238,16 @@ class EventStore:
             row_id, ts, et, strategy, pair, side, price, qty, reason, source, stored_hmac = row
             expected = _sign(
                 self._key,
-                row_id, str(ts), str(et),
-                str(strategy or ""), str(pair or ""),
-                str(side or ""), float(price or 0.0),
-                float(qty or 0.0), str(reason or ""), str(source or ""),
+                row_id,
+                str(ts),
+                str(et),
+                str(strategy or ""),
+                str(pair or ""),
+                str(side or ""),
+                float(price or 0.0),
+                float(qty or 0.0),
+                str(reason or ""),
+                str(source or ""),
             )
             if _hmac_mod.compare_digest(expected, stored_hmac or ""):
                 ok += 1
@@ -252,7 +261,10 @@ class EventStore:
     def _write(self, row: dict) -> None:
         try:
             with self._lock:
-                row_id = self._conn.execute("SELECT nextval('events_seq')").fetchone()[0]
+                seq_row = self._conn.execute("SELECT nextval('events_seq')").fetchone()
+                if seq_row is None:
+                    raise RuntimeError("events_seq nextval returned None — DuckDB sequence missing")
+                row_id = seq_row[0]
                 ts = str(row.get("ts") or datetime.now(UTC).isoformat())
                 et = str(row["event_type"])
                 strategy = str(row.get("strategy") or "")
@@ -263,7 +275,9 @@ class EventStore:
                 reason = str(row.get("reason") or "")
                 source = str(row.get("source") or "")
 
-                sig = _sign(self._key, row_id, ts, et, strategy, pair, side, price, qty, reason, source)
+                sig = _sign(
+                    self._key, row_id, ts, et, strategy, pair, side, price, qty, reason, source
+                )
 
                 self._conn.execute(
                     "INSERT INTO events "
@@ -271,8 +285,16 @@ class EventStore:
                     " reason, source, profit_ratio, profit_abs, metadata_json, hmac) "
                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                     [
-                        row_id, ts, et, strategy, pair, side, price, qty,
-                        reason, source,
+                        row_id,
+                        ts,
+                        et,
+                        strategy,
+                        pair,
+                        side,
+                        price,
+                        qty,
+                        reason,
+                        source,
                         float(row.get("profit_ratio") or 0.0),
                         float(row.get("profit_abs") or 0.0),
                         str(row.get("metadata_json") or "{}"),
@@ -284,6 +306,7 @@ class EventStore:
 
 
 # ── Bus event → row mapper ────────────────────────────────────────────────────
+
 
 def _bus_event_to_row(event: BaseEvent) -> dict:
     """Flatten a typed bus event into the event store's flat schema."""
@@ -355,7 +378,9 @@ def _bus_event_to_row(event: BaseEvent) -> dict:
         base.update(
             strategy=event.strategy,
             profit_ratio=event.best_value,
-            metadata_json=json.dumps({"best_params": event.best_params, "n_trials": event.n_trials}),
+            metadata_json=json.dumps(
+                {"best_params": event.best_params, "n_trials": event.n_trials}
+            ),
         )
     elif isinstance(event, SystemHealthEvent):
         base.update(

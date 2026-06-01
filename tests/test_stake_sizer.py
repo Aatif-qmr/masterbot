@@ -13,6 +13,7 @@ from risk.stake_sizer import (
 
 # ── _compute_multiplier ───────────────────────────────────────────────────────
 
+
 def test_50pct_wr_returns_1x():
     assert _compute_multiplier(0.50) == pytest.approx(1.0)
 
@@ -58,6 +59,7 @@ def test_multiplier_rounded_to_2dp():
 
 
 # ── quantize_stake ────────────────────────────────────────────────────────────
+
 
 def test_quantize_basic():
     assert quantize_stake(10.123456789, "0.001") == pytest.approx(10.123)
@@ -113,6 +115,7 @@ def test_quantize_large_stake():
 
 # ── get_stake_amount ──────────────────────────────────────────────────────────
 
+
 def test_get_stake_amount_no_tick(monkeypatch):
     monkeypatch.setattr("risk.stake_sizer.get_stake_multiplier", lambda s: 1.5)
     result = get_stake_amount("ScalpV1", 100.0)
@@ -147,6 +150,7 @@ def test_get_stake_amount_returns_float(monkeypatch):
 
 
 # ── get_stake_multiplier fallback ─────────────────────────────────────────────
+
 
 def test_get_stake_multiplier_returns_1_when_no_db():
     result = get_stake_multiplier("NonExistentStrategy")

@@ -18,6 +18,7 @@ client = TestClient(app, raise_server_exceptions=False)
 
 # ── /health ───────────────────────────────────────────────────────────────────
 
+
 def test_health():
     r = client.get("/health")
     assert r.status_code == 200
@@ -25,6 +26,7 @@ def test_health():
 
 
 # ── WebhookPayload validation ─────────────────────────────────────────────────
+
 
 def test_payload_valid():
     p = WebhookPayload(secret="x", strategy="ScalpV1", pair="BTC/USDT", side="buy")
@@ -59,13 +61,16 @@ def test_payload_pair_uppercased():
 
 # ── /webhook/tradingview ──────────────────────────────────────────────────────
 
+
 def _post(payload: dict):
     return client.post("/webhook/tradingview", json=payload)
 
 
 def test_valid_buy_signal():
     with patch("mcp.webhook._emit_signal", return_value={"event_type": "signal"}):
-        r = _post({"secret": "test-secret", "strategy": "ScalpV1", "pair": "BTC/USDT", "side": "buy"})
+        r = _post(
+            {"secret": "test-secret", "strategy": "ScalpV1", "pair": "BTC/USDT", "side": "buy"}
+        )
     assert r.status_code == 202
     assert r.json()["status"] == "accepted"
 
@@ -96,26 +101,42 @@ def test_non_json_body_returns_400():
 
 def test_sell_signal_accepted():
     with patch("mcp.webhook._emit_signal", return_value={}):
-        r = _post({"secret": "test-secret", "strategy": "TrendFollowV1", "pair": "ETH/USDT", "side": "sell"})
+        r = _post(
+            {
+                "secret": "test-secret",
+                "strategy": "TrendFollowV1",
+                "pair": "ETH/USDT",
+                "side": "sell",
+            }
+        )
     assert r.status_code == 202
 
 
 def test_close_signal_accepted():
     with patch("mcp.webhook._emit_signal", return_value={}):
-        r = _post({"secret": "test-secret", "strategy": "ScalpV1", "pair": "SOL/USDT", "side": "close"})
+        r = _post(
+            {"secret": "test-secret", "strategy": "ScalpV1", "pair": "SOL/USDT", "side": "close"}
+        )
     assert r.status_code == 202
 
 
 def test_optional_price_field():
     with patch("mcp.webhook._emit_signal", return_value={}):
-        r = _post({
-            "secret": "test-secret", "strategy": "ScalpV1", "pair": "BTC/USDT",
-            "side": "buy", "price": 42000.0, "reason": "RSI oversold",
-        })
+        r = _post(
+            {
+                "secret": "test-secret",
+                "strategy": "ScalpV1",
+                "pair": "BTC/USDT",
+                "side": "buy",
+                "price": 42000.0,
+                "reason": "RSI oversold",
+            }
+        )
     assert r.status_code == 202
 
 
 # ── /webhook/tradingview/batch ────────────────────────────────────────────────
+
 
 def _batch(payload: list):
     return client.post("/webhook/tradingview/batch", json=payload)
@@ -157,12 +178,11 @@ def test_batch_empty_array():
 
 # ── _emit_signal bus integration ──────────────────────────────────────────────
 
+
 def test_emit_signal_falls_back_when_bus_unavailable():
     from mcp.webhook import _emit_signal
 
-    payload = WebhookPayload(
-        secret="test-secret", strategy="ScalpV1", pair="BTC/USDT", side="buy"
-    )
+    payload = WebhookPayload(secret="test-secret", strategy="ScalpV1", pair="BTC/USDT", side="buy")
     with patch("mcp.webhook.get_bus" if False else "builtins.__import__", side_effect=ImportError):
         # Should not raise — bus failure is a warning only
         event = _emit_signal(payload)

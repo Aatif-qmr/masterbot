@@ -52,6 +52,7 @@ if TYPE_CHECKING:
 @dataclass
 class _SliceState:
     """In-flight TWAP order state for one active entry."""
+
     full_stake: float
     n_slices: int
     interval_secs: int
@@ -98,7 +99,9 @@ class TwapSlicer:
         self.n_slices = n_slices
         self.interval_secs = interval_secs
         # Default timeout: at least 60s to avoid expiry on fast test loops.
-        self.timeout_secs = timeout_secs if timeout_secs is not None else max(n_slices * interval_secs * 3, 60)
+        self.timeout_secs = (
+            timeout_secs if timeout_secs is not None else max(n_slices * interval_secs * 3, 60)
+        )
         self.min_slice_pct = min_slice_pct
         self._state: _SliceState | None = None
 
@@ -120,11 +123,17 @@ class TwapSlicer:
             return min(proposed_stake, max_stake)
 
         # Start a new sequence if none active or previous is complete/expired
-        if self._state is None or self._state.is_complete() or self._state.is_expired(self.timeout_secs):
+        if (
+            self._state is None
+            or self._state.is_complete()
+            or self._state.is_expired(self.timeout_secs)
+        ):
             if self._state is not None and not self._state.is_complete():
                 logger.warning(
                     "TWAP timed out for %s after %d/%d slices — resetting",
-                    self._state.pair, self._state.slices_placed, self._state.n_slices,
+                    self._state.pair,
+                    self._state.slices_placed,
+                    self._state.n_slices,
                 )
             self._state = _SliceState(
                 full_stake=proposed_stake,
@@ -134,7 +143,10 @@ class TwapSlicer:
             )
             logger.info(
                 "TWAP start: %s full_stake=%.2f, n_slices=%d, interval=%ds",
-                pair, proposed_stake, self.n_slices, self.interval_secs,
+                pair,
+                proposed_stake,
+                self.n_slices,
+                self.interval_secs,
             )
 
         state = self._state
@@ -157,14 +169,18 @@ class TwapSlicer:
         if min_stake and slice_amount < min_stake:
             logger.warning(
                 "TWAP slice %.2f below min_stake %.2f — using min_stake",
-                slice_amount, min_stake,
+                slice_amount,
+                min_stake,
             )
             slice_amount = float(min_stake)
 
         result = min(slice_amount, max_stake)
         logger.info(
             "TWAP slice %d/%d: pair=%s stake=%.2f",
-            state.slices_placed, state.n_slices, pair, result,
+            state.slices_placed,
+            state.n_slices,
+            pair,
+            result,
         )
         return result
 

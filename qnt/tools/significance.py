@@ -44,8 +44,8 @@ _STRATEGY_DB: dict[str, str] = {
     "Auto202605030340": "tradesv3.sqlite",
 }
 
-MIN_TRADES_ERROR = 10    # fewer than this → raise ValueError
-MIN_TRADES_WARN = 30     # fewer than this → set low_sample_warning = True
+MIN_TRADES_ERROR = 10  # fewer than this → raise ValueError
+MIN_TRADES_WARN = 30  # fewer than this → set low_sample_warning = True
 
 
 # ── Trade loaders ─────────────────────────────────────────────────────────────
@@ -110,8 +110,7 @@ def load_trades_from_db(strategy: str) -> tuple[list[dict], dict]:
 
     if not db_path.exists():
         raise FileNotFoundError(
-            f"SQLite database not found: {db_path}. "
-            f"Has this strategy ever run live/dry-run?"
+            f"SQLite database not found: {db_path}. Has this strategy ever run live/dry-run?"
         )
 
     conn = sqlite3.connect(str(db_path))
@@ -172,8 +171,7 @@ def load_trades(
         except Exception as exc:
             last_exc = exc
     raise ValueError(
-        f"No trade data found for '{strategy}' from any source. "
-        f"Last error: {last_exc}"
+        f"No trade data found for '{strategy}' from any source. Last error: {last_exc}"
     )
 
 

@@ -14,6 +14,7 @@ from qnt.tools.rule_engine import (
 
 # ── Fixtures ──────────────────────────────────────────────────────────────────
 
+
 @pytest.fixture
 def tmp_rules_dir(tmp_path):
     """Returns a temp dir with one sample rule file."""
@@ -51,6 +52,7 @@ BASE_CONTEXT = {
 
 # ── Loading ───────────────────────────────────────────────────────────────────
 
+
 def test_loads_rules(engine):
     assert len(engine.rules) == 1
     assert engine.rules[0].name == "test_high_drawdown"
@@ -69,13 +71,16 @@ def test_reload_reloads_from_disk(tmp_rules_dir):
     eng = RuleEngine(rules_dir=tmp_rules_dir)
     assert len(eng.rules) == 1
     # Add another rule file
-    extra = {"rules": [{"name": "extra_rule", "condition": "True", "cooldown_secs": 0, "actions": []}]}
+    extra = {
+        "rules": [{"name": "extra_rule", "condition": "True", "cooldown_secs": 0, "actions": []}]
+    }
     (tmp_rules_dir / "extra.yaml").write_text(yaml.dump(extra))
     eng.reload()
     assert len(eng.rules) == 2
 
 
 # ── _eval_condition ───────────────────────────────────────────────────────────
+
 
 def test_eval_true_condition():
     assert _eval_condition("drawdown_pct > 5", {"drawdown_pct": 10.0}) is True
@@ -132,6 +137,7 @@ def test_eval_blocks_comprehension():
 
 # ── evaluate — firing ─────────────────────────────────────────────────────────
 
+
 def test_fires_when_condition_true(engine):
     ctx = {**BASE_CONTEXT, "drawdown_pct": 10.0}
     fired = engine.evaluate(ctx)
@@ -159,13 +165,18 @@ def test_fired_rule_has_timestamp(engine):
 
 # ── Cooldown ──────────────────────────────────────────────────────────────────
 
+
 def test_cooldown_prevents_refiring(tmp_rules_dir):
-    rules = {"rules": [{
-        "name": "cooldown_test",
-        "condition": "True",
-        "cooldown_secs": 9999,
-        "actions": [],
-    }]}
+    rules = {
+        "rules": [
+            {
+                "name": "cooldown_test",
+                "condition": "True",
+                "cooldown_secs": 9999,
+                "actions": [],
+            }
+        ]
+    }
     (tmp_rules_dir / "cooldown.yaml").write_text(yaml.dump(rules))
     eng = RuleEngine(rules_dir=tmp_rules_dir)
     # Remove old rule so only cooldown_test remains
@@ -187,6 +198,7 @@ def test_zero_cooldown_refires_immediately(engine):
 
 # ── dry_run ───────────────────────────────────────────────────────────────────
 
+
 def test_dry_run_detects_condition_but_no_actions(engine):
     ctx = {**BASE_CONTEXT, "drawdown_pct": 9.0}
     fired = engine.evaluate(ctx, dry_run=True)
@@ -195,31 +207,40 @@ def test_dry_run_detects_condition_but_no_actions(engine):
 
 
 def test_dry_run_does_not_update_cooldown(tmp_rules_dir):
-    rules = {"rules": [{
-        "name": "dry_test",
-        "condition": "True",
-        "cooldown_secs": 9999,
-        "actions": [],
-    }]}
+    rules = {
+        "rules": [
+            {
+                "name": "dry_test",
+                "condition": "True",
+                "cooldown_secs": 9999,
+                "actions": [],
+            }
+        ]
+    }
     (tmp_rules_dir / "dry.yaml").write_text(yaml.dump(rules))
     eng = RuleEngine(rules_dir=tmp_rules_dir)
     eng._rules = [r for r in eng._rules if r.name == "dry_test"]
 
-    eng.evaluate(BASE_CONTEXT, dry_run=True)   # dry — should NOT set cooldown
-    fired = eng.evaluate(BASE_CONTEXT)          # real — should fire
+    eng.evaluate(BASE_CONTEXT, dry_run=True)  # dry — should NOT set cooldown
+    fired = eng.evaluate(BASE_CONTEXT)  # real — should fire
     assert len(fired) == 1
 
 
 # ── Disabled rules ────────────────────────────────────────────────────────────
 
+
 def test_disabled_rule_never_fires(tmp_rules_dir):
-    rules = {"rules": [{
-        "name": "disabled_rule",
-        "condition": "True",
-        "enabled": False,
-        "cooldown_secs": 0,
-        "actions": [],
-    }]}
+    rules = {
+        "rules": [
+            {
+                "name": "disabled_rule",
+                "condition": "True",
+                "enabled": False,
+                "cooldown_secs": 0,
+                "actions": [],
+            }
+        ]
+    }
     (tmp_rules_dir / "disabled.yaml").write_text(yaml.dump(rules))
     eng = RuleEngine(rules_dir=tmp_rules_dir)
     eng._rules = [r for r in eng._rules if r.name == "disabled_rule"]
@@ -228,6 +249,7 @@ def test_disabled_rule_never_fires(tmp_rules_dir):
 
 
 # ── add_rule ──────────────────────────────────────────────────────────────────
+
 
 def test_add_rule_programmatically(engine):
     r = Rule(
@@ -242,6 +264,7 @@ def test_add_rule_programmatically(engine):
 
 
 # ── Action handler ────────────────────────────────────────────────────────────
+
 
 def test_log_action():
     action = {"type": "log", "message": "drawdown is {drawdown_pct:.1f}"}
@@ -267,13 +290,18 @@ def test_unknown_action_returns_string():
 
 # ── Condition error handling ──────────────────────────────────────────────────
 
+
 def test_bad_condition_does_not_crash_engine(tmp_rules_dir):
-    rules = {"rules": [{
-        "name": "bad_rule",
-        "condition": "undefined_var > 5",  # NameError
-        "cooldown_secs": 0,
-        "actions": [],
-    }]}
+    rules = {
+        "rules": [
+            {
+                "name": "bad_rule",
+                "condition": "undefined_var > 5",  # NameError
+                "cooldown_secs": 0,
+                "actions": [],
+            }
+        ]
+    }
     (tmp_rules_dir / "bad.yaml").write_text(yaml.dump(rules))
     eng = RuleEngine(rules_dir=tmp_rules_dir)
     fired = eng.evaluate(BASE_CONTEXT)  # should not raise
@@ -282,12 +310,20 @@ def test_bad_condition_does_not_crash_engine(tmp_rules_dir):
 
 # ── Multiple rules ────────────────────────────────────────────────────────────
 
+
 def test_multiple_rules_fire_independently(tmp_rules_dir):
-    rules = {"rules": [
-        {"name": "rule_a", "condition": "drawdown_pct > 5", "cooldown_secs": 0, "actions": []},
-        {"name": "rule_b", "condition": "open_trades > 8", "cooldown_secs": 0, "actions": []},
-        {"name": "rule_c", "condition": "sentiment_score < -0.9", "cooldown_secs": 0, "actions": []},
-    ]}
+    rules = {
+        "rules": [
+            {"name": "rule_a", "condition": "drawdown_pct > 5", "cooldown_secs": 0, "actions": []},
+            {"name": "rule_b", "condition": "open_trades > 8", "cooldown_secs": 0, "actions": []},
+            {
+                "name": "rule_c",
+                "condition": "sentiment_score < -0.9",
+                "cooldown_secs": 0,
+                "actions": [],
+            },
+        ]
+    }
     (tmp_rules_dir / "multi.yaml").write_text(yaml.dump(rules))
     eng = RuleEngine(rules_dir=tmp_rules_dir)
     ctx = {**BASE_CONTEXT, "drawdown_pct": 9.0, "open_trades": 10, "sentiment_score": 0.0}

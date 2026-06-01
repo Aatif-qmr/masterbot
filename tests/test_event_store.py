@@ -105,7 +105,7 @@ def test_verify_detects_bad_hmac(store):
 
 def test_verify_mixed_tampered_and_clean(store):
     store.append_raw("trade_open", pair="BTC/USDT")  # id 1 — will be tampered
-    store.append_raw("signal", pair="ETH/USDT")      # id 2 — clean
+    store.append_raw("signal", pair="ETH/USDT")  # id 2 — clean
     store._conn.execute("UPDATE events SET pair = 'HACKED/USDT' WHERE id = 1")
     result = store.verify_integrity()
     assert 1 in result["tampered"]
@@ -217,12 +217,19 @@ def test_consumer_failure_doesnt_crash_bus(tmp_path):
 
 # ── SQL injection regression (parameterised queries) ─────────────────────────
 
+
 def test_query_sql_injection_in_strategy(store):
     """Parameterised query must not return all rows on injection attempt."""
     # Append one real trade
     store.append_raw(
-        event_type="trade", strategy="SafeStrategy", pair="BTC/USDT",
-        side="buy", price=50000.0, qty=0.01, reason="test", source="test",
+        event_type="trade",
+        strategy="SafeStrategy",
+        pair="BTC/USDT",
+        side="buy",
+        price=50000.0,
+        qty=0.01,
+        reason="test",
+        source="test",
     )
     # Attempt injection: strategy = "x' OR '1'='1"
     result = store.query(strategy="x' OR '1'='1")
@@ -232,8 +239,14 @@ def test_query_sql_injection_in_strategy(store):
 
 def test_query_sql_injection_in_pair(store):
     store.append_raw(
-        event_type="trade", strategy="S", pair="BTC/USDT",
-        side="buy", price=1.0, qty=1.0, reason="r", source="s",
+        event_type="trade",
+        strategy="S",
+        pair="BTC/USDT",
+        side="buy",
+        price=1.0,
+        qty=1.0,
+        reason="r",
+        source="s",
     )
     result = store.query(pair="BTC/USDT' OR '1'='1")
     assert len(result) == 0

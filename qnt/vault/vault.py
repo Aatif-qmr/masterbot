@@ -94,9 +94,11 @@ def recall_lessons(query: str, n_results: int = 3) -> list:
         log_action("vault_recall", f"Queried: {query}")
         return [
             {
-                "id": h.payload.get("lesson_id"),
-                "document": h.payload.get("text"),
-                "metadata": {k: v for k, v in h.payload.items() if k not in ("lesson_id", "text")},
+                "id": (h.payload or {}).get("lesson_id"),
+                "document": (h.payload or {}).get("text"),
+                "metadata": {
+                    k: v for k, v in (h.payload or {}).items() if k not in ("lesson_id", "text")
+                },
                 "score": h.score,
             }
             for h in hits

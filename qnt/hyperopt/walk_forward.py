@@ -33,14 +33,14 @@ logger = logging.getLogger(__name__)
 # Lookback in days by strategy class name.
 # Conservatively set to max(indicator_periods) × timeframe_minutes / 1440.
 _STRATEGY_LOOKBACK_DAYS: dict[str, int] = {
-    "ScalpV1": 3,           # RSI-14 on 5m → ~14 × 5min = 70min, round up to 3 days
+    "ScalpV1": 3,  # RSI-14 on 5m → ~14 × 5min = 70min, round up to 3 days
     "BearScalpV1": 3,
     "MicroScalpV1": 2,
-    "TrendFollowV1": 7,     # EMA-50 on 1h → 50h = ~2.1 days, round up to 7
+    "TrendFollowV1": 7,  # EMA-50 on 1h → 50h = ~2.1 days, round up to 7
     "DailyTrendV1": 7,
     "MeanReversionV1": 5,
     "SwingV1": 7,
-    "VectorVaultV1": 14,    # FreqAI train lookback
+    "VectorVaultV1": 14,  # FreqAI train lookback
     "Auto202605030340": 5,
 }
 DEFAULT_LOOKBACK_DAYS = 7
@@ -49,9 +49,10 @@ DEFAULT_LOOKBACK_DAYS = 7
 @dataclass
 class WalkForwardFold:
     """One train/test fold with a purge gap between them."""
-    train_start: str   # freqtrade timerange format: YYYYMMDD
+
+    train_start: str  # freqtrade timerange format: YYYYMMDD
     train_end: str
-    test_start: str    # = train_end + purge_days
+    test_start: str  # = train_end + purge_days
     test_end: str
     fold_index: int
 
@@ -140,7 +141,10 @@ def evaluate_params_walk_forward(
             scores.append(score)
         logger.debug(
             "Fold %d [%s→%s]: score=%.4f",
-            fold.fold_index, fold.test_start, fold.test_end, score,
+            fold.fold_index,
+            fold.test_start,
+            fold.test_end,
+            score,
         )
 
     if len(scores) < len(folds) // 2:
@@ -184,11 +188,14 @@ def run_walk_forward_study(
 
     if strategy not in SEARCH_SPACES:
         raise ValueError(
-            f"Strategy '{strategy}' not in SEARCH_SPACES. "
-            f"Available: {list(SEARCH_SPACES.keys())}"
+            f"Strategy '{strategy}' not in SEARCH_SPACES. Available: {list(SEARCH_SPACES.keys())}"
         )
 
-    gap = purge_days if purge_days is not None else _STRATEGY_LOOKBACK_DAYS.get(strategy, DEFAULT_LOOKBACK_DAYS)
+    gap = (
+        purge_days
+        if purge_days is not None
+        else _STRATEGY_LOOKBACK_DAYS.get(strategy, DEFAULT_LOOKBACK_DAYS)
+    )
     folds = build_folds(start, end, n_folds=n_folds, purge_days=gap)
     logger.info("Walk-forward study: %d folds, purge=%dd, strategy=%s", len(folds), gap, strategy)
 
@@ -222,6 +229,7 @@ def run_walk_forward_study(
         @ray.remote
         def _worker():
             import optuna as _opt
+
             _opt.logging.set_verbosity(_opt.logging.WARNING)
             s = _opt.load_study(study_name=study_name, storage=storage_url)
             s.optimize(objective, n_trials=1)

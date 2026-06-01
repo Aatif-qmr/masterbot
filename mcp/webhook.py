@@ -48,6 +48,7 @@ VALID_SIDES = {"buy", "sell", "long", "short", "close"}
 
 # ── Payload schema ────────────────────────────────────────────────────────────
 
+
 class WebhookPayload(BaseModel):
     secret: str
     strategy: str
@@ -125,6 +126,7 @@ def _emit_signal(payload: WebhookPayload) -> dict[str, Any]:
 
     try:
         from bus.event_bus import get_bus
+
         bus = get_bus()
         # asyncio.create_task() requires a running loop (guaranteed inside FastAPI handlers).
         # If called outside async context (e.g. tests), fall through to the except branch.
@@ -133,7 +135,9 @@ def _emit_signal(payload: WebhookPayload) -> dict[str, Any]:
         logger.info("Signal emitted to bus: %s %s %s", payload.strategy, payload.side, payload.pair)
     except RuntimeError:
         # No running event loop — sync context (CLI, tests)
-        logger.info("Signal logged (no event loop): %s %s %s", payload.strategy, payload.side, payload.pair)
+        logger.info(
+            "Signal logged (no event loop): %s %s %s", payload.strategy, payload.side, payload.pair
+        )
     except Exception as exc:
         logger.warning("Bus unavailable (%s) — signal logged only", exc)
 
@@ -141,6 +145,7 @@ def _emit_signal(payload: WebhookPayload) -> dict[str, Any]:
 
 
 # ── Routes ─────────────────────────────────────────────────────────────────────
+
 
 @app.get("/health")
 async def health() -> JSONResponse:
@@ -219,14 +224,17 @@ async def tradingview_webhook_batch(request: Request) -> JSONResponse:
 
 # ── Entrypoint ────────────────────────────────────────────────────────────────
 
+
 def run(host: str = "0.0.0.0", port: int = 9011) -> None:
     import uvicorn
+
     logger.info("TradingView webhook bridge starting at http://%s:%d", host, port)
     uvicorn.run(app, host=host, port=port, log_level="info")
 
 
 if __name__ == "__main__":
     import argparse
+
     p = argparse.ArgumentParser(description="Cipher TradingView Webhook Bridge")
     p.add_argument("--port", type=int, default=9011)
     p.add_argument("--host", type=str, default="0.0.0.0")

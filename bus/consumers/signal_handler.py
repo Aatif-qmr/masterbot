@@ -78,7 +78,7 @@ async def vault_writer(event: BaseEvent) -> None:
             f"Strategy {event.source} closed {getattr(event, 'pair', '?')} "
             f"profit={getattr(event, 'profit_ratio', 0):.2%}"
         )
-        store_lesson(lesson, metadata={"event_type": "trade_close"})
+        store_lesson(lesson, lesson, metadata={"event_type": "trade_close"})
     except Exception as exc:
         logger.debug("vault_writer skipped: %s", exc)
 
