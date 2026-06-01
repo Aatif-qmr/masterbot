@@ -1,0 +1,79 @@
+# config/rules/example_rules.yaml
+# Declarative trigger rules for Cipher.
+#
+# Each rule has:
+#   name:        unique identifier
+#   description: human-readable purpose
+#   condition:   a Python-safe expression evaluated against the context dict
+#   actions:     list of actions to take when condition is True
+#   cooldown_secs: minimum seconds between firings (default: 300)
+#   enabled:     true/false (default: true)
+#
+# Context variables available in conditions:
+#   sentiment_score     float  (-1 to 1)
+#   funding_rate        float  (8h rate, e.g. 0.001)
+#   open_trades         int
+#   drawdown_pct        float  (positive, e.g. 5.2 = 5.2%)
+#   btc_price           float
+#   regime              str    ("bull", "bear", "sideways")
+#
+# Action types:
+#   - type: log         message: "..."
+#   - type: notify      message: "..."   (Telegram/webhook)
+#   - type: set_param   strategy: "..." key: "..." value: ...
+#   - type: pause       strategy: "..."  (halts new entries)
+#   - type: resume      strategy: "..."
+
+rules:
+  - name: high_drawdown_pause
+    description: Pause all entries when portfolio drawdown exceeds 8%
+    condition: "drawdown_pct > 8.0"
+    cooldown_secs: 600
+    actions:
+      - type: notify
+        message: "ALERT: Drawdown {drawdown_pct:.1f}% — pausing new entries"
+      - type: pause
+        strategy: "*"
+
+  - name: extreme_negative_sentiment
+    description: Tighten stoploss on all scalpers when sentiment collapses
+    condition: "sentiment_score < -0.7 and regime == 'bear'"
+    cooldown_secs: 3600
+    actions:
+      - type: notify
+        message: "Bearish sentiment {sentiment_score:.2f} + bear regime — tightening scalp stoploss"
+      - type: set_param
+        strategy: "ScalpV1"
+        key: "stoploss"
+        value: -0.02
+      - type: set_param
+        strategy: "BearScalpV1"
+        key: "stoploss"
+        value: -0.02
+
+  - name: high_funding_rate_alert
+    description: Alert when funding rate exceeds 0.1% per 8h (expensive to be long)
+    condition: "funding_rate > 0.001"
+    cooldown_secs: 3600
+    actions:
+      - type: notify
+        message: "High funding rate {funding_rate:.4%}/8h — longs expensive"
+      - type: log
+        message: "Funding rate spike: {funding_rate:.4%}"
+
+  - name: too_many_open_trades
+    description: Log a warning when open trade count reaches the max
+    condition: "open_trades >= 10"
+    cooldown_secs: 300
+    actions:
+      - type: log
+        message: "Open trade count at max: {open_trades}"
+
+  - name: example_disabled
+    description: Template rule — disabled
+    enabled: false
+    condition: "btc_price < 20000"
+    cooldown_secs: 86400
+    actions:
+      - type: notify
+        message: "BTC below $20k — review exposure"
