@@ -7,7 +7,9 @@ Loads YAML rule files from config/rules/, evaluates each rule's condition
 expression against a live context dict, and executes actions when the
 condition is True.
 
-Rules are safe-eval'd using a restricted set of builtins (no import, no exec).
+Rules are evaluated via a whitelist-only AST visitor — no eval(), no exec().
+Only comparisons, boolean ops, arithmetic, whitelisted functions, and context
+name lookups are permitted. Class hierarchy access is structurally impossible.
 Each rule has a cooldown so it doesn't fire continuously.
 
 Usage:
@@ -24,7 +26,11 @@ CLI: python qnt/agent.py rules [--context '{"sentiment_score": -0.8, ...}']
 
 from __future__ import annotations
 
+import ast
 import logging
+import operator
+import tempfile
+import threading
 import time
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -36,12 +42,25 @@ logger = logging.getLogger(__name__)
 
 _RULES_DIR = Path(__file__).resolve().parent.parent.parent / "config" / "rules"
 
-# Restricted builtins for condition evaluation
-_SAFE_BUILTINS: dict[str, Any] = {
-    "abs": abs, "min": min, "max": max, "round": round,
-    "len": len, "int": int, "float": float, "str": str, "bool": bool,
-    "True": True, "False": False, "None": None,
+# Whitelisted functions callable inside rule conditions
+_SAFE_FUNCS: dict[str, Any] = {
+    "abs": abs, "min": min, "max": max, "round": round, "len": len,
+    "int": int, "float": float, "str": str, "bool": bool,
 }
+
+# AST node type whitelist — anything not in here raises ValueError
+_ALLOWED_NODES = (
+    ast.Expression,
+    ast.BoolOp, ast.And, ast.Or,
+    ast.UnaryOp, ast.Not, ast.USub, ast.UAdd,
+    ast.BinOp, ast.Add, ast.Sub, ast.Mult, ast.Div, ast.Mod, ast.Pow,
+    ast.Compare,
+    ast.Eq, ast.NotEq, ast.Lt, ast.LtE, ast.Gt, ast.GtE, ast.In, ast.NotIn,
+    ast.Constant,
+    ast.Name,
+    ast.Call,
+    ast.Load,
+)
 
 
 @dataclass
@@ -206,15 +225,104 @@ class RuleEngine:
         self._rules.append(rule)
 
 
-# ── Condition evaluator ───────────────────────────────────────────────────────
+# ── Condition evaluator (AST whitelist — no eval/exec) ───────────────────────
 
 def _eval_condition(expr: str, context: dict[str, Any]) -> bool:
     """
-    Evaluate a condition expression in a restricted sandbox.
-    Only safe builtins + context keys are accessible.
+    Evaluate a condition expression using a whitelist-only AST interpreter.
+
+    Only permits: comparisons, boolean ops, arithmetic, whitelisted function calls,
+    constant literals, and Name lookups from the context dict.
+    Raises ValueError for any disallowed node type (attributes, subscripts,
+    class access, imports, lambdas, comprehensions, etc.)
     """
-    namespace = {**_SAFE_BUILTINS, **context}
-    return bool(eval(expr, {"__builtins__": {}}, namespace))  # noqa: S307
+    try:
+        tree = ast.parse(expr, mode="eval")
+    except SyntaxError as exc:
+        raise ValueError(f"Invalid condition syntax: {exc}") from exc
+
+    _validate_ast(tree)
+    return bool(_eval_node(tree.body, context))
+
+
+def _validate_ast(node: ast.AST) -> None:
+    """Walk AST and reject any node not in the whitelist."""
+    for n in ast.walk(node):
+        if not isinstance(n, _ALLOWED_NODES):
+            raise ValueError(
+                f"Disallowed AST node '{type(n).__name__}' in condition. "
+                "Only comparisons, boolean ops, arithmetic, and whitelisted "
+                "function calls are permitted."
+            )
+        # Extra guard: Attribute access is structurally blocked by _ALLOWED_NODES
+        # but double-check Name nodes aren't sneaking through as function targets
+        if isinstance(n, ast.Call):
+            if not isinstance(n.func, ast.Name):
+                raise ValueError("Only simple function calls allowed (no attribute access).")
+            if n.func.id not in _SAFE_FUNCS:
+                raise ValueError(f"Function '{n.func.id}' not in whitelist.")
+            if n.keywords:
+                raise ValueError("Keyword arguments not allowed in condition calls.")
+
+
+def _eval_node(node: ast.expr, ctx: dict[str, Any]) -> Any:
+    """Recursively evaluate a validated AST node."""
+    if isinstance(node, ast.Constant):
+        return node.value
+
+    if isinstance(node, ast.Name):
+        if node.id in ("True", "False", "None"):
+            return {"True": True, "False": False, "None": None}[node.id]
+        try:
+            return ctx[node.id]
+        except KeyError:
+            raise NameError(f"Name '{node.id}' not in rule context.")
+
+    if isinstance(node, ast.BoolOp):
+        if isinstance(node.op, ast.And):
+            return all(_eval_node(v, ctx) for v in node.values)
+        return any(_eval_node(v, ctx) for v in node.values)
+
+    if isinstance(node, ast.UnaryOp):
+        val = _eval_node(node.operand, ctx)
+        if isinstance(node.op, ast.Not):
+            return not val
+        if isinstance(node.op, ast.USub):
+            return -val
+        return +val
+
+    if isinstance(node, ast.BinOp):
+        left = _eval_node(node.left, ctx)
+        right = _eval_node(node.right, ctx)
+        _OPS = {
+            ast.Add: operator.add, ast.Sub: operator.sub,
+            ast.Mult: operator.mul, ast.Div: operator.truediv,
+            ast.Mod: operator.mod, ast.Pow: operator.pow,
+        }
+        return _OPS[type(node.op)](left, right)
+
+    if isinstance(node, ast.Compare):
+        left = _eval_node(node.left, ctx)
+        for op, comparator in zip(node.ops, node.comparators):
+            right = _eval_node(comparator, ctx)
+            _CMP = {
+                ast.Eq: operator.eq, ast.NotEq: operator.ne,
+                ast.Lt: operator.lt, ast.LtE: operator.le,
+                ast.Gt: operator.gt, ast.GtE: operator.ge,
+                ast.In: lambda a, b: a in b,
+                ast.NotIn: lambda a, b: a not in b,
+            }
+            if not _CMP[type(op)](left, right):
+                return False
+            left = right
+        return True
+
+    if isinstance(node, ast.Call):
+        func = _SAFE_FUNCS[node.func.id]  # type: ignore[union-attr]
+        args = [_eval_node(a, ctx) for a in node.args]
+        return func(*args)
+
+    raise ValueError(f"Unhandled node type: {type(node).__name__}")
 
 
 # ── Default action handler ────────────────────────────────────────────────────
@@ -265,21 +373,32 @@ def _send_notification(message: str) -> None:
         logger.info("[NOTIFY] %s", message)
 
 
+_params_lock = threading.Lock()
+
+
 def _set_strategy_param(strategy: str, key: str, value: Any) -> None:
-    """Write to config/dynamic_params.json."""
+    """Write to config/dynamic_params.json atomically (tmp + rename)."""
     import json
+    import os
     params_path = Path(__file__).resolve().parent.parent.parent / "config" / "dynamic_params.json"
-    try:
-        params: dict = json.loads(params_path.read_text()) if params_path.exists() else {}
-        if strategy == "*":
-            for s in params:
-                params[s][key] = value
-        else:
-            params.setdefault(strategy, {})[key] = value
-        params_path.write_text(json.dumps(params, indent=2))
-        logger.info("set_param: %s.%s = %s", strategy, key, value)
-    except Exception as exc:
-        logger.error("set_param failed: %s", exc)
+    with _params_lock:
+        try:
+            params: dict = json.loads(params_path.read_text()) if params_path.exists() else {}
+            if strategy == "*":
+                for s in params:
+                    params[s][key] = value
+            else:
+                params.setdefault(strategy, {})[key] = value
+            # Write to temp file then rename — atomic on POSIX
+            with tempfile.NamedTemporaryFile(
+                mode="w", dir=params_path.parent, delete=False, suffix=".tmp"
+            ) as tmp:
+                json.dump(params, tmp, indent=2)
+                tmp_path = tmp.name
+            os.replace(tmp_path, params_path)
+            logger.info("set_param: %s.%s = %s", strategy, key, value)
+        except Exception as exc:
+            logger.error("set_param failed: %s", exc)
 
 
 def _set_strategy_pause(strategy: str, *, paused: bool) -> None:

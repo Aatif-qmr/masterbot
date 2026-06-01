@@ -18,6 +18,7 @@
 
 import os
 import sqlite3
+import threading
 import time
 from decimal import ROUND_DOWN, ROUND_HALF_EVEN, Decimal, InvalidOperation
 from pathlib import Path
@@ -41,6 +42,7 @@ CEILING = 2.0
 CACHE_TTL = 1800  # 30 minutes
 
 _cache: dict[str, tuple[float, float]] = {}
+_cache_lock = threading.Lock()
 
 _TRADE_QUERY = (
     "SELECT close_profit FROM trades "
@@ -152,9 +154,10 @@ def get_stake_multiplier(strategy: str) -> float:
     Falls back to 1.0 if DB unavailable or fewer than MIN_TRADES records.
     """
     now = time.time()
-    cached = _cache.get(strategy)
-    if cached and now < cached[1]:
-        return cached[0]
+    with _cache_lock:
+        cached = _cache.get(strategy)
+        if cached and now < cached[1]:
+            return cached[0]
 
     # Try PostgreSQL first (live/dry_run via supervisord)
     env_key = f"FREQTRADE_DB_{strategy.upper()}"
@@ -169,5 +172,6 @@ def get_stake_multiplier(strategy: str) -> float:
 
     win_rate = sum(1 for p in profits if p > 0) / len(profits)
     multiplier = _compute_multiplier(win_rate)
-    _cache[strategy] = (multiplier, now + CACHE_TTL)
+    with _cache_lock:
+        _cache[strategy] = (multiplier, now + CACHE_TTL)
     return multiplier

@@ -34,7 +34,7 @@ Usage (add to MeanReversionV1 or any IStrategy):
 from __future__ import annotations
 
 import logging
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 logger = logging.getLogger(__name__)
 
@@ -194,7 +194,15 @@ class DcaExecutor:
 # ── Duck-type helpers (work with real Trade and plain dicts for tests) ────────
 
 def _trade_id(trade) -> int:
-    return int(getattr(trade, "id", None) or trade.get("id", 0))
+    tid = getattr(trade, "id", None)
+    if tid is None and isinstance(trade, dict):
+        tid = trade.get("id")
+    if tid is None:
+        raise ValueError(
+            "Trade object has no 'id' field. "
+            "Pass a Freqtrade Trade or a dict with 'id' key."
+        )
+    return int(tid)
 
 
 def _initial_stake(trade) -> float:

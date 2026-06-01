@@ -1,22 +1,16 @@
 """Tests for qnt/tools/rule_engine.py"""
 
-from __future__ import annotations
-
-import time
-from pathlib import Path
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 import pytest
 import yaml
 
 from qnt.tools.rule_engine import (
-    FiredRule,
     Rule,
     RuleEngine,
-    _eval_condition,
     _default_action_handler,
+    _eval_condition,
 )
-
 
 # ── Fixtures ──────────────────────────────────────────────────────────────────
 
@@ -108,6 +102,32 @@ def test_eval_blocks_import():
 def test_eval_blocks_builtins_dict():
     with pytest.raises(Exception):
         _eval_condition("open('/etc/passwd').read()", {})
+
+
+def test_eval_blocks_class_hierarchy_escape():
+    """Regression: ().__class__.__mro__[-1].__subclasses__() must not work."""
+    with pytest.raises((ValueError, TypeError, NameError)):
+        _eval_condition("().__class__.__mro__[-1].__subclasses__()", {})
+
+
+def test_eval_blocks_attribute_access():
+    with pytest.raises((ValueError, TypeError)):
+        _eval_condition("sentiment_score.__class__", {"sentiment_score": 0.5})
+
+
+def test_eval_blocks_unknown_function():
+    with pytest.raises(ValueError, match="not in whitelist"):
+        _eval_condition("exec('import os')", {})
+
+
+def test_eval_blocks_lambda():
+    with pytest.raises((ValueError, SyntaxError)):
+        _eval_condition("(lambda: __import__('os'))()", {})
+
+
+def test_eval_blocks_comprehension():
+    with pytest.raises(ValueError):
+        _eval_condition("[x for x in range(10)]", {})
 
 
 # ── evaluate — firing ─────────────────────────────────────────────────────────

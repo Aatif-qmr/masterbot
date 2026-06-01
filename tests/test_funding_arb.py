@@ -1,19 +1,15 @@
 """Tests for qnt/tools/funding_arb.py — mocked ccxt, no network."""
 
-from __future__ import annotations
-
 from unittest.mock import MagicMock, patch
 
 import pytest
 
 from qnt.tools.funding_arb import (
-    DEFAULT_MIN_CARRY_PCT,
     FundingArbOpportunity,
     _fetch_funding_rates,
     funding_arb_report,
     scan_funding_arb,
 )
-
 
 # ── FundingArbOpportunity ─────────────────────────────────────────────────────
 

@@ -52,3 +52,9 @@
 - `bash scripts/hooks/pre-compact.sh "reason"` — save state before /compact
 - `bash scripts/hooks/post-compact.sh` — restore context after /compact
 - `bash scripts/hooks/create-bundle.sh "task" file...` — create subagent bundle
+
+## External Tracking
+- **Notion Projects DB:** https://www.notion.so/bfb15c91faeb44e3aae6c2c56d2cdec9
+- Query this row: `ntn api post "v1/data_sources/8c1be4c6-df6c-400d-ac3f-7cda00c88192/query" --data '{"filter":{"property":"Name","title":{"equals":"cipher"}}}'`
+- Update a property: `ntn api patch "v1/pages/<PAGE_ID>" --data '{"properties":{"Status":{"select":{"name":"Active"}}}}'`
+- Notion DS ID: `8c1be4c6-df6c-400d-ac3f-7cda00c88192`

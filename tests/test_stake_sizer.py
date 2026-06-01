@@ -1,8 +1,5 @@
 """Tests for risk/stake_sizer.py — Decimal precision additions."""
 
-from __future__ import annotations
-
-from decimal import Decimal
 from unittest.mock import patch
 
 import pytest
@@ -13,7 +10,6 @@ from risk.stake_sizer import (
     get_stake_multiplier,
     quantize_stake,
 )
-
 
 # ── _compute_multiplier ───────────────────────────────────────────────────────
 

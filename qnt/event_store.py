@@ -183,19 +183,25 @@ class EventStore:
         import polars as pl
 
         conditions: list[str] = []
+        params: list[Any] = []
         if strategy:
-            conditions.append(f"strategy = '{strategy}'")
+            conditions.append("strategy = ?")
+            params.append(strategy)
         if event_type:
-            conditions.append(f"event_type = '{event_type}'")
+            conditions.append("event_type = ?")
+            params.append(event_type)
         if pair:
-            conditions.append(f"pair = '{pair}'")
+            conditions.append("pair = ?")
+            params.append(pair)
         if since:
-            conditions.append(f"ts >= '{since.isoformat()}'")
+            conditions.append("ts >= ?")
+            params.append(since.isoformat())
         where = ("WHERE " + " AND ".join(conditions)) if conditions else ""
-        sql = f"SELECT * FROM events {where} ORDER BY ts DESC LIMIT {limit}"
+        # limit is always an int from the caller signature — safe to interpolate
+        sql = f"SELECT * FROM events {where} ORDER BY ts DESC LIMIT {int(limit)}"
 
         with self._lock:
-            rows = self._conn.execute(sql).fetchall()
+            rows = self._conn.execute(sql, params).fetchall()
             cols = [d[0] for d in self._conn.description]
 
         if not rows:

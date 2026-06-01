@@ -1,0 +1,15 @@
+#!/bin/bash
+# Decision helper: should this task use parallel subagents?
+echo "=== PARALLELIZABILITY ASSESSMENT ==="
+echo ""
+echo "SAFE examples:  frontend + backend + tests | security + perf + API review"
+echo "UNSAFE examples: two agents editing same file | agent 2 depends on agent 1"
+echo ""
+echo "Check all 4:"
+echo "  1. Subtasks completely independent (no shared files/state)?"
+echo "  2. 3 or fewer parallel streams?"
+echo "  3. Each subtask has clear, verifiable output?"
+echo "  4. Total task too large for one context window?"
+echo ""
+echo "→ If all YES: safe to parallelize."
+echo "→ Any NO: use single agent."

@@ -213,3 +213,27 @@ def test_consumer_failure_doesnt_crash_bus(tmp_path):
         assert len(bus.dead_letter_queue) == 0
     finally:
         es_mod._store = original
+
+
+# ── SQL injection regression (parameterised queries) ─────────────────────────
+
+def test_query_sql_injection_in_strategy(store):
+    """Parameterised query must not return all rows on injection attempt."""
+    # Append one real trade
+    store.append_raw(
+        event_type="trade", strategy="SafeStrategy", pair="BTC/USDT",
+        side="buy", price=50000.0, qty=0.01, reason="test", source="test",
+    )
+    # Attempt injection: strategy = "x' OR '1'='1"
+    result = store.query(strategy="x' OR '1'='1")
+    # Must return empty — not all rows
+    assert len(result) == 0
+
+
+def test_query_sql_injection_in_pair(store):
+    store.append_raw(
+        event_type="trade", strategy="S", pair="BTC/USDT",
+        side="buy", price=1.0, qty=1.0, reason="r", source="s",
+    )
+    result = store.query(pair="BTC/USDT' OR '1'='1")
+    assert len(result) == 0

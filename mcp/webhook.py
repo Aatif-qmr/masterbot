@@ -27,13 +27,13 @@ Design:
 
 from __future__ import annotations
 
-import hashlib
+import asyncio
 import hmac
 import logging
 import os
 from typing import Any
 
-from fastapi import FastAPI, Header, HTTPException, Request, status
+from fastapi import FastAPI, HTTPException, Request, status
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, field_validator
 
@@ -91,12 +91,17 @@ app = FastAPI(
 )
 
 
-def _check_secret(provided: str) -> None:
-    """Constant-time HMAC compare against TV_WEBHOOK_SECRET env var."""
+def _check_secret(provided: str, header_secret: str | None = None) -> None:
+    """
+    Constant-time compare against TV_WEBHOOK_SECRET.
+    Prefers X-TV-Signature header over body field (body secret exposed in logs).
+    """
     if not _SECRET:
         logger.warning("TV_WEBHOOK_SECRET not set — webhook is open (dev mode only)")
         return
-    if not hmac.compare_digest(provided.encode(), _SECRET.encode()):
+    # Header takes priority — body fallback kept for backwards compat
+    candidate = header_secret or provided
+    if not hmac.compare_digest(candidate.encode(), _SECRET.encode()):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Invalid webhook secret.",
@@ -121,13 +126,14 @@ def _emit_signal(payload: WebhookPayload) -> dict[str, Any]:
     try:
         from bus.event_bus import get_bus
         bus = get_bus()
-        import asyncio
-        loop = asyncio.get_event_loop()
-        if loop.is_running():
-            loop.create_task(bus.publish("signal", event))
-        else:
-            loop.run_until_complete(bus.publish("signal", event))
+        # asyncio.create_task() requires a running loop (guaranteed inside FastAPI handlers).
+        # If called outside async context (e.g. tests), fall through to the except branch.
+        asyncio.get_running_loop()  # raises RuntimeError if no loop
+        asyncio.create_task(bus.publish("signal", event))
         logger.info("Signal emitted to bus: %s %s %s", payload.strategy, payload.side, payload.pair)
+    except RuntimeError:
+        # No running event loop — sync context (CLI, tests)
+        logger.info("Signal logged (no event loop): %s %s %s", payload.strategy, payload.side, payload.pair)
     except Exception as exc:
         logger.warning("Bus unavailable (%s) — signal logged only", exc)
 
@@ -146,9 +152,13 @@ async def tradingview_webhook(request: Request) -> JSONResponse:
     """
     Receive a TradingView alert.
 
+    Auth: prefer X-TV-Signature header (body 'secret' field also accepted but
+    will appear in logs — use header for production).
+
     Expected body: JSON with fields: secret, strategy, pair, side,
     optionally price and reason.
     """
+    header_secret: str | None = request.headers.get("X-TV-Signature")
     try:
         raw = await request.json()
     except Exception:
@@ -165,7 +175,7 @@ async def tradingview_webhook(request: Request) -> JSONResponse:
             detail=str(exc),
         )
 
-    _check_secret(payload.secret)
+    _check_secret(payload.secret, header_secret=header_secret)
     event = _emit_signal(payload)
 
     return JSONResponse(

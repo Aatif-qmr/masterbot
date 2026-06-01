@@ -1,8 +1,7 @@
 """Tests for risk/dca.py"""
 
-from __future__ import annotations
-
 import pytest
+
 from risk.dca import DcaExecutor
 
 
@@ -169,3 +168,13 @@ def test_status_after_first_order(dca):
     assert st["active"] is True
     assert st["orders_placed"] == 1
     assert st["total_dca_stake"] == pytest.approx(200.0)
+
+
+# ── Trade id missing raises ValueError (no silent collision) ──────────────────
+
+def test_trade_without_id_raises():
+    from risk.dca import DcaExecutor
+    dca = DcaExecutor()
+    trade_no_id = {"stake_amount": 100.0, "open_rate": 1.0}  # no 'id'
+    with pytest.raises(ValueError, match="id"):
+        dca.adjust(trade_no_id, current_rate=0.97, min_stake=5.0, max_stake=500.0, current_profit=-0.03)
